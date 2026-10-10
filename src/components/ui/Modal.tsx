@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 interface ModalProps {
@@ -9,6 +10,7 @@ interface ModalProps {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
@@ -18,6 +20,7 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   subtitle,
   children,
+  footer,
   maxWidth = "md",
 }) => {
   useEffect(() => {
@@ -36,7 +39,7 @@ export const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
   const maxWidthStyles = {
     sm: "max-w-sm",
@@ -46,10 +49,13 @@ export const Modal: React.FC<ModalProps> = ({
     "2xl": "max-w-2xl",
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/45 animate-fade-in-scale">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/45 animate-fade-in-scale overflow-hidden"
+      onClick={onClose}
+    >
       <div
-        className={`w-full ${maxWidthStyles[maxWidth]} bg-surface border border-surface-border rounded-[8px] overflow-hidden flex flex-col max-h-[90dvh] select-none`}
+        className={`w-full ${maxWidthStyles[maxWidth]} max-h-[calc(100dvh-2rem)] bg-surface border border-surface-border rounded-[8px] overflow-hidden flex flex-col min-h-0 select-none`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -75,7 +81,15 @@ export const Modal: React.FC<ModalProps> = ({
         <div className="p-4 overflow-y-auto overscroll-contain text-xs text-text-primary min-h-0 flex-1">
           {children}
         </div>
+
+        {/* Footer (optional) */}
+        {footer && (
+          <div className="shrink-0 px-4 py-3 border-t border-surface-border bg-surface-muted">
+            {footer}
+          </div>
+        )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

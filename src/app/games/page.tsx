@@ -762,8 +762,24 @@ export default function GameLibraryPage() {
         onClose={() => setEditModalOpen(false)}
         title={`EDIT GAME: ${selectedGame?.title || ""}`}
         maxWidth="lg"
+        footer={
+          <div className="flex justify-end gap-2.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEditModalOpen(false)}
+              disabled={isSubmitting}
+            >
+              Batal
+            </Button>
+            <Button type="submit" form="edit-game-form" variant="primary" size="sm" disabled={isSubmitting}>
+              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
+            </Button>
+          </div>
+        }
       >
-        <form onSubmit={handleEditSubmit} className="space-y-4">
+        <form id="edit-game-form" onSubmit={handleEditSubmit} className="space-y-4">
           {formError && (
             <div className="p-3 bg-maroon-subtle border border-maroon-border rounded text-sm text-maroon font-semibold">
               {formError}
@@ -870,20 +886,6 @@ export default function GameLibraryPage() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2.5 pt-3 mt-4 border-t border-surface-border">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setEditModalOpen(false)}
-              disabled={isSubmitting}
-            >
-              Batal
-            </Button>
-            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
-            </Button>
-          </div>
         </form>
       </Modal>
 
