@@ -121,26 +121,25 @@ model User {
 }
 
 model Member {
-  id           String     @id @default(cuid())
-  memberCode   String     @unique
-  fullName     String
-  username     String     @unique
-  phoneNumber  String?    @unique
-  email        String?    @unique
-  tier         MemberTier @default(REGULAR)
-  balance      Float      @default(0)
-  dreamCoins   Int        @default(100)
-  xp           Int        @default(0)
-  level        Int        @default(1)
-  avatarUrl    String?
-  notes        String?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-
-  sessions     Session[]
-  bookings     Booking[]
-  transactions    Transaction[]
-  gameStats           MemberGameStat[]
+  id                                                String                             @id @default(cuid())
+  memberCode                                        String                             @unique
+  fullName                                          String
+  username                                          String                             @unique
+  phoneNumber                                       String?                            @unique
+  email                                             String?                            @unique
+  tier                                              MemberTier                         @default(REGULAR)
+  balance                                           Float                              @default(0)
+  dreamCoins                                        Int                                @default(100)
+  xp                                                Int                                @default(0)
+  level                                             Int                                @default(1)
+  avatarUrl                                         String?
+  notes                                             String?
+  createdAt                                         DateTime                           @default(now())
+  updatedAt                                         DateTime                           @updatedAt
+  bookings                                          Booking[]
+  gameStats                                         MemberGameStat[]
+  sessions                                          Session[]
+  transactions                                      Transaction[]
 
   @@index([tier])
 }
@@ -351,29 +350,29 @@ model TransactionItem {
 }
 
 model Game {
-  id                 String            @id @default(cuid())
-  title              String            @unique
+  id                 String             @id @default(cuid())
+  title              String             @unique
   slug               String?
   genre              String
   publisher          String
   iconUrl            String?
   bannerUrl          String?
   description        String?
-  minGpuRequired     String            @default("GTX 1650")
-  popularityRank     Int               @default(1)
-  isInstalledOnPc    Boolean           @default(true)
-  isInstalledConsole Boolean           @default(false)
-  isActive           Boolean           @default(true)
-  tags               String[]          @default([])
-  imageSource        GameImageSource   @default(AUTO_STEAM)
+  minGpuRequired     String             @default("GTX 1650")
+  popularityRank     Int                @default(1)
+  isInstalledOnPc    Boolean            @default(true)
+  isInstalledConsole Boolean            @default(false)
+  isActive           Boolean            @default(true)
+  tags               String[]           @default([])
+  imageSource        GameImageSource    @default(AUTO_STEAM)
   steamAppId         Int?
   artworkVerifiedAt  DateTime?
   manualImagePath    String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 
-  sessions           Session[]
   memberStats        MemberGameStat[]
+  sessions           Session[]
 
   @@index([genre])
   @@index([isActive])

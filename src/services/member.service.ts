@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { MemberTier, Prisma } from "@prisma/client";
 import { memberSchema, updateMemberSchema } from "@/lib/validators";
+import { calculateLevelFromXP } from "@/lib/level-calculator";
 
 export interface MemberFilterOptions {
   search?: string | null;
@@ -305,7 +306,7 @@ export async function addMemberXP(id: string, xpToAdd: number) {
   if (!member) return null;
 
   const totalXP = member.xp + xpToAdd;
-  const newLevel = Math.max(1, Math.floor(totalXP / 500) + 1);
+  const newLevel = calculateLevelFromXP(totalXP);
 
   return await prisma.member.update({
     where: { id },

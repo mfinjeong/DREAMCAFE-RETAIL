@@ -2,7 +2,7 @@ import { prisma } from "../src/lib/prisma";
 import { PCStatus, ConsoleStatus, ConsoleType, SessionStatus, PaymentStatus, PaymentMethod, BookingStatus, InventoryAction } from "@prisma/client";
 import { listPCs, getPCById, updatePCStatus } from "../src/services/pc.service";
 import { listConsoles, getConsoleById, createConsole, updateConsole, updateConsoleStatus, deleteConsole } from "../src/services/console.service";
-import { listMembers, getMemberById, createMember, updateMember, deleteMember, searchMembers } from "../src/services/member.service";
+import { listMembers, getMemberById, createMember, updateMember, deleteMember, searchMembers, addMemberXP } from "../src/services/member.service";
 import { startSession, stopSession, checkoutSession, getSessionById } from "../src/services/session.service";
 import { getLowStockProducts, listProducts, getProductById, createProduct } from "../src/services/product.service";
 import { createPosCheckout, listTransactions, getTransactionById } from "../src/services/transaction.service";
@@ -1696,6 +1696,19 @@ async function runTests() {
   assert(profileAfterLevelUp.stats.progressPercent === 0, "Test 19f: Progress percent at start of Level 2 is 0%");
   assert(profileAfterLevelUp.stats.xpRemaining === 150, "Test 19g: XP remaining for Level 3 is 150");
 
+  // 19h. Consistency: same total XP reached via transaction yields identical level
+  const transactionGamingMember = await createMember({
+    fullName: `Transaction Level Tester ${randNum}`,
+    username: `TxnLevel_${randNum}`,
+    phoneNumber: `0877${randNum}5678`,
+    email: `txnlevel_${randNum}@dreamtest.com`,
+  });
+  // Award 100 XP via transaction XP path: addMemberXP uses same calculateLevelFromXP formula
+  const memberViaTransaction = await addMemberXP(transactionGamingMember.id, 100);
+  assert(memberViaTransaction !== null && memberViaTransaction.xp === 100, `Test 19h: Member reached 100 XP via transaction (${memberViaTransaction?.xp})`);
+  assert(memberViaTransaction !== null && memberViaTransaction.level === 2, `Test 19i: Member advanced to Level 2 via transaction (${memberViaTransaction?.level})`);
+  assert(memberViaTransaction !== null && memberViaTransaction.dreamCoins === 110, `Test 19j: Dream Coins increased by 10 (${memberViaTransaction?.dreamCoins})`);
+
   // 20. Soft delete / deactivate game when sessions exist
   const deleteResult = await deleteGame(testGame.id);
   assert(deleteResult.deactivated === true, "Test 20: deleteGame soft-deactivates game because sessions exist");
@@ -1713,6 +1726,7 @@ async function runTests() {
     where: { memberId: gamingMember.id },
   });
   await deleteMember(gamingMember.id);
+  await deleteMember(transactionGamingMember.id);
   await prisma.game.delete({
     where: { id: testGame.id },
   });
