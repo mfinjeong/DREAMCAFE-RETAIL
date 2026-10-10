@@ -3,9 +3,9 @@ import "./globals.css";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 
 export const metadata: Metadata = {
-  title: "DREAMCAFÉ - Gaming Center Management & Community Platform",
+  title: "DREAMCAFÉ - Retail Management",
   description:
-    "Stylish cyber cafe, PC/console station management, live billing, cash POS, inventory, bookings, and esports community platform.",
+    "PC and console station management, live billing, cash POS, inventory, bookings, and operational reporting.",
 };
 
 export default function RootLayout({

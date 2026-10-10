@@ -55,7 +55,7 @@ export default function SettingsPage() {
               required
             />
             <Input
-              label="Arena Esports"
+              label="Arena Zone"
               type="number"
               step="1000"
               value={rates.arenaRate}

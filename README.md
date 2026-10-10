@@ -1,7 +1,7 @@
 # DREAMCAFE
 
-> **Gaming Center Management & Community Platform**  
-> Sistem manajemen operasional cyber cafe modern, biling real-time, kasir POS tunai (cash-only), inventaris stok, reservasi station, dan platform komunitas esports.
+> **Gaming Center Retail Management**
+> Sistem manajemen operasional cyber cafe modern, biling real-time, kasir POS tunai (cash-only), inventaris stok, dan reservasi station.
 
 ---
 
@@ -52,9 +52,8 @@
   - `ADJUSTMENT`: Koreksi hasil *stock opname* fisik gudang.
 - **Audit Log Terperinci**: Pencatatan riwayat setiap mutasi lengkap dengan stempel waktu, perubahan stok sebelum-sesudah, alasan, dan nama petugas.
 
-### 6. 👥 Member & Profil Gaming (DREAMRANK)
+### 6. 👥 Member & Profil Gaming
 - **Tingkatan Membership**: Kategori Member `REGULAR`, `VIP`, dan `PRO GAMER`.
-- **DREAMRANK System**: Peringkat kompetitif pemain (`BRONZE` hingga `GRANDMASTER`).
 - **Sistem Level, XP & DREAM Coins**: Penghargaan poin loyalitas berdasarkan jam terbang bermain di cafe.
 - **Riwayat Lengkap**: Pencatatan saldo biling, sesi biling aktif, dan transaksi kasir.
 
@@ -62,11 +61,7 @@
 - Reservasi station PC maupun Konsol untuk tanggal dan slot jam tertentu.
 - **Conflict Prevention Engine**: Memeriksa tabrakan jadwal (*overlapping*) pada station dan rentang waktu yang sama untuk mencegah terjadinya *double-booking*.
 
-### 8. 🏆 Esports Hub & Turnamen
-- Pengelolaan turnamen komunitas (*bracket single/double elimination*), hadiah (*prize pool*), dan regulasi.
-- Leaderboard tim/clan lokal dengan rating ELO, kalkulasi Win/Loss, dan kompatibilitas GPU rig untuk game populer.
-
-### 9. 📊 Laporan Finansial & Operasional
+### 8. 📊 Laporan Finansial & Operasional
 - Rekap kas harian pendapatan tunai (*Total Cash Revenue*).
 - Pemisahan pendapatan antara sewa station (*sessions*) dan penjualan F&B/toko (*store*).
 - Log riwayat transaksi kasir yang komprehensif.
@@ -156,7 +151,7 @@ d:/DREAMCAFE/
 │   │   ├── store/          # Halaman kasir Point of Sale (POS)
 │   │   ├── inventory/      # Halaman mutasi & audit stok
 │   │   ├── members/        # Halaman direktori member & profile
-│   │   ├── tournaments/    # Halaman turnamen, clan & game library
+│   │   ├── games/         # Halaman game library
 │   │   ├── reports/        # Halaman laporan finansial & transaksi
 │   │   ├── settings/       # Pengaturan tarif biling & kebijakan cabang
 │   │   ├── layout.tsx      # Root layout dengan DashboardShell

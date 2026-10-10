@@ -67,10 +67,6 @@ async function runTests() {
   console.log("DREAMCAFE BACKEND END-TO-END VERIFICATION SUITE");
   console.log("==================================================\n");
 
-  const only18 = process.argv.includes("--group18");
-  const only19 = process.argv.includes("--group19");
-  const only20 = process.argv.includes("--group20");
-  if (!only18 && !only19 && !only20) {
   // -------------------------------------------------------------------
   // TEST GROUP 1: PC MANAGEMENT
   // -------------------------------------------------------------------
@@ -1721,7 +1717,6 @@ async function runTests() {
     where: { id: testGame.id },
   });
   console.log("  ✓ Test 21: Isolated gaming profile test fixtures cleaned up cleanly.\n");
-  }
 
   console.log(`SUMMARY: ${passedCount} PASSED, ${failedCount} FAILED`);
   console.log("==================================================");

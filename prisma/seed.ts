@@ -315,7 +315,7 @@ export const SEED_DATA = {
       popularityRank: 1,
       isInstalledOnPc: true,
       isInstalledConsole: false,
-      tags: ["Competitive", "Esports", "Shooter", "5v5"],
+      tags: ["Competitive", "Multiplayer", "Shooter", "5v5"],
     },
     {
       title: "Counter-Strike 2",
@@ -325,7 +325,7 @@ export const SEED_DATA = {
       popularityRank: 2,
       isInstalledOnPc: true,
       isInstalledConsole: false,
-      tags: ["FPS", "Classic", "Tactical", "Esports"],
+      tags: ["FPS", "Classic", "Tactical", "Multiplayer"],
     },
     {
       title: "Dota 2",
@@ -335,7 +335,7 @@ export const SEED_DATA = {
       popularityRank: 3,
       isInstalledOnPc: true,
       isInstalledConsole: false,
-      tags: ["Strategy", "MOBA", "Esports", "Team"],
+      tags: ["Strategy", "MOBA", "Multiplayer", "Team"],
     },
     {
       title: "EA Sports FC 24",
@@ -365,7 +365,7 @@ export const SEED_DATA = {
       popularityRank: 6,
       isInstalledOnPc: true,
       isInstalledConsole: false,
-      tags: ["MOBA", "Emulator", "Mobile Esports", "5v5"],
+      tags: ["MOBA", "Emulator", "Multiplayer", "5v5"],
     },
     {
       title: "Genshin Impact",
