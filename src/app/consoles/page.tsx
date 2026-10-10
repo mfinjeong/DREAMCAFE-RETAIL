@@ -278,29 +278,31 @@ export default function ConsolesPage() {
   return (
     <div className="space-y-4">
       {/* Top Action Bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-orange rounded-[1px]"></span>
-          <h2 className="text-xs font-black text-text-primary uppercase tracking-wider">
-            Console Lounge Fleet
-          </h2>
-          <span className="text-[11px] font-mono text-text-secondary">
-            ({consoles.length} stations loaded from database)
-          </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2 h-5 bg-orange rounded-[2px]"></span>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-text-primary tracking-tight">
+              Console Lounge Fleet
+            </h2>
+            <span className="text-xs sm:text-sm font-mono text-text-secondary">
+              ({consoles.length} stations terhubung di Supabase)
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={handleManualRefresh}
-                      className={`p-1.5 text-text-secondary hover:text-orange bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
-                        isRefreshing ? "animate-spin text-orange" : ""
+            className={`p-2 text-text-secondary hover:text-orange bg-surface-muted hover:bg-surface-hover rounded-[6px] border border-surface-border transition-colors cursor-pointer ${
+              isRefreshing ? "animate-spin text-orange" : ""
             }`}
             title="Refresh database records"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className="w-4 h-4" />
           </button>
-          <Button variant="primary" size="sm" onClick={handleOpenCreate}>
-            <Plus className="w-3.5 h-3.5 mr-1" />
+          <Button variant="primary" size="md" onClick={handleOpenCreate}>
+            <Plus className="w-4 h-4 mr-1.5" />
             Add Console
           </Button>
         </div>
@@ -308,7 +310,7 @@ export default function ConsolesPage() {
 
       {/* Error Banner */}
       {errorMessage && (
-        <div className="p-3 bg-maroon-subtle border border-maroon-border rounded-[8px] text-xs text-maroon flex items-center justify-between">
+        <div className="p-3.5 bg-maroon-subtle border border-maroon-border rounded-[8px] text-sm text-maroon flex items-center justify-between">
           <div className="flex items-center gap-2 font-semibold">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>Connection Error: {errorMessage}</span>
@@ -318,7 +320,7 @@ export default function ConsolesPage() {
               setIsLoading(true);
               fetchConsoles(searchQuery, selectedType, selectedStatus);
             }}
-            className="px-2.5 py-1 bg-orange hover:bg-orange-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
+            className="px-3 py-1.5 bg-orange hover:bg-orange-hover text-white rounded-[6px] text-xs font-semibold cursor-pointer"
           >
             Retry
           </button>
@@ -326,26 +328,26 @@ export default function ConsolesPage() {
       )}
 
       {/* Filter Row */}
-      <div className="bg-surface border border-surface-border rounded-[8px] px-3.5 py-2.5 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
-        <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+      <div className="bg-surface border border-surface-border rounded-[8px] px-4 py-3 flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search console, TV specs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-orange font-sans"
+            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-9 pr-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-orange font-sans"
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* Platform filter buttons */}
           <div className="flex items-center gap-1">
             {["ALL", "PS5", "PS4", "SWITCH"].map((t) => (
               <button
                 key={t}
                 onClick={() => setSelectedType(t)}
-                className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-[6px] text-sm font-semibold transition-colors cursor-pointer ${
                   selectedType === t
                     ? "bg-orange text-white"
                     : "text-text-secondary hover:text-orange hover:bg-orange-subtle"
@@ -360,7 +362,7 @@ export default function ConsolesPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none font-medium cursor-pointer"
+            className="bg-surface-muted border border-surface-border rounded-[6px] px-3 py-1.5 text-sm text-text-primary focus:outline-none font-medium cursor-pointer"
           >
             <option value="ALL">All Status</option>
             <option value="AVAILABLE">AVAILABLE</option>
@@ -394,8 +396,8 @@ export default function ConsolesPage() {
                     <Gamepad2 className="w-5 h-5 text-teal" aria-hidden="true" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.16em] text-text-muted font-bold">Gaming station</p>
-                    <p className="text-sm font-bold text-text-primary">{con.consoleType}</p>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">Gaming station</p>
+                    <p className="text-base font-bold text-text-primary">{con.consoleType}</p>
                   </div>
                 </div>
                 <StatusBadge status={con.status} />
@@ -405,25 +407,25 @@ export default function ConsolesPage() {
               <div>
                 {/* Station identity */}
                 <div>
-                  <p className="text-lg font-bold text-text-primary leading-tight">{con.stationNumber}</p>
-                  <p className="text-[11px] text-text-secondary truncate mt-1" title={con.name}>
+                  <p className="text-xl sm:text-2xl font-bold text-text-primary leading-tight">{con.stationNumber}</p>
+                  <p className="text-xs sm:text-sm text-text-secondary truncate mt-1" title={con.name}>
                     {con.name}
                   </p>
                 </div>
 
                 {/* Specs Box */}
-                <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px] my-2 text-xs space-y-1 font-mono">
-                  <div className="flex justify-between text-text-secondary text-[11px]">
+                <div className="p-3 bg-surface-muted border border-surface-border rounded-[6px] my-3 space-y-2 font-mono">
+                  <div className="flex justify-between text-text-secondary text-xs font-semibold">
                     <span>Display:</span>
                     <span className="text-text-primary truncate max-w-[130px] font-medium" title={con.specsDisplay}>
                       {con.specsDisplay}
                     </span>
                   </div>
-                  <div className="flex justify-between text-text-secondary text-[11px]">
+                  <div className="flex justify-between text-text-secondary text-xs font-semibold">
                     <span>Controllers:</span>
                     <span className="text-text-primary">{con.controllersCount} Wireless</span>
                   </div>
-                  <div className="flex justify-between text-text-secondary text-[11px]">
+                  <div className="flex justify-between text-text-secondary text-xs font-semibold">
                     <span>Rate:</span>
                     <span className="text-text-primary font-bold">{formatRupiah(con.hourlyRate)} / hr</span>
                   </div>
@@ -431,14 +433,14 @@ export default function ConsolesPage() {
 
                 {/* Live Active Session Box (if IN_USE) */}
                 {con.status === "IN_USE" && con.activeSession && (
-                  <div className="p-2 bg-coffee-subtle border border-coffee-border rounded-[6px] my-2 text-xs font-mono space-y-0.5">
-                    <div className="flex items-center justify-between text-coffee font-bold text-[11px]">
+                  <div className="p-3 bg-orange-subtle border border-orange-border rounded-[6px] my-3 space-y-1 font-mono">
+                    <div className="flex items-center justify-between text-orange font-bold text-xs">
                       <span className="truncate max-w-[120px]">
                         {con.activeSession.memberName || con.activeSession.guestName || "Guest"}
                       </span>
                       <span>{con.activeSession.remainingMinutes}m left</span>
                     </div>
-                    <div className="flex items-center justify-between text-text-secondary text-[10px]">
+                    <div className="flex items-center justify-between text-text-secondary text-xs font-semibold">
                       <span className="truncate max-w-[120px]">
                         {con.currentGame || con.activeSession.currentGame || "Game"}
                       </span>
@@ -451,11 +453,11 @@ export default function ConsolesPage() {
 
                 {/* Installed Games Tags */}
                 {con.installedGames && con.installedGames.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-3">
+                  <div className="flex flex-wrap gap-1.5 mb-3">
                     {con.installedGames.map((g, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] px-1.5 py-0.5 rounded-[3px] bg-surface-muted text-text-secondary border border-surface-border font-sans truncate max-w-[140px]"
+                        className="text-xs px-2 py-1 rounded-[4px] bg-surface-muted text-text-secondary border border-surface-border font-sans font-medium truncate max-w-[160px]"
                         title={g}
                       >
                         {g}
@@ -466,21 +468,21 @@ export default function ConsolesPage() {
               </div>
 
               {/* Station Actions Footer */}
-              <div className="pt-2.5 border-t border-surface-border space-y-2">
+              <div className="pt-3 border-t border-surface-border space-y-2.5">
                 {/* Session Action */}
                 <div>
                   {con.status === "AVAILABLE" ? (
                     <button
                       onClick={() => handleStartSession(con)}
-                      className="w-full bg-coffee hover:bg-coffee-hover active:bg-coffee-hover text-white text-xs font-bold py-1.5 px-3 rounded-[6px] uppercase tracking-wider font-sans cursor-pointer transition-colors text-center"
+                      className="w-full bg-orange hover:bg-orange-hover active:bg-orange-active text-white text-sm font-bold py-2 px-3 rounded-[6px] uppercase tracking-wide font-sans cursor-pointer transition-colors text-center"
                     >
                       START SESSION
                     </button>
                   ) : con.status === "IN_USE" && con.activeSession ? (
-                    <div className="grid grid-cols-2 gap-1.5">
+                    <div className="grid grid-cols-2 gap-2">
                       <button
                         onClick={() => handleOpenCheckout(con)}
-                        className="bg-sage hover:bg-sage-hover active:bg-sage text-white text-[11px] font-bold py-1.5 px-2 rounded-[6px] transition-colors uppercase tracking-wider font-sans cursor-pointer text-center"
+                        className="bg-sage hover:bg-sage-hover active:bg-sage text-white text-sm font-bold py-2 px-2 rounded-[6px] transition-colors uppercase tracking-wide font-sans cursor-pointer text-center"
                         title="Checkout & Cash Pay"
                       >
                         CHECKOUT
@@ -494,31 +496,31 @@ export default function ConsolesPage() {
                             alert(err instanceof Error ? err.message : "Failed to stop session");
                           }
                         }}
-                        className="bg-surface-muted hover:bg-surface-hover text-coffee border border-coffee-border text-[11px] font-semibold py-1.5 px-2 rounded-[6px] transition-colors uppercase tracking-wider font-sans cursor-pointer text-center"
+                        className="bg-surface-muted hover:bg-surface-hover text-orange border border-orange-border text-sm font-bold py-2 px-2 rounded-[6px] transition-colors uppercase tracking-wide font-sans cursor-pointer text-center"
                         title="Stop Session"
                       >
                         STOP
                       </button>
                     </div>
                   ) : con.status === "MAINTENANCE" ? (
-                    <div className="w-full bg-surface-muted border border-surface-border text-pamber text-xs py-1.5 px-3 rounded-[6px] text-center font-medium">
+                    <div className="w-full bg-surface-muted border border-surface-border text-text-secondary text-sm py-2 px-3 rounded-[6px] text-center font-semibold">
                       Under Maintenance
                     </div>
                   ) : (
-                    <div className="w-full bg-surface-muted border border-surface-border text-text-muted text-xs py-1.5 px-3 rounded-[6px] text-center font-medium">
+                    <div className="w-full bg-surface-muted border border-surface-border text-text-muted text-sm py-2 px-3 rounded-[6px] text-center font-semibold">
                       Station Offline
                     </div>
                   )}
                 </div>
 
                 {/* Console Management Actions */}
-                <div className="flex items-center justify-between pt-1 border-t border-surface-border/60">
+                <div className="flex items-center justify-between pt-2 border-t border-surface-border/60">
                   {/* Status Toggle Quick Selector */}
                   <select
                     value={con.status}
                     onChange={(e) => handleStatusChange(con.id, e.target.value as ConsoleStatus)}
                     disabled={con.status === "IN_USE"}
-                    className="bg-surface-muted border border-surface-border rounded-[4px] px-1.5 py-1 text-[10px] text-text-secondary focus:outline-none cursor-pointer disabled:opacity-40"
+                    className="bg-surface-muted border border-surface-border rounded-[6px] px-2 py-1.5 text-xs font-medium text-text-secondary focus:outline-none cursor-pointer disabled:opacity-40"
                     title="Change station status"
                   >
                     <option value="AVAILABLE">AVAILABLE</option>
@@ -526,21 +528,21 @@ export default function ConsolesPage() {
                     <option value="OFFLINE">OFFLINE</option>
                   </select>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => handleOpenEdit(con)}
-                      className="p-1.5 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border cursor-pointer transition-colors"
+                      className="p-2 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[6px] border border-surface-border cursor-pointer transition-colors"
                       title="Edit Console"
                     >
-                      <Edit2 className="w-3 h-3" />
+                      <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteConsole(con.id, con.stationNumber)}
-                      className="p-1.5 text-coffee hover:text-white bg-coffee-subtle hover:bg-coffee rounded-[4px] border border-coffee-border cursor-pointer transition-colors disabled:opacity-30"
+                      className="p-2 text-orange hover:text-white bg-orange-subtle hover:bg-orange rounded-[6px] border border-orange-border cursor-pointer transition-colors disabled:opacity-30"
                       title="Delete Console"
                       disabled={con.status === "IN_USE"}
                     >
-                      <Trash2 className="w-3 h-3" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

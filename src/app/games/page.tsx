@@ -25,6 +25,29 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
+const CATALOG_REPLACEMENTS: Record<string, { title: string; cover: string }> = {
+  Valorant: {
+    title: "ELDEN RING",
+    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/f0b19c231f86fa0e633ff88a1a63459443017728/header_alt_assets_3.jpg",
+  },
+  "Mobile Legends": {
+    title: "Forza Horizon 5",
+    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1551360/header.jpg",
+  },
+  "Genshin Impact": {
+    title: "The Witcher 3: Wild Hunt",
+    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/292030/e8afc4252e3fee8ed2525ab2fd7675cca39aa38d/header_alt_assets_1.jpg",
+  },
+  "Honkai: Star Rail": {
+    title: "Warframe",
+    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/230410/1a3e7c2a05ce4e5cad5ac4c7e858cf5b0934704e/header.jpg",
+  },
+  Minecraft: {
+    title: "Destiny 2",
+    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1085660/0ccf0dc0a8c4ec078db7ab99ddc820b2fa884441/header.jpg",
+  },
+};
+
 const GAME_COVERS: Record<string, string> = {
   "Counter-Strike 2": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/162664aa5da85f418105350c5d67ca565f6c3713/header.jpg",
   "Dota 2": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/570/header.jpg",
@@ -33,6 +56,11 @@ const GAME_COVERS: Record<string, string> = {
   "Rainbow Six Siege": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/359550/6b69a8d5ac8d0542bba5c735a8bcc5bb33cda42e/header_alt_assets_25.jpg",
   "EA Sports FC 24": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
   "Tekken 8": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1778820/c7b0b80639fc8c7d386922f414f293ca849e8e81/header.jpg",
+  "ELDEN RING": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/f0b19c231f86fa0e633ff88a1a63459443017728/header_alt_assets_3.jpg",
+  "Forza Horizon 5": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1551360/header.jpg",
+  "The Witcher 3: Wild Hunt": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/292030/e8afc4252e3fee8ed2525ab2fd7675cca39aa38d/header_alt_assets_1.jpg",
+  "Warframe": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/230410/1a3e7c2a05ce4e5cad5ac4c7e858cf5b0934704e/header.jpg",
+  "Destiny 2": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1085660/0ccf0dc0a8c4ec078db7ab99ddc820b2fa884441/header.jpg",
 };
 
 function gameCover(game: GameItem): string | null {
@@ -134,6 +162,20 @@ export default function GameLibraryPage() {
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
+
+  // Apply catalog replacements for display only
+  const displayGames = games.map((game) => {
+    const replacement = CATALOG_REPLACEMENTS[game.title];
+    if (replacement) {
+      return {
+        ...game,
+        title: replacement.title,
+        bannerUrl: replacement.cover,
+        iconUrl: null,
+      };
+    }
+    return game;
+  });
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -302,12 +344,12 @@ export default function GameLibraryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-4 bg-orange rounded-[1px]"></div>
-            <h1 className="text-xl font-black tracking-wider text-text-primary uppercase">
-              Game Library & Station Compatibility
+            <div className="w-1.5 h-5 bg-orange rounded-[1px]"></div>
+            <h1 className="text-3xl font-black tracking-wider text-text-primary uppercase">
+              Game Library
             </h1>
           </div>
-          <p className="text-xs text-text-secondary mt-1">
+          <p className="text-sm text-text-secondary mt-1 font-medium">
             Katalog game terpasang, platform support, dan histori durasi bermain di DREAMCAFÉ
           </p>
         </div>
@@ -351,81 +393,81 @@ export default function GameLibraryPage() {
 
       {/* KPI Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-surface-card border border-surface-border p-3.5 rounded-[4px]">
-          <div className="flex items-center justify-between text-text-muted mb-1">
-            <span className="text-[10px] font-mono uppercase tracking-wider">Total Games</span>
-            <Gamepad2 className="w-3.5 h-3.5 text-text-secondary" />
+        <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
+          <div className="flex items-center justify-between text-text-secondary mb-2">
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">Total Games</span>
+            <Gamepad2 className="w-4 h-4 text-text-secondary" />
           </div>
-          <div className="text-lg font-bold text-text-primary font-mono">{totalCount}</div>
-          <div className="text-[10px] text-text-muted mt-0.5">Semua judul terdaftar</div>
+          <div className="text-2xl font-bold text-text-primary font-mono">{totalCount}</div>
+          <div className="text-xs text-text-secondary mt-1 font-medium">Semua judul</div>
         </div>
 
-        <div className="bg-surface-card border border-surface-border p-3.5 rounded-[4px]">
-          <div className="flex items-center justify-between text-text-muted mb-1">
-            <span className="text-[10px] font-mono uppercase tracking-wider">PC Games</span>
-            <Monitor className="w-3.5 h-3.5 text-persona-blue" />
+        <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
+          <div className="flex items-center justify-between text-text-secondary mb-2">
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">PC Games</span>
+            <Monitor className="w-4 h-4 text-persona-blue" />
           </div>
-          <div className="text-lg font-bold text-persona-blue font-mono">{pcCount}</div>
-          <div className="text-[10px] text-text-muted mt-0.5">Tersedia di PC Stations</div>
+          <div className="text-2xl font-bold text-persona-blue font-mono">{pcCount}</div>
+          <div className="text-xs text-text-secondary mt-1 font-medium">Di PC Stations</div>
         </div>
 
-        <div className="bg-surface-card border border-surface-border p-3.5 rounded-[4px]">
-          <div className="flex items-center justify-between text-text-muted mb-1">
-            <span className="text-[10px] font-mono uppercase tracking-wider">Console Games</span>
-            <Gamepad2 className="w-3.5 h-3.5 text-orange" />
+        <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
+          <div className="flex items-center justify-between text-text-secondary mb-2">
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">Console Games</span>
+            <Gamepad2 className="w-4 h-4 text-orange" />
           </div>
-          <div className="text-lg font-bold text-orange font-mono">{consoleCount}</div>
-          <div className="text-[10px] text-text-muted mt-0.5">PS5 / Nintendo Switch</div>
+          <div className="text-2xl font-bold text-orange font-mono">{consoleCount}</div>
+          <div className="text-xs text-text-secondary mt-1 font-medium">PS5 / Switch</div>
         </div>
 
-        <div className="bg-surface-card border border-surface-border p-3.5 rounded-[4px]">
-          <div className="flex items-center justify-between text-text-muted mb-1">
-            <span className="text-[10px] font-mono uppercase tracking-wider">Aktif</span>
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
+          <div className="flex items-center justify-between text-text-secondary mb-2">
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">Aktif</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-lg font-bold text-emerald-400 font-mono">{activeCount}</div>
-          <div className="text-[10px] text-text-muted mt-0.5">Siap dimainkan</div>
+          <div className="text-2xl font-bold text-emerald-400 font-mono">{activeCount}</div>
+          <div className="text-xs text-text-secondary mt-1 font-medium">Siap main</div>
         </div>
       </div>
 
       {/* Filters & Search Toolbar */}
-      <div className="bg-surface-card border border-surface-border p-3 rounded-[4px] space-y-3">
+      <div className="bg-surface-card border border-surface-border p-4 rounded-[6px] space-y-3">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search bar */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
             <input
               type="text"
               placeholder="Cari judul game, publisher, genre, atau tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-orange"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-surface-dark border border-surface-border rounded-[6px] text-text-primary placeholder-text-secondary focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/20"
             />
           </div>
 
           {/* Platform Filters */}
-          <div className="flex gap-1 bg-surface-dark border border-surface-border p-0.5 rounded-[4px] shrink-0">
+          <div className="flex gap-1 bg-surface-dark border border-surface-border p-1 rounded-[6px] shrink-0">
             {(["ALL", "PC", "CONSOLE"] as const).map((plat) => (
               <button
                 key={plat}
                 onClick={() => setPlatformFilter(plat)}
-                className={`px-3 py-1 text-[11px] font-medium rounded-[3px] transition-colors ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors ${
                   platformFilter === plat
                     ? "bg-orange text-white"
                     : "text-text-secondary hover:text-orange hover:bg-orange-subtle"
                 }`}
               >
-                {plat === "ALL" ? "Semua Platform" : plat}
+                {plat === "ALL" ? "Semua" : plat}
               </button>
             ))}
           </div>
 
           {/* Genre select */}
-          <div className="w-full md:w-44 shrink-0">
+          <div className="w-full md:w-48 shrink-0">
             <select
               value={genreFilter}
               onChange={(e) => setGenreFilter(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-orange"
+              className="w-full px-3 py-2 text-sm bg-surface-dark border border-surface-border rounded-[6px] text-text-primary focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/20"
             >
               <option value="ALL">Semua Genre</option>
               {genres.map((g) => (
@@ -437,11 +479,11 @@ export default function GameLibraryPage() {
           </div>
 
           {/* Status select */}
-          <div className="w-full md:w-36 shrink-0">
+          <div className="w-full md:w-40 shrink-0">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as "ALL" | "ACTIVE" | "INACTIVE")}
-              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-orange"
+              className="w-full px-3 py-2 text-sm bg-surface-dark border border-surface-border rounded-[6px] text-text-primary focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/20"
             >
               <option value="ALL">Semua Status</option>
               <option value="ACTIVE">Aktif</option>
@@ -453,15 +495,15 @@ export default function GameLibraryPage() {
 
       {/* Game Cards Grid */}
       {isLoading ? (
-        <div className="p-12 text-center bg-surface-card border border-surface-border rounded-[4px]">
-          <RefreshCw className="w-6 h-6 animate-spin text-orange mx-auto mb-2" />
-          <p className="text-xs text-text-secondary font-mono">Memuat pustaka game dari Supabase...</p>
+        <div className="p-16 text-center bg-surface-card border border-surface-border rounded-[6px]">
+          <RefreshCw className="w-7 h-7 animate-spin text-orange mx-auto mb-3" />
+          <p className="text-sm text-text-secondary font-medium">Memuat pustaka game dari Supabase...</p>
         </div>
-      ) : games.length === 0 ? (
-        <div className="p-12 text-center bg-surface-card border border-surface-border rounded-[4px]">
-          <Gamepad2 className="w-8 h-8 text-text-muted mx-auto mb-2" />
-          <h3 className="text-sm font-bold text-text-primary">Tidak Ada Game Ditemukan</h3>
-          <p className="text-xs text-text-secondary mt-1">
+      ) : displayGames.length === 0 ? (
+        <div className="p-16 text-center bg-surface-card border border-surface-border rounded-[6px]">
+          <Gamepad2 className="w-9 h-9 text-text-secondary mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-text-primary">Tidak Ada Game Ditemukan</h3>
+          <p className="text-sm text-text-secondary mt-2 font-medium">
             {searchQuery || platformFilter !== "ALL" || genreFilter !== "ALL"
               ? "Coba ubah kata kunci pencarian atau reset filter platform/genre."
               : "Belum ada data game di database. Klik tombol 'Tambah Game' untuk mendaftarkan game baru."}
@@ -469,7 +511,7 @@ export default function GameLibraryPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {games.map((game) => {
+          {displayGames.map((game) => {
             const playHours = Math.round(((game.totalPlayMinutes || 0) / 60) * 10) / 10;
 
             return (
@@ -485,26 +527,26 @@ export default function GameLibraryPage() {
                     {/* Top Bar: Badges */}
                     <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 bg-surface-dark border border-surface-border rounded text-text-secondary uppercase">
+                      <span className="text-xs font-mono px-2 py-1 bg-surface-dark border border-surface-border rounded text-text-secondary uppercase font-semibold">
                         {game.genre}
                       </span>
                       {game.isInstalledOnPc && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-persona-blue/15 text-persona-blue border border-persona-blue/30 rounded">
+                        <span className="text-xs font-mono px-2 py-1 bg-persona-blue/15 text-persona-blue border border-persona-blue/30 rounded font-semibold">
                           PC
                         </span>
                       )}
                       {game.isInstalledConsole && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-orange/15 text-orange border border-orange-border/30 rounded font-semibold">
+                        <span className="text-xs font-mono px-2 py-1 bg-orange/15 text-orange border border-orange-border/30 rounded font-semibold">
                           CONSOLE
                         </span>
                       )}
                     </div>
 
                     <span
-                      className={`text-[10px] font-mono font-semibold px-2 py-1 rounded border status-transition ${
+                      className={`text-xs font-mono font-semibold px-2.5 py-1 rounded border status-transition ${
                         game.isActive
                           ? "bg-sage-subtle text-sage border-sage-border"
-                          : "bg-surface-muted text-text-muted border-surface-border"
+                          : "bg-surface-muted text-text-secondary border-surface-border"
                       }`}
                     >
                       {game.isActive ? "AKTIF" : "OFF"}
@@ -512,30 +554,30 @@ export default function GameLibraryPage() {
                   </div>
 
                   {/* Title & Publisher */}
-                  <h3 className="text-sm font-bold text-text-primary tracking-wide">
+                  <h3 className="text-base font-bold text-text-primary tracking-wide mt-1">
                     {game.title}
                   </h3>
-                  <p className="text-[11px] text-text-muted mt-0.5">
+                  <p className="text-sm text-text-secondary mt-0.5 font-medium">
                     {game.publisher}
                   </p>
 
                   {/* System & Hardware specs */}
-                  <div className="mt-3 pt-3 border-t border-surface-border grid grid-cols-2 gap-2 text-[11px]">
+                  <div className="mt-3 pt-3 border-t border-surface-border grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-text-muted flex items-center gap-1 text-[10px]">
-                        <Cpu className="w-3 h-3" /> Min. GPU
+                      <span className="text-text-secondary flex items-center gap-1 text-xs font-semibold">
+                        <Cpu className="w-3.5 h-3.5" /> Min. GPU
                       </span>
-                      <span className="font-mono text-text-secondary font-medium">
+                      <span className="font-mono text-text-primary font-semibold mt-0.5">
                         {game.minGpuRequired}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-text-muted flex items-center gap-1 text-[10px]">
-                        <Clock className="w-3 h-3" /> Total Durasi
+                      <span className="text-text-secondary flex items-center gap-1 text-xs font-semibold">
+                        <Clock className="w-3.5 h-3.5" /> Total Durasi
                       </span>
-                      <span className="font-mono text-text-secondary font-medium">
-                        {playHours} Jam ({game.totalSessions || 0} sesi)
+                      <span className="font-mono text-text-primary font-semibold mt-0.5">
+                        {playHours}h ({game.totalSessions || 0}x)
                       </span>
                     </div>
                   </div>
@@ -559,27 +601,27 @@ export default function GameLibraryPage() {
                 <div className="mt-4 pt-3 border-t border-surface-border flex items-center justify-between gap-2">
                   <button
                     onClick={() => handleOpenDetail(game)}
-                    className="text-[11px] text-text-muted hover:text-white flex items-center gap-1"
+                    className="text-sm text-text-secondary hover:text-orange flex items-center gap-1 font-medium transition-colors"
                   >
-                    <Eye className="w-3 h-3" />
+                    <Eye className="w-4 h-4" />
                     <span>Detail</span>
                   </button>
 
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => handleOpenEdit(game)}
-                      className="p-1.5 text-text-muted hover:text-persona-blue hover:bg-surface-dark rounded transition-colors"
+                      className="p-1.5 text-text-secondary hover:text-persona-blue hover:bg-surface-dark rounded transition-colors"
                       title="Edit Game"
                     >
-                      <Edit2 className="w-3.5 h-3.5" />
+                      <Edit2 className="w-4 h-4" />
                     </button>
 
                     <button
                       onClick={() => handleDelete(game)}
-                      className="p-1.5 text-text-muted hover:text-maroon hover:bg-surface-dark rounded transition-colors"
+                      className="p-1.5 text-text-secondary hover:text-maroon hover:bg-surface-dark rounded transition-colors"
                       title="Hapus / Nonaktifkan"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
