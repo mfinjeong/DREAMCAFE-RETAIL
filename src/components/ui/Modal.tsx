@@ -24,12 +24,14 @@ export const Modal: React.FC<ModalProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      window.addEventListener("keydown", handleKeyDown);
-    }
+    if (!isOpen) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = previousBodyOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -47,7 +49,7 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/45 animate-fade-in-scale">
       <div
-        className={`w-full ${maxWidthStyles[maxWidth]} bg-surface border border-surface-border rounded-[8px] overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] min-h-0 select-none`}
+        className={`w-full ${maxWidthStyles[maxWidth]} bg-surface border border-surface-border rounded-[8px] overflow-hidden flex flex-col max-h-[90dvh] select-none`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

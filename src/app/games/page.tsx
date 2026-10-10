@@ -870,7 +870,7 @@ export default function GameLibraryPage() {
             </div>
           </div>
 
-          <div className="sticky bottom-0 bg-surface/95 backdrop-blur-sm -mx-4 -mb-4 p-4 border-t border-surface-border flex justify-end gap-2.5 mt-4">
+          <div className="flex justify-end gap-2.5 pt-3 mt-4 border-t border-surface-border">
             <Button
               type="button"
               variant="outline"
