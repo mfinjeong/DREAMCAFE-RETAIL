@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { GameItem } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -97,6 +98,7 @@ function GameCover({ game }: { game: GameItem }) {
 }
 
 export default function GameLibraryPage() {
+  const router = useRouter();
   const [games, setGames] = useState<GameItem[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -140,7 +142,7 @@ export default function GameLibraryPage() {
       if (genreFilter !== "ALL") params.set("genre", genreFilter);
       if (statusFilter !== "ALL") params.set("status", statusFilter);
 
-      const res = await fetch(`/api/games?${params.toString()}`);
+      const res = await fetch(`/api/games?${params.toString()}`, { credentials: "same-origin" });
       const json = await res.json();
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Gagal memuat katalog game");
@@ -249,10 +251,15 @@ export default function GameLibraryPage() {
       const res = await fetch("/api/games", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify(payload),
       });
 
       const json = await res.json();
+      if (res.status === 401) {
+        router.replace("/login");
+        throw new Error("Sesi login tidak valid. Silakan masuk kembali.");
+      }
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Gagal membuat game baru");
       }
@@ -295,10 +302,15 @@ export default function GameLibraryPage() {
       const res = await fetch(`/api/games/${selectedGame.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify(payload),
       });
 
       const json = await res.json();
+      if (res.status === 401) {
+        router.replace("/login");
+        throw new Error("Sesi login tidak valid. Silakan masuk kembali.");
+      }
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Gagal memperbarui game");
       }
@@ -321,8 +333,12 @@ export default function GameLibraryPage() {
     if (!confirm(confirmMsg)) return;
 
     try {
-      const res = await fetch(`/api/games/${game.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/games/${game.id}`, { method: "DELETE", credentials: "same-origin" });
       const json = await res.json();
+      if (res.status === 401) {
+        router.replace("/login");
+        throw new Error("Sesi login tidak valid. Silakan masuk kembali.");
+      }
       if (!res.ok || !json.success) {
         throw new Error(json.message || "Gagal memproses aksi hapus");
       }
