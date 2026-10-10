@@ -1,0 +1,426 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+  STAFF
+}
+
+enum PCStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  OFFLINE
+}
+
+enum ConsoleType {
+  PS5
+  PS4
+  SWITCH
+}
+
+enum ConsoleStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  OFFLINE
+}
+
+enum StationZone {
+  REGULAR
+  VIP
+  ARENA
+}
+
+enum SessionType {
+  PC
+  CONSOLE
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum MemberTier {
+  REGULAR
+  VIP
+  PRO
+}
+
+
+enum InventoryAction {
+  STOCK_IN
+  STOCK_OUT
+  ADJUSTMENT
+}
+
+
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  RESOLVED
+}
+
+
+
+
+
+
+
+
+
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  role         Role     @default(OPERATOR)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([role])
+}
+
+model Member {
+  id           String     @id @default(cuid())
+  memberCode   String     @unique
+  fullName     String
+  username     String     @unique
+  phoneNumber  String?    @unique
+  email        String?    @unique
+  tier         MemberTier @default(REGULAR)
+  balance      Float      @default(0)
+  dreamCoins   Int        @default(100)
+  xp           Int        @default(0)
+  level        Int        @default(1)
+  avatarUrl    String?
+  notes        String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  sessions     Session[]
+  bookings     Booking[]
+  transactions    Transaction[]
+  gameStats           MemberGameStat[]
+
+  @@index([tier])
+}
+
+model PC {
+  id               String       @id @default(cuid())
+  stationNumber    String       @unique // e.g. "PC 01", "PC 02"
+  name             String
+  zone             StationZone  @default(REGULAR)
+  status           PCStatus     @default(AVAILABLE)
+  ipAddress        String?
+  macAddress       String?
+  hourlyRate       Float        @default(10000)
+  specsCpu         String       @default("Intel Core i5-13400F")
+  specsGpu         String       @default("NVIDIA RTX 4060 8GB")
+  specsRam         String       @default("16GB DDR5 5200MHz")
+  specsMonitor     String       @default("24\" 165Hz IPS")
+  specsStorage     String       @default("1TB NVMe SSD")
+  specsPeripherals String       @default("Mechanical RGB Keyboard + Gaming Mouse")
+  currentGame      String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  sessions     Session[]
+  bookings     Booking[]
+  maintenances Maintenance[]
+
+  @@index([status])
+  @@index([zone])
+}
+
+model Console {
+  id               String        @id @default(cuid())
+  stationNumber    String        @unique // e.g. "CON 01"
+  name             String
+  consoleType      ConsoleType   @default(PS5)
+  status           ConsoleStatus @default(AVAILABLE)
+  hourlyRate       Float         @default(15000)
+  controllersCount Int           @default(2)
+  installedGames   String[]      @default([])
+  specsDisplay     String        @default("55\" 4K 120Hz OLED")
+  currentGame      String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  sessions     Session[]
+  bookings     Booking[]
+  maintenances Maintenance[]
+
+  @@index([status])
+  @@index([consoleType])
+}
+
+model Session {
+  id              String        @id @default(cuid())
+  sessionNumber   String        @unique // e.g. "SES-20261005-001"
+  type            SessionType   @default(PC)
+  pcId            String?
+  consoleId       String?
+  memberId        String?
+  guestName       String?
+  startTime       DateTime      @default(now())
+  endTime         DateTime?
+  durationMinutes Int           @default(60)
+  remainingMinutes Int          @default(60)
+  hourlyRate      Float         @default(10000)
+  totalPrice      Float         @default(10000)
+  status          SessionStatus @default(ACTIVE)
+  paymentStatus   PaymentStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  pc              PC?           @relation(fields: [pcId], references: [id], onDelete: SetNull)
+  console         Console?      @relation(fields: [consoleId], references: [id], onDelete: SetNull)
+  member          Member?       @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  transaction     Transaction?  @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  transactionId   String?
+  gameId          String?
+  isXpAwarded     Boolean       @default(false)
+  game            Game?         @relation(fields: [gameId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([pcId])
+  @@index([consoleId])
+  @@index([memberId])
+  @@index([gameId])
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  bookingCode   String        @unique
+  type          SessionType   @default(PC)
+  pcId          String?
+  consoleId     String?
+  memberId      String
+  bookingDate   DateTime
+  startTime     String        // e.g. "14:00"
+  endTime       String        // e.g. "17:00"
+  durationHours Int           @default(2)
+  totalPrice    Float         @default(20000)
+  status        BookingStatus @default(PENDING)
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  pc            PC?           @relation(fields: [pcId], references: [id], onDelete: SetNull)
+  console       Console?      @relation(fields: [consoleId], references: [id], onDelete: SetNull)
+  member        Member        @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([bookingDate])
+  @@index([pcId])
+  @@index([consoleId])
+}
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id            String          @id @default(cuid())
+  name          String
+  barcode       String?         @unique
+  categoryId    String
+  price         Float
+  costPrice     Float           @default(0)
+  stock         Int             @default(0)
+  minStockAlert Int             @default(5)
+  unit          String          @default("pcs")
+  imageUrl      String?
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  category      ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  transactionItems TransactionItem[]
+  inventoryLogs InventoryLog[]
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+model InventoryLog {
+  id            String          @id @default(cuid())
+  productId     String
+  action        InventoryAction
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  reason        String
+  recordedBy    String?         @default("Admin")
+  createdAt     DateTime        @default(now())
+
+  product       Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([createdAt])
+}
+
+model Transaction {
+  id            String          @id @default(cuid())
+  invoiceNumber String          @unique
+  memberId      String?
+  cashierName   String          @default("Admin")
+  type          String          @default("GENERAL") // SESSION, STORE, MIXED
+  subtotal      Float
+  tax           Float           @default(0)
+  discount      Float           @default(0)
+  totalAmount   Float
+  cashReceived  Float
+  cashChange    Float
+  paymentMethod PaymentMethod   @default(CASH)
+  status        PaymentStatus   @default(PAID)
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  member        Member?         @relation(fields: [memberId], references: [id], onDelete: SetNull)
+  items         TransactionItem[]
+  sessions      Session[]
+
+  @@index([createdAt])
+  @@index([invoiceNumber])
+}
+
+model TransactionItem {
+  id            String      @id @default(cuid())
+  transactionId String
+  productId     String?
+  description   String
+  unitPrice     Float
+  quantity      Int         @default(1)
+  subtotal      Float
+  createdAt     DateTime    @default(now())
+
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  product       Product?    @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([transactionId])
+}
+
+model Game {
+  id                 String   @id @default(cuid())
+  title              String   @unique
+  slug               String?
+  genre              String
+  publisher          String
+  iconUrl            String?
+  bannerUrl          String?
+  description        String?
+  minGpuRequired     String   @default("GTX 1650")
+  popularityRank     Int      @default(1)
+  isInstalledOnPc    Boolean  @default(true)
+  isInstalledConsole Boolean  @default(false)
+  isActive           Boolean  @default(true)
+  tags               String[] @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  sessions           Session[]
+  memberStats        MemberGameStat[]
+
+  @@index([genre])
+  @@index([isActive])
+}
+
+model MemberGameStat {
+  id               String    @id @default(cuid())
+  memberId         String
+  gameId           String
+  totalSessions    Int       @default(0)
+  totalPlayMinutes Int       @default(0)
+  wins             Int       @default(0)
+  losses           Int       @default(0)
+  xp               Int       @default(0)
+  lastPlayedAt     DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  member           Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  game             Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, gameId])
+  @@index([memberId])
+  @@index([gameId])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+model Maintenance {
+  id          String            @id @default(cuid())
+  type        SessionType       @default(PC)
+  pcId        String?
+  consoleId   String?
+  title       String
+  description String
+  cost        Float             @default(0)
+  technician  String            @default("Internal Tech")
+  status      MaintenanceStatus @default(SCHEDULED)
+  reportedAt  DateTime          @default(now())
+  resolvedAt  DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  pc          PC?               @relation(fields: [pcId], references: [id], onDelete: SetNull)
+  console     Console?          @relation(fields: [consoleId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([pcId])
+  @@index([consoleId])
+}
