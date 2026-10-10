@@ -2,7 +2,12 @@
 ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "passwordHashSalt" TEXT;
 
 -- CreateEnum
-CREATE TYPE "GameImageSource" AS ENUM ('AUTO_STEAM', 'MANUAL', 'FALLBACK');
+DO $$
+BEGIN
+    CREATE TYPE "GameImageSource" AS ENUM ('AUTO_STEAM', 'MANUAL', 'FALLBACK');
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- AlterTable
 ALTER TABLE "Game" ADD COLUMN IF NOT EXISTS "imageSource" "GameImageSource" NOT NULL DEFAULT 'AUTO_STEAM';
@@ -27,12 +32,18 @@ CREATE TABLE IF NOT EXISTS "SessionToken" (
 
 -- CreateIndex
 CREATE INDEX IF NOT EXISTS "SessionToken_userId_idx" ON "SessionToken"("userId");
+CREATE UNIQUE INDEX IF NOT EXISTS "SessionToken_tokenHash_key" ON "SessionToken"("tokenHash");
 CREATE INDEX IF NOT EXISTS "SessionToken_tokenHash_idx" ON "SessionToken"("tokenHash");
 CREATE INDEX IF NOT EXISTS "SessionToken_expiresAt_idx" ON "SessionToken"("expiresAt");
 CREATE INDEX IF NOT EXISTS "SessionToken_createdAt_idx" ON "SessionToken"("createdAt");
 
 -- AddForeignKey
-ALTER TABLE "SessionToken" ADD CONSTRAINT "SessionToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    ALTER TABLE "SessionToken" ADD CONSTRAINT "SessionToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Insert seed admin password update via later script
 -- Password will be updated via environment variable using bcrypt hash, not directly in migration
