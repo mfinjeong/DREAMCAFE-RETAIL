@@ -42,18 +42,14 @@ export default function DashboardPage() {
   const fetchData = useCallback(async () => {
     try {
       setErrorMessage(null);
-      const [pcRes, memRes, reportRes, sessionRes] = await Promise.all([
+      const [pcRes, statsRes] = await Promise.all([
         fetch("/api/pc"),
-        fetch("/api/members"),
-        fetch("/api/reports"),
-        fetch("/api/sessions?status=ACTIVE"),
+        fetch("/api/dashboard/stats"),
       ]);
 
-      const [pcJson, memJson, reportJson, sessionJson] = await Promise.all([
+      const [pcJson, statsJson] = await Promise.all([
         pcRes.json(),
-        memRes.json(),
-        reportRes.json(),
-        sessionRes.json(),
+        statsRes.json(),
       ]);
 
       if (!pcRes.ok || !pcJson.success) {
@@ -61,16 +57,16 @@ export default function DashboardPage() {
       }
       setPcs(pcJson.data);
 
+      if (statsJson.success && statsJson.data) {
+        setTodayRevenue(statsJson.data.todayRevenue || 0);
+        setActiveSessionsCount(statsJson.data.activeSessionsCount || 0);
+      }
+
+      // Members are needed by start-session modal.
+      const memRes = await fetch("/api/members");
+      const memJson = await memRes.json();
       if (memJson.success && Array.isArray(memJson.data)) {
         setMembers(memJson.data);
-      }
-
-      if (reportJson.success && reportJson.data) {
-        setTodayRevenue(reportJson.data.todayRevenue || 0);
-      }
-
-      if (sessionJson.success && Array.isArray(sessionJson.data)) {
-        setActiveSessionsCount(sessionJson.data.length);
       }
     } catch (err: unknown) {
       console.error(err);
