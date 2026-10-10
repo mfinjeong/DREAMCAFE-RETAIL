@@ -52,8 +52,10 @@ export async function GET() {
         todayRevenue,
       },
     });
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Failed to load dashboard stats";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { success: false, message: "Failed to load dashboard stats" },
+      { status: 500 }
+    );
   }
 }
