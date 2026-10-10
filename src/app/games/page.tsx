@@ -25,6 +25,45 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
+const STEAM_COVERS: Record<string, string> = {
+  "Counter-Strike 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
+  "Dota 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg",
+  "EA Sports FC 24": "https://cdn.cloudflare.steamstatic.com/steam/apps/2195250/header.jpg",
+  "Tekken 8": "https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg",
+  "Genshin Impact": "https://cdn.cloudflare.steamstatic.com/steam/apps/1962663/header.jpg",
+  "Honkai: Star Rail": "https://cdn.cloudflare.steamstatic.com/steam/apps/2185061/header.jpg",
+  "Minecraft": "https://cdn.cloudflare.steamstatic.com/steam/apps/1928870/header.jpg",
+};
+
+function gameCover(game: GameItem): string | null {
+  return game.bannerUrl || game.iconUrl || STEAM_COVERS[game.title] || null;
+}
+
+function GameCover({ game }: { game: GameItem }) {
+  const [hasImageError, setHasImageError] = useState(false);
+  const cover = gameCover(game);
+
+  if (!cover || hasImageError) {
+    return (
+      <div className="relative w-full h-32 bg-surface-muted flex items-center justify-center">
+        <Gamepad2 className="w-12 h-12 text-surface-border" aria-hidden="true" />
+        <span className="sr-only">Cover {game.title} tidak tersedia</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-32 bg-surface-muted">
+      <img
+        src={cover}
+        alt={game.title}
+        className="w-full h-full object-cover"
+        onError={() => setHasImageError(true)}
+      />
+    </div>
+  );
+}
+
 export default function GameLibraryPage() {
   const [games, setGames] = useState<GameItem[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
@@ -432,11 +471,15 @@ export default function GameLibraryPage() {
             return (
               <div
                 key={game.id}
-                className="bg-surface-card border border-surface-border hover:border-surface-border-active transition-colors p-4 rounded-[4px] flex flex-col justify-between"
+                className="bg-surface-card border border-surface-border hover:border-surface-border-active transition-colors rounded-[4px] flex flex-col justify-between overflow-hidden"
               >
-                <div>
-                  {/* Top Bar: Badges */}
-                  <div className="flex items-center justify-between gap-2 mb-2">
+                {/* Game Cover Image */}
+                <GameCover game={game} />
+
+                <div className="p-4">
+                  <div>
+                    {/* Top Bar: Badges */}
+                    <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="text-[10px] font-mono px-1.5 py-0.5 bg-surface-dark border border-surface-border rounded text-text-secondary uppercase">
                         {game.genre}
@@ -535,6 +578,7 @@ export default function GameLibraryPage() {
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
+                </div>
                 </div>
               </div>
             );
