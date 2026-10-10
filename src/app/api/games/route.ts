@@ -11,8 +11,10 @@ export async function GET(request: Request) {
     const status = (searchParams.get("status") as "ALL" | "ACTIVE" | "INACTIVE") || undefined;
 
     const validatedQuery = gameQuerySchema.parse({ q, platform, genre, status });
-    const games = await listGames(validatedQuery);
-    const genres = await getGameGenres();
+    const [games, genres] = await Promise.all([
+      listGames(validatedQuery),
+      getGameGenres(),
+    ]);
 
     return NextResponse.json({
       success: true,

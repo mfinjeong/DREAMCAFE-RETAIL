@@ -26,10 +26,13 @@ import {
 } from "lucide-react";
 
 const GAME_COVERS: Record<string, string> = {
-  "Counter-Strike 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
-  "Dota 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg",
-  "EA Sports FC 24": "https://cdn.cloudflare.steamstatic.com/steam/apps/2195250/header.jpg",
-  "Tekken 8": "https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg",
+  "Counter-Strike 2": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/162664aa5da85f418105350c5d67ca565f6c3713/header.jpg",
+  "Dota 2": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/570/header.jpg",
+  "PUBG: BATTLEGROUNDS": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/578080/841ea38bc58cabb70aef65365cf50bc2d79329d9/header.jpg",
+  "Apex Legends": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1172470/60fcaedb88ccf94df30281533d828b86c6ffb9b6/header_alt_assets_5.jpg",
+  "Rainbow Six Siege": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/359550/6b69a8d5ac8d0542bba5c735a8bcc5bb33cda42e/header_alt_assets_25.jpg",
+  "EA Sports FC 24": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
+  "Tekken 8": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1778820/c7b0b80639fc8c7d386922f414f293ca849e8e81/header.jpg",
   "Minecraft": "https://cdn.cloudflare.steamstatic.com/steam/apps/1928870/header.jpg",
 };
 
@@ -58,6 +61,8 @@ function GameCover({ game }: { game: GameItem }) {
         src={cover}
         alt={game.title}
         className="w-full h-full object-cover"
+        loading="lazy"
+        decoding="async"
         onError={() => setHasImageError(true)}
       />
     </div>
