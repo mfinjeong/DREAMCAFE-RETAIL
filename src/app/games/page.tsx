@@ -25,18 +25,18 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
-const STEAM_COVERS: Record<string, string> = {
+const GAME_COVERS: Record<string, string> = {
   "Counter-Strike 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
   "Dota 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg",
   "EA Sports FC 24": "https://cdn.cloudflare.steamstatic.com/steam/apps/2195250/header.jpg",
   "Tekken 8": "https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg",
-  "Genshin Impact": "https://cdn.cloudflare.steamstatic.com/steam/apps/1962663/header.jpg",
-  "Honkai: Star Rail": "https://cdn.cloudflare.steamstatic.com/steam/apps/2185061/header.jpg",
   "Minecraft": "https://cdn.cloudflare.steamstatic.com/steam/apps/1928870/header.jpg",
 };
 
 function gameCover(game: GameItem): string | null {
-  return game.bannerUrl || game.iconUrl || STEAM_COVERS[game.title] || null;
+  if (game.bannerUrl) return game.bannerUrl;
+  if (game.iconUrl) return game.iconUrl;
+  return GAME_COVERS[game.title] || null;
 }
 
 function GameCover({ game }: { game: GameItem }) {

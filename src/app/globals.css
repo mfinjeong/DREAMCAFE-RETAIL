@@ -4,15 +4,17 @@
 
 :root {
   --background: #FAF8F2;
-  --foreground: #292820;
+  --foreground: #29231F;
   --surface: #FFFFFF;
   --surface-muted: #F5F1E8;
-  --surface-hover: #F1E8D5;
-  --surface-border: #E8E3D8;
+  --surface-hover: #EFEADE;
+  --surface-border: #E5DED3;
   --coffee: #76513C;
   --sage: #71866A;
-  --ink-muted: #777568;
-  --highlight: #F1E8D5;
+  --teal: #477C78;
+  --terracotta: #C4775A;
+  --ink-muted: #5F574F;
+  --highlight: #EFEADE;
 }
 
 * { box-sizing: border-box; }

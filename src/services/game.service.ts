@@ -35,6 +35,21 @@ export async function listGames(filters: GameListFilters = {}): Promise<GameItem
     where.genre = { equals: filters.genre, mode: "insensitive" };
   }
 
+  // Exclude esports Pro League records from retail catalog
+  where.AND = [
+    {
+      NOT: {
+        title: {
+          in: [
+            "Valorant Pro League 5097",
+            "Valorant Pro League CDR 5549",
+            "Valorant Pro League CDR 5942",
+          ],
+        },
+      },
+    },
+  ];
+
   // Search query across title, genre, publisher, tags
   if (filters.q && filters.q.trim()) {
     const query = filters.q.trim();
@@ -256,12 +271,23 @@ export async function deleteGame(id: string): Promise<{ deleted: boolean; deacti
 }
 
 /**
- * Returns distinct genres currently in the catalog.
+ * Returns distinct genres currently in the retail catalog.
  */
 export async function getGameGenres(): Promise<string[]> {
   const games = await prisma.game.findMany({
     select: { genre: true },
     distinct: ["genre"],
+    where: {
+      NOT: {
+        title: {
+          in: [
+            "Valorant Pro League 5097",
+            "Valorant Pro League CDR 5549",
+            "Valorant Pro League CDR 5942",
+          ],
+        },
+      },
+    },
     orderBy: { genre: "asc" },
   });
   return games.map((g) => g.genre);
