@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { gameSchema, updateGameSchema } from "@/lib/validators";
 import { GameItem } from "@/lib/types";
+import { resolveGameArtwork } from "@/services/game-artwork.service";
 
 export interface GameListFilters {
   q?: string;
@@ -86,6 +87,10 @@ export async function listGames(filters: GameListFilters = {}): Promise<GameItem
       publisher: g.publisher,
       iconUrl: g.iconUrl,
       bannerUrl: g.bannerUrl,
+      imageSource: g.imageSource,
+      steamAppId: g.steamAppId,
+      artworkVerifiedAt: g.artworkVerifiedAt?.toISOString() ?? null,
+      manualImagePath: g.manualImagePath,
       description: g.description,
       minGpuRequired: g.minGpuRequired,
       popularityRank: g.popularityRank,
@@ -127,6 +132,10 @@ export async function getGameById(id: string): Promise<GameItem | null> {
     publisher: game.publisher,
     iconUrl: game.iconUrl,
     bannerUrl: game.bannerUrl,
+    imageSource: game.imageSource,
+    steamAppId: game.steamAppId,
+    artworkVerifiedAt: game.artworkVerifiedAt?.toISOString() ?? null,
+    manualImagePath: game.manualImagePath,
     description: game.description,
     minGpuRequired: game.minGpuRequired,
     popularityRank: game.popularityRank,
@@ -164,14 +173,27 @@ export async function createGame(data: unknown): Promise<GameItem> {
       .replace(/^-|-$/g, "");
   }
 
+  // Resolve artwork automatically unless manual mode
+  let artwork: { source: "AUTO_STEAM" | "MANUAL" | "FALLBACK"; steamAppId: number | null; bannerUrl: string | null; iconUrl: string | null; isVerified: boolean } = { source: "FALLBACK", steamAppId: null, bannerUrl: null, iconUrl: null, isVerified: false };
+  if (validated.imageSource === "MANUAL" && validated.manualImagePath) {
+    artwork = { source: "MANUAL", steamAppId: validated.steamAppId ?? null, bannerUrl: validated.manualImagePath, iconUrl: validated.manualImagePath, isVerified: false };
+  } else if (validated.imageSource !== "MANUAL") {
+    const resolved = await resolveGameArtwork(validated.title);
+    artwork = { source: resolved.source, steamAppId: resolved.steamAppId, bannerUrl: resolved.bannerUrl, iconUrl: resolved.iconUrl, isVerified: resolved.isVerified };
+  }
+
   const created = await prisma.game.create({
     data: {
       title: validated.title,
       slug,
       genre: validated.genre,
       publisher: validated.publisher,
-      iconUrl: validated.iconUrl || null,
-      bannerUrl: validated.bannerUrl || null,
+      iconUrl: artwork.iconUrl || validated.iconUrl || null,
+      bannerUrl: artwork.bannerUrl || validated.bannerUrl || null,
+      imageSource: artwork.source,
+      steamAppId: artwork.steamAppId,
+      artworkVerifiedAt: artwork.isVerified ? new Date() : null,
+      manualImagePath: validated.manualImagePath || null,
       description: validated.description || null,
       minGpuRequired: validated.minGpuRequired || "GTX 1650",
       popularityRank: validated.popularityRank || 1,
@@ -186,6 +208,7 @@ export async function createGame(data: unknown): Promise<GameItem> {
     ...created,
     createdAt: created.createdAt.toISOString(),
     updatedAt: created.updatedAt.toISOString(),
+    artworkVerifiedAt: created.artworkVerifiedAt?.toISOString() ?? null,
     totalSessions: 0,
     totalPlayMinutes: 0,
   };
@@ -210,15 +233,46 @@ export async function updateGame(id: string, data: unknown): Promise<GameItem> {
     }
   }
 
+  const nextTitle = validated.title ?? existing.title;
+  const requestedSource = validated.imageSource;
+  const shouldResolveAutomatically = requestedSource === "AUTO_STEAM" ||
+    (existing.imageSource === "AUTO_STEAM" && validated.title !== undefined && validated.title !== existing.title && requestedSource !== "MANUAL");
+
+  let artworkData: Prisma.GameUpdateInput = {};
+  if (requestedSource === "MANUAL") {
+    if (!validated.manualImagePath) throw new Error("URL gambar manual wajib diisi");
+    artworkData = {
+      imageSource: "MANUAL",
+      manualImagePath: validated.manualImagePath,
+      bannerUrl: validated.manualImagePath,
+      iconUrl: validated.manualImagePath,
+      steamAppId: null,
+      artworkVerifiedAt: null,
+    };
+  } else if (shouldResolveAutomatically) {
+    const artwork = await resolveGameArtwork(nextTitle);
+    artworkData = {
+      imageSource: artwork.source,
+      steamAppId: artwork.steamAppId,
+      bannerUrl: artwork.bannerUrl,
+      iconUrl: artwork.iconUrl,
+      manualImagePath: null,
+      artworkVerifiedAt: artwork.isVerified ? new Date() : null,
+    };
+  } else if (requestedSource === "FALLBACK") {
+    artworkData = { imageSource: "FALLBACK", steamAppId: null, manualImagePath: null, artworkVerifiedAt: null };
+  }
+
   const updated = await prisma.game.update({
     where: { id },
     data: {
+      ...artworkData,
       ...(validated.title !== undefined && { title: validated.title }),
       ...(validated.slug !== undefined && { slug: validated.slug }),
       ...(validated.genre !== undefined && { genre: validated.genre }),
       ...(validated.publisher !== undefined && { publisher: validated.publisher }),
-      ...(validated.iconUrl !== undefined && { iconUrl: validated.iconUrl }),
-      ...(validated.bannerUrl !== undefined && { bannerUrl: validated.bannerUrl }),
+      ...(validated.iconUrl !== undefined && !shouldResolveAutomatically && requestedSource !== "MANUAL" && { iconUrl: validated.iconUrl }),
+      ...(validated.bannerUrl !== undefined && !shouldResolveAutomatically && requestedSource !== "MANUAL" && { bannerUrl: validated.bannerUrl }),
       ...(validated.description !== undefined && { description: validated.description }),
       ...(validated.minGpuRequired !== undefined && { minGpuRequired: validated.minGpuRequired }),
       ...(validated.popularityRank !== undefined && { popularityRank: validated.popularityRank }),
@@ -226,6 +280,8 @@ export async function updateGame(id: string, data: unknown): Promise<GameItem> {
       ...(validated.isInstalledConsole !== undefined && { isInstalledConsole: validated.isInstalledConsole }),
       ...(validated.isActive !== undefined && { isActive: validated.isActive }),
       ...(validated.tags !== undefined && { tags: validated.tags }),
+      ...(validated.steamAppId !== undefined && { steamAppId: validated.steamAppId }),
+      ...(validated.manualImagePath !== undefined && { manualImagePath: validated.manualImagePath }),
     },
   });
 
@@ -233,6 +289,7 @@ export async function updateGame(id: string, data: unknown): Promise<GameItem> {
     ...updated,
     createdAt: updated.createdAt.toISOString(),
     updatedAt: updated.updatedAt.toISOString(),
+    artworkVerifiedAt: updated.artworkVerifiedAt?.toISOString() ?? null,
   };
 }
 

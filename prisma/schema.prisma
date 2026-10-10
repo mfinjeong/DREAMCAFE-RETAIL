@@ -14,6 +14,12 @@ enum Role {
   STAFF
 }
 
+enum GameImageSource {
+  AUTO_STEAM
+  MANUAL
+  FALLBACK
+}
+
 enum PCStatus {
   AVAILABLE
   IN_USE
@@ -99,14 +105,17 @@ enum MaintenanceStatus {
 
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  email        String   @unique
-  passwordHash String
-  fullName     String
-  role         Role     @default(OPERATOR)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                 String           @id @default(cuid())
+  username           String           @unique
+  email              String           @unique
+  passwordHash       String
+  passwordHashSalt   String?
+  fullName           String
+  role               Role             @default(OPERATOR)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  sessionTokens      SessionToken[]
 
   @@index([role])
 }
@@ -342,28 +351,51 @@ model TransactionItem {
 }
 
 model Game {
-  id                 String   @id @default(cuid())
-  title              String   @unique
+  id                 String            @id @default(cuid())
+  title              String            @unique
   slug               String?
   genre              String
   publisher          String
   iconUrl            String?
   bannerUrl          String?
   description        String?
-  minGpuRequired     String   @default("GTX 1650")
-  popularityRank     Int      @default(1)
-  isInstalledOnPc    Boolean  @default(true)
-  isInstalledConsole Boolean  @default(false)
-  isActive           Boolean  @default(true)
-  tags               String[] @default([])
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  minGpuRequired     String            @default("GTX 1650")
+  popularityRank     Int               @default(1)
+  isInstalledOnPc    Boolean           @default(true)
+  isInstalledConsole Boolean           @default(false)
+  isActive           Boolean           @default(true)
+  tags               String[]          @default([])
+  imageSource        GameImageSource   @default(AUTO_STEAM)
+  steamAppId         Int?
+  artworkVerifiedAt  DateTime?
+  manualImagePath    String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   sessions           Session[]
   memberStats        MemberGameStat[]
 
   @@index([genre])
   @@index([isActive])
+}
+
+model SessionToken {
+  id            String    @id @default(cuid())
+  userId        String
+  tokenHash     String    @unique
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  revokedReason String?
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@index([createdAt])
 }
 
 model MemberGameStat {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getGameById, updateGame, deleteGame } from "@/services/game.service";
 import { updateGameSchema } from "@/lib/validators";
+import { requireUser, authErrorResponse } from "@/lib/auth";
 
 export async function GET(
   request: Request,
@@ -29,6 +30,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser(["ADMIN"]);
+
     const { id } = await params;
     const body = await request.json();
     const validated = updateGameSchema.safeParse(body);
@@ -47,6 +50,10 @@ export async function PUT(
       message: `Data game '${updated.title}' berhasil diperbarui`,
     });
   } catch (err: unknown) {
+    const { status, message } = authErrorResponse(err);
+    if (status === 401 || status === 403) {
+      return NextResponse.json({ success: false, message }, { status });
+    }
     const msg = err instanceof Error ? err.message : "Gagal memperbarui game";
     return NextResponse.json({ success: false, message: msg }, { status: 400 });
   }
@@ -57,6 +64,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser(["ADMIN"]);
+
     const { id } = await params;
     const result = await deleteGame(id);
 
@@ -70,6 +79,10 @@ export async function DELETE(
       message,
     });
   } catch (err: unknown) {
+    const { status, message } = authErrorResponse(err);
+    if (status === 401 || status === 403) {
+      return NextResponse.json({ success: false, message }, { status });
+    }
     const msg = err instanceof Error ? err.message : "Gagal menghapus game";
     return NextResponse.json({ success: false, message: msg }, { status: 400 });
   }

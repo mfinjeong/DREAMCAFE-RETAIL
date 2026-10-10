@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { listGames, createGame, getGameGenres } from "@/services/game.service";
 import { gameSchema, gameQuerySchema } from "@/lib/validators";
+import { requireUser, authErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
@@ -32,6 +33,8 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    await requireUser(["ADMIN"]);
+
     const body = await request.json();
     const validated = gameSchema.safeParse(body);
 
@@ -52,6 +55,10 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (err: unknown) {
+    const { status, message } = authErrorResponse(err);
+    if (status === 401 || status === 403) {
+      return NextResponse.json({ success: false, message }, { status });
+    }
     const msg = err instanceof Error ? err.message : "Gagal menambahkan game baru";
     return NextResponse.json({ success: false, message: msg }, { status: 400 });
   }

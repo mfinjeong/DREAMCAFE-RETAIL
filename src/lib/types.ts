@@ -362,6 +362,10 @@ export interface GameItem {
   publisher: string;
   iconUrl?: string | null;
   bannerUrl?: string | null;
+  imageSource?: "AUTO_STEAM" | "MANUAL" | "FALLBACK";
+  steamAppId?: number | null;
+  artworkVerifiedAt?: string | null;
+  manualImagePath?: string | null;
   description?: string | null;
   minGpuRequired: string;
   popularityRank: number;
