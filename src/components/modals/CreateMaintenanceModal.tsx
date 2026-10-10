@@ -110,7 +110,7 @@ export const CreateMaintenanceModal: React.FC<CreateMaintenanceModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-3.5">
         {errorMsg && (
-          <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+          <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
             {errorMsg}
           </div>
         )}
@@ -141,7 +141,7 @@ export const CreateMaintenanceModal: React.FC<CreateMaintenanceModalProps> = ({
             rows={3}
             required
             placeholder="Jelaskan gejala dan kapan terjadi"
-            className="w-full bg-surface-muted border border-surface-border focus:border-persona-red rounded-[6px] px-3 py-1.5 text-xs text-[#F2F3F5] placeholder-text-muted transition-colors focus:outline-none"
+            className="w-full bg-surface-muted border border-surface-border focus:border-coffee-border rounded-[6px] px-3 py-1.5 text-xs text-text-primary placeholder-text-muted transition-colors focus:outline-none"
           />
         </div>
 

@@ -9,46 +9,54 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Dark charcoal foundation
-        background: "oklch(0.12 0.015 260)", // #0F1115
+        background: "#FAF8F2",
         surface: {
-          DEFAULT: "oklch(0.16 0.015 260)", // #15181F
-          muted: "oklch(0.135 0.015 260)",  // #111419
-          hover: "oklch(0.19 0.018 260)",  // #1B1F27
-          border: "oklch(0.24 0.015 260)", // #242933
-          "border-subtle": "oklch(0.19 0.012 260)",
+          DEFAULT: "#FFFFFF",
+          muted: "#F5F1E8",
+          hover: "#F1E8D5",
+          border: "#E8E3D8",
+          "border-subtle": "#EDE8DE",
         },
-        // Persona 5 inspired Red
-        persona: {
-          red: "oklch(0.55 0.20 25)",       // #D82239
-          "red-hover": "oklch(0.48 0.20 25)",
-          "red-active": "oklch(0.42 0.19 25)",
-          "red-subtle": "oklch(0.20 0.06 25)", // Solid dark red background
-          "red-border": "oklch(0.32 0.10 25)",
+        coffee: {
+          DEFAULT: "#76513C",
+          hover: "#5F4130",
+          active: "#483225",
+          subtle: "#F5ECE6",
+          border: "#C7B3A6",
         },
-        // Persona 3 Reload inspired Blue
-        p3r: {
-          blue: "oklch(0.55 0.16 250)",      // #2563EB solid cobalt ink
-          "blue-hover": "oklch(0.48 0.16 250)",
-          "blue-subtle": "oklch(0.20 0.05 250)", // Solid dark blue background
-          "blue-border": "oklch(0.32 0.08 250)",
+        sage: {
+          DEFAULT: "#71866A",
+          hover: "#5A6D54",
+          subtle: "#EFF5EE",
+          border: "#C1CDC0",
         },
-        // Maintenance Amber
         pamber: {
-          DEFAULT: "oklch(0.68 0.14 75)",   // #C98822
-          subtle: "oklch(0.22 0.04 75)",
-          border: "oklch(0.35 0.07 75)",
+          DEFAULT: "#B87F3B",
+          subtle: "#FDF5E6",
+          border: "#E8D3B8",
         },
-        // Typography
+        persona: {
+          red: "#76513C",
+          "red-hover": "#5F4130",
+          "red-active": "#483225",
+          "red-subtle": "#F5ECE6",
+          "red-border": "#C7B3A6",
+        },
+        p3r: {
+          blue: "#71866A",
+          "blue-hover": "#5A6D54",
+          "blue-subtle": "#EFF5EE",
+          "blue-border": "#C1CDC0",
+        },
         text: {
-          primary: "#F2F3F5",
-          secondary: "#8F96A3",
-          muted: "#5B6270",
+          primary: "#292820",
+          secondary: "#777568",
+          muted: "#A29F91",
         },
       },
       fontFamily: {
         sans: [
-          '"Plus Jakarta Sans"',
+          '"DM Sans"',
           "-apple-system",
           "BlinkMacSystemFont",
           '"Segoe UI"',
@@ -57,8 +65,10 @@ const config: Config = {
         ],
         mono: [
           '"JetBrains Mono"',
-          '"SF Mono"',
-          "Consolas",
+          "monospace",
+        ],
+        pixel: [
+          '"Press Start 2P"',
           "monospace",
         ],
       },

@@ -19,7 +19,7 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`rounded-[8px] border p-4 text-[#F2F3F5] ${variantStyles[variant]} ${className}`}
+      className={`rounded-md border p-4 text-text-primary shadow-pixel ${variantStyles[variant]} ${className}`}
       {...props}
     >
       {children}

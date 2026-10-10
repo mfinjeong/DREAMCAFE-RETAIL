@@ -120,8 +120,8 @@ export default function MaintenancePage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             Hardware Maintenance
           </h2>
         </div>
@@ -132,7 +132,7 @@ export default function MaintenancePage() {
       </div>
 
       {pageError && (
-        <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+        <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
           {pageError}
         </div>
       )}
@@ -143,19 +143,19 @@ export default function MaintenancePage() {
           <span className="text-[10px] font-mono uppercase text-text-secondary font-semibold block tracking-wider">
             Tiket Aktif
           </span>
-          <span className="text-xl font-bold font-mono text-[#F2F3F5] mt-1 block">{openCount}</span>
+          <span className="text-xl font-bold font-mono text-text-primary mt-1 block">{openCount}</span>
         </div>
         <div className="p-3 bg-surface border border-surface-border rounded-[8px]">
           <span className="text-[10px] font-mono uppercase text-text-secondary font-semibold block tracking-wider">
             Total Tiket
           </span>
-          <span className="text-xl font-bold font-mono text-[#F2F3F5] mt-1 block">{tickets.length}</span>
+          <span className="text-xl font-bold font-mono text-text-primary mt-1 block">{tickets.length}</span>
         </div>
         <div className="p-3 bg-surface border border-surface-border rounded-[8px]">
           <span className="text-[10px] font-mono uppercase text-text-secondary font-semibold block tracking-wider">
             Biaya Perbaikan (Selesai)
           </span>
-          <span className="text-xl font-bold font-mono text-[#F2F3F5] mt-1 block">
+          <span className="text-xl font-bold font-mono text-text-primary mt-1 block">
             {formatRupiah(resolvedCost)}
           </span>
         </div>
@@ -169,8 +169,8 @@ export default function MaintenancePage() {
             onClick={() => setStatusFilter(s)}
             className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
               statusFilter === s
-                ? "bg-persona-red text-white"
-                : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                ? "bg-coffee text-white"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
             }`}
           >
             {s.replace("_", " ")}
@@ -208,17 +208,17 @@ export default function MaintenancePage() {
             visible.map((t) => (
               <TableRow key={t.id}>
                 <TableCell className="text-xs">
-                  <span className="font-bold text-[#F2F3F5] block font-mono">{t.stationNumber}</span>
+                  <span className="font-bold text-text-primary block font-mono">{t.stationNumber}</span>
                   <span className="text-[11px] text-text-secondary">{t.type}</span>
                 </TableCell>
                 <TableCell className="text-xs max-w-xs">
-                  <span className="font-semibold text-[#F2F3F5] block">{t.title}</span>
+                  <span className="font-semibold text-text-primary block">{t.title}</span>
                   <span className="text-[11px] text-text-secondary whitespace-pre-line line-clamp-2">
                     {t.description}
                   </span>
                 </TableCell>
                 <TableCell className="text-xs text-text-secondary">{t.technician}</TableCell>
-                <TableCell className="font-mono text-xs text-[#F2F3F5]">{formatRupiah(t.cost)}</TableCell>
+                <TableCell className="font-mono text-xs text-text-primary">{formatRupiah(t.cost)}</TableCell>
                 <TableCell>
                   <StatusBadge status={t.status} />
                 </TableCell>

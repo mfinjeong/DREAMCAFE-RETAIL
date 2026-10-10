@@ -24,7 +24,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-4 max-w-2xl">
       <div className="flex items-center gap-2">
-        <div className="w-1.5 h-3.5 bg-persona-red persona-slash" />
+        <div className="w-1.5 h-3.5 bg-coffee" />
         <h2 className="text-sm font-bold text-text-primary tracking-tight font-sans">
           System Settings & Rates
         </h2>
@@ -87,7 +87,7 @@ export default function SettingsPage() {
         {/* Policy Notice */}
         <div className="p-3.5 bg-surface border border-surface-border rounded-[6px] text-xs space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-persona-red" />
+            <span className="w-1.5 h-1.5 rounded-full bg-coffee" />
             <span className="text-[11px] uppercase tracking-wider text-text-primary font-semibold">
               Payment Mode: Physical Cash Only
             </span>
@@ -99,7 +99,7 @@ export default function SettingsPage() {
 
         <div className="flex items-center justify-end gap-3 pt-1">
           {saved && (
-            <span className="text-xs font-mono text-p3r-blue font-semibold">Settings Saved Successfully</span>
+            <span className="text-xs font-mono text-sage font-semibold">Settings Saved Successfully</span>
           )}
           <Button type="submit" variant="primary" size="sm">
             Save Changes

@@ -113,7 +113,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-3.5">
         {errorMessage && (
-          <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+          <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
             {errorMessage}
           </div>
         )}
@@ -125,8 +125,8 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
             onClick={() => setMemberType("member")}
             className={`py-1.5 text-xs font-semibold rounded-[4px] transition-colors cursor-pointer ${
               memberType === "member"
-                ? "bg-persona-red text-white"
-                : "text-text-secondary hover:text-[#F2F3F5]"
+                ? "bg-coffee text-white"
+                : "text-text-secondary hover:text-text-primary"
             }`}
           >
             Registered Member
@@ -136,8 +136,8 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
             onClick={() => setMemberType("guest")}
             className={`py-1.5 text-xs font-semibold rounded-[4px] transition-colors cursor-pointer ${
               memberType === "guest"
-                ? "bg-persona-red text-white"
-                : "text-text-secondary hover:text-[#F2F3F5]"
+                ? "bg-coffee text-white"
+                : "text-text-secondary hover:text-text-primary"
             }`}
           >
             Guest Player
@@ -176,8 +176,8 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
                 onClick={() => setDurationMinutes(opt.value)}
                 className={`py-2 px-1 rounded-[6px] text-xs font-bold transition-colors text-center border cursor-pointer ${
                   durationMinutes === opt.value
-                    ? "bg-persona-red-subtle border-persona-red text-white"
-                    : "bg-surface-muted border-surface-border text-text-secondary hover:text-[#F2F3F5]"
+                    ? "bg-coffee-subtle border-coffee-border text-white"
+                    : "bg-surface-muted border-surface-border text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {opt.label}
@@ -195,7 +195,7 @@ export const StartSessionModal: React.FC<StartSessionModalProps> = ({
         {/* Total Price Summary */}
         <div className="p-3 bg-surface-muted border border-surface-border rounded-[6px] flex items-center justify-between">
           <span className="text-text-secondary text-xs font-medium">Estimated Bill:</span>
-          <span className="text-sm font-extrabold text-[#F2F3F5] font-mono">{formatRupiah(totalPrice)}</span>
+          <span className="text-sm font-extrabold text-text-primary font-mono">{formatRupiah(totalPrice)}</span>
         </div>
 
         {/* Actions */}

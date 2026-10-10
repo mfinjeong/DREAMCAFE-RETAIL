@@ -24,12 +24,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={`w-full bg-surface-muted border ${
-            error ? "border-persona-red" : "border-surface-border focus:border-persona-red"
-          } rounded-[6px] px-3 py-1.5 text-xs text-[#F2F3F5] placeholder-text-muted transition-colors focus:outline-none disabled:opacity-50 disabled:bg-surface ${className}`}
+            error ? "border-coffee" : "border-surface-border focus:border-sage"
+          } rounded-md px-3 py-2 text-sm text-text-primary placeholder-text-muted transition-colors focus:outline-none focus:ring-2 focus:ring-sage/30 disabled:opacity-50 disabled:bg-surface ${className}`}
           {...props}
         />
         {error ? (
-          <p className="mt-1 text-[11px] text-persona-red font-medium">{error}</p>
+          <p className="mt-1 text-[11px] text-coffee font-medium">{error}</p>
         ) : helperText ? (
           <p className="mt-1 text-[11px] text-text-muted">{helperText}</p>
         ) : null}

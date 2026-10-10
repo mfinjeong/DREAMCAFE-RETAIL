@@ -255,8 +255,8 @@ export default function MembersPage() {
       {/* Top Action Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             Members Directory & Rankings
           </h2>
           <span className="text-[11px] font-mono text-text-secondary">
@@ -267,8 +267,8 @@ export default function MembersPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleManualRefresh}
-            className={`p-1.5 text-text-secondary hover:text-[#F2F3F5] bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
-              isRefreshing ? "animate-spin text-persona-red" : ""
+            className={`p-1.5 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
+              isRefreshing ? "animate-spin text-coffee" : ""
             }`}
             title="Refresh database records"
           >
@@ -290,7 +290,7 @@ export default function MembersPage() {
 
       {/* Error Banner */}
       {errorMessage && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[8px] text-xs text-persona-red flex items-center justify-between">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[8px] text-xs text-coffee flex items-center justify-between">
           <div className="flex items-center gap-2 font-medium">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>Connection Error: {errorMessage}</span>
@@ -300,7 +300,7 @@ export default function MembersPage() {
               setIsLoading(true);
               fetchMembers(searchQuery, selectedTier);
             }}
-            className="px-2.5 py-1 bg-persona-red hover:bg-persona-red-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
+            className="px-2.5 py-1 bg-coffee hover:bg-coffee-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
           >
             Retry
           </button>
@@ -316,7 +316,7 @@ export default function MembersPage() {
             placeholder="Search code, name, phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red font-sans"
+            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border font-sans"
           />
         </div>
 
@@ -327,8 +327,8 @@ export default function MembersPage() {
               onClick={() => setSelectedTier(tier)}
               className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
                 selectedTier === tier
-                  ? "bg-persona-red text-white"
-                  : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                  ? "bg-coffee text-white"
+                  : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
               }`}
             >
               {tier}
@@ -356,7 +356,7 @@ export default function MembersPage() {
             <TableRow>
               <TableCell colSpan={9} className="h-32 text-center text-text-secondary text-xs font-mono">
                 <div className="flex flex-col items-center justify-center gap-2">
-                  <RefreshCw className="w-4 h-4 animate-spin text-persona-red" />
+                  <RefreshCw className="w-4 h-4 animate-spin text-coffee" />
                   <span>Loading members from database...</span>
                 </div>
               </TableCell>
@@ -370,11 +370,11 @@ export default function MembersPage() {
           ) : (
             members.map((m) => (
               <TableRow key={m.id}>
-                <TableCell className="font-mono text-[11px] text-[#F2F3F5] font-semibold">
+                <TableCell className="font-mono text-[11px] text-text-primary font-semibold">
                   {m.memberCode}
                 </TableCell>
                 <TableCell className="text-xs">
-                  <span className="font-bold text-[#F2F3F5] block font-sans">@{m.username}</span>
+                  <span className="font-bold text-text-primary block font-sans">@{m.username}</span>
                   <span className="text-[11px] text-text-secondary truncate block max-w-[150px]">{m.fullName}</span>
                 </TableCell>
                 <TableCell className="font-mono text-[11px] text-text-secondary">
@@ -384,9 +384,9 @@ export default function MembersPage() {
                   <span
                     className={`text-[10px] font-mono px-2 py-0.5 rounded-[3px] border font-bold ${
                       m.tier === "PRO"
-                        ? "bg-persona-red-subtle border-persona-red-border text-persona-red"
+                        ? "bg-coffee-subtle border-coffee-border text-coffee"
                         : m.tier === "VIP"
-                        ? "bg-p3r-blue-subtle border-p3r-blue-border text-p3r-blue"
+                        ? "bg-sage-subtle border-sage-border text-sage"
                         : "bg-surface-muted border-surface-border text-text-secondary"
                     }`}
                   >
@@ -396,10 +396,10 @@ export default function MembersPage() {
                 <TableCell className="font-mono text-xs text-text-secondary font-medium">
                   Lv. {m.level} ({m.xp} XP)
                 </TableCell>
-                <TableCell className="font-mono text-xs text-[#F2F3F5] font-semibold">
+                <TableCell className="font-mono text-xs text-text-primary font-semibold">
                   {m.dreamCoins}
                 </TableCell>
-                <TableCell className="font-mono text-xs text-p3r-blue font-bold">
+                <TableCell className="font-mono text-xs text-sage font-bold">
                   {formatRupiah(m.balance)}
                 </TableCell>
                 <TableCell className="text-right">
@@ -413,21 +413,21 @@ export default function MembersPage() {
                     </Link>
                     <button
                       onClick={() => handleOpenDetail(m)}
-                      className="p-1.5 rounded-[4px] bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-[#F2F3F5] border border-surface-border cursor-pointer transition-colors"
+                      className="p-1.5 rounded-[4px] bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary border border-surface-border cursor-pointer transition-colors"
                       title="View Member Profile"
                     >
                       <Eye className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleOpenEdit(m)}
-                      className="p-1.5 rounded-[4px] bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-[#F2F3F5] border border-surface-border cursor-pointer transition-colors"
+                      className="p-1.5 rounded-[4px] bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary border border-surface-border cursor-pointer transition-colors"
                       title="Edit Member"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeleteMember(m.id, m.fullName)}
-                      className="p-1.5 rounded-[4px] bg-persona-red-subtle hover:bg-persona-red text-persona-red hover:text-white border border-persona-red-border cursor-pointer transition-colors"
+                      className="p-1.5 rounded-[4px] bg-coffee-subtle hover:bg-coffee text-coffee hover:text-white border border-coffee-border cursor-pointer transition-colors"
                       title="Delete Member"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -450,7 +450,7 @@ export default function MembersPage() {
       >
         <form onSubmit={handleCreateMember} className="space-y-3.5">
           {formError && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
               {formError}
             </div>
           )}
@@ -534,7 +534,7 @@ export default function MembersPage() {
       >
         <form onSubmit={handleEditMember} className="space-y-3.5">
           {formError && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
               {formError}
             </div>
           )}
@@ -618,27 +618,27 @@ export default function MembersPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
                 <span className="text-[10px] text-text-muted uppercase block font-mono">Member Tier</span>
-                <span className="font-bold text-[#F2F3F5] text-xs flex items-center gap-1 mt-0.5">
-                  <Trophy className="w-3 h-3 text-persona-red" />
+                <span className="font-bold text-text-primary text-xs flex items-center gap-1 mt-0.5">
+                  <Trophy className="w-3 h-3 text-coffee" />
                   {selectedMember.tier}
                 </span>
               </div>
               <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
                 <span className="text-[10px] text-text-muted uppercase block font-mono">Progression</span>
-                <span className="font-bold text-[#F2F3F5] text-xs block mt-0.5">
+                <span className="font-bold text-text-primary text-xs block mt-0.5">
                   Lv. {selectedMember.level} ({selectedMember.xp} XP)
                 </span>
               </div>
               <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
                 <span className="text-[10px] text-text-muted uppercase block font-mono">DREAM Coins</span>
-                <span className="font-bold text-[#F2F3F5] text-xs flex items-center gap-1 mt-0.5">
+                <span className="font-bold text-text-primary text-xs flex items-center gap-1 mt-0.5">
                   <Coins className="w-3 h-3 text-pamber" />
                   {selectedMember.dreamCoins}
                 </span>
               </div>
               <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
                 <span className="text-[10px] text-text-muted uppercase block font-mono">Account Balance</span>
-                <span className="font-bold text-p3r-blue text-xs block mt-0.5 font-mono">
+                <span className="font-bold text-sage text-xs block mt-0.5 font-mono">
                   {formatRupiah(selectedMember.balance)}
                 </span>
               </div>
@@ -648,20 +648,20 @@ export default function MembersPage() {
             <div className="p-3 bg-surface-muted border border-surface-border rounded-[8px] space-y-1.5 font-mono text-xs">
               <div className="flex justify-between text-text-secondary">
                 <span>Phone Number:</span>
-                <span className="text-[#F2F3F5]">{selectedMember.phoneNumber || "-"}</span>
+                <span className="text-text-primary">{selectedMember.phoneNumber || "-"}</span>
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Email Address:</span>
-                <span className="text-[#F2F3F5]">{selectedMember.email || "-"}</span>
+                <span className="text-text-primary">{selectedMember.email || "-"}</span>
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Member Since:</span>
-                <span className="text-[#F2F3F5]">{formatDateTime(selectedMember.createdAt)}</span>
+                <span className="text-text-primary">{formatDateTime(selectedMember.createdAt)}</span>
               </div>
               {memberDetail?.totalSpending !== undefined && (
                 <div className="flex justify-between text-text-secondary pt-1 border-t border-surface-border font-bold">
                   <span>Total Spending Contribution:</span>
-                  <span className="text-persona-red">{formatRupiah(memberDetail.totalSpending)}</span>
+                  <span className="text-coffee">{formatRupiah(memberDetail.totalSpending)}</span>
                 </div>
               )}
             </div>
@@ -669,7 +669,7 @@ export default function MembersPage() {
             {/* Activity History from Real Database */}
             {loadingDetail ? (
               <div className="h-20 flex items-center justify-center text-text-secondary font-mono text-xs gap-2">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin text-persona-red" />
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-coffee" />
                 <span>Loading activity history...</span>
               </div>
             ) : (
@@ -677,7 +677,7 @@ export default function MembersPage() {
                 {/* Recent Sessions */}
                 <div className="p-3 bg-surface-muted border border-surface-border rounded-[8px] space-y-2">
                   <div className="flex items-center gap-1.5 font-bold text-text-secondary uppercase text-[10px] font-mono">
-                    <Clock className="w-3 h-3 text-p3r-blue" />
+                    <Clock className="w-3 h-3 text-sage" />
                     <span>Recent Sessions ({memberDetail?.sessions?.length || 0})</span>
                   </div>
                   {memberDetail?.sessions && memberDetail.sessions.length > 0 ? (
@@ -685,10 +685,10 @@ export default function MembersPage() {
                       {memberDetail.sessions.map((s) => (
                         <div key={s.id} className="flex justify-between p-1.5 bg-surface rounded-[4px] border border-surface-border">
                           <div>
-                            <span className="text-[#F2F3F5] font-bold block">{s.stationName} ({s.type})</span>
+                            <span className="text-text-primary font-bold block">{s.stationName} ({s.type})</span>
                             <span className="text-[10px] text-text-muted">{s.durationMinutes}m • {s.status}</span>
                           </div>
-                          <span className="text-p3r-blue font-semibold">{formatRupiah(s.totalPrice)}</span>
+                          <span className="text-sage font-semibold">{formatRupiah(s.totalPrice)}</span>
                         </div>
                       ))}
                     </div>
@@ -700,7 +700,7 @@ export default function MembersPage() {
                 {/* Recent Transactions */}
                 <div className="p-3 bg-surface-muted border border-surface-border rounded-[8px] space-y-2">
                   <div className="flex items-center gap-1.5 font-bold text-text-secondary uppercase text-[10px] font-mono">
-                    <Receipt className="w-3 h-3 text-persona-red" />
+                    <Receipt className="w-3 h-3 text-coffee" />
                     <span>Recent Transactions ({memberDetail?.transactions?.length || 0})</span>
                   </div>
                   {memberDetail?.transactions && memberDetail.transactions.length > 0 ? (
@@ -708,10 +708,10 @@ export default function MembersPage() {
                       {memberDetail.transactions.map((t) => (
                         <div key={t.id} className="flex justify-between p-1.5 bg-surface rounded-[4px] border border-surface-border">
                           <div>
-                            <span className="text-[#F2F3F5] font-bold block">{t.invoiceNumber}</span>
+                            <span className="text-text-primary font-bold block">{t.invoiceNumber}</span>
                             <span className="text-[10px] text-text-muted">{t.type} • {t.status}</span>
                           </div>
-                          <span className="text-[#F2F3F5] font-semibold">{formatRupiah(t.totalAmount)}</span>
+                          <span className="text-text-primary font-semibold">{formatRupiah(t.totalAmount)}</span>
                         </div>
                       ))}
                     </div>

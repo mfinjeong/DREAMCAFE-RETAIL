@@ -63,7 +63,7 @@ export default function MemberGamingProfilePage({
   if (isLoading) {
     return (
       <div className="p-16 text-center bg-surface-card border border-surface-border rounded-[4px]">
-        <RefreshCw className="w-6 h-6 animate-spin text-persona-red mx-auto mb-2" />
+        <RefreshCw className="w-6 h-6 animate-spin text-coffee mx-auto mb-2" />
         <p className="text-xs text-text-secondary font-mono">Memuat Gaming Profile member...</p>
       </div>
     );
@@ -72,7 +72,7 @@ export default function MemberGamingProfilePage({
   if (errorMessage || !profile) {
     return (
       <div className="p-8 bg-surface-card border border-surface-border rounded-[4px] text-center space-y-4">
-        <AlertTriangle className="w-8 h-8 text-persona-red mx-auto" />
+        <AlertTriangle className="w-8 h-8 text-coffee mx-auto" />
         <div>
           <h2 className="text-sm font-bold text-text-primary">Profil Tidak Ditemukan</h2>
           <p className="text-xs text-text-secondary mt-1">{errorMessage || "Data member tidak tersedia."}</p>
@@ -118,11 +118,11 @@ export default function MemberGamingProfilePage({
       </div>
 
       <div className="bg-surface-card border border-surface-border p-5 rounded-[4px] relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-persona-red/10 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-coffee/10 to-transparent pointer-events-none"></div>
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-[4px] bg-surface-dark border border-surface-border-active flex items-center justify-center text-xl font-black text-persona-red font-mono shrink-0">
+            <div className="w-16 h-16 rounded-[4px] bg-surface-dark border border-surface-border-active flex items-center justify-center text-xl font-black text-coffee font-mono shrink-0">
               {member.username.slice(0, 2).toUpperCase()}
             </div>
 
@@ -134,7 +134,7 @@ export default function MemberGamingProfilePage({
                 <span className="text-xs font-mono text-text-muted px-1.5 py-0.5 bg-surface-dark border border-surface-border rounded">
                   {member.memberCode}
                 </span>
-                <span className="text-xs font-mono text-persona-red font-bold px-2 py-0.5 bg-persona-red/10 border border-persona-red/30 rounded">
+                <span className="text-xs font-mono text-coffee font-bold px-2 py-0.5 bg-coffee/10 border border-coffee-border/30 rounded">
                   {member.tier}
                 </span>
               </div>
@@ -171,7 +171,7 @@ export default function MemberGamingProfilePage({
         <div className="mt-5 pt-4 border-t border-surface-border">
           <div className="flex items-center justify-between text-xs mb-1.5">
             <div className="flex items-center gap-2">
-              <span className="font-mono font-bold text-white px-2 py-0.5 bg-persona-red rounded-[2px] text-[11px]">
+              <span className="font-mono font-bold text-white px-2 py-0.5 bg-coffee rounded-[2px] text-[11px]">
                 LEVEL {member.level}
               </span>
               <span className="text-text-secondary text-[11px]">
@@ -186,7 +186,7 @@ export default function MemberGamingProfilePage({
 
           <div className="w-full h-2 bg-surface-dark border border-surface-border rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-persona-red to-persona-blue transition-all duration-300"
+              className="h-full bg-gradient-to-r from-coffee to-persona-blue transition-all duration-300"
               style={{ width: `${stats.progressPercent}%` }}
             ></div>
           </div>
@@ -203,7 +203,7 @@ export default function MemberGamingProfilePage({
         <div className="bg-surface-card border border-surface-border p-4 rounded-[4px]">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Total Sessions</span>
-            <Clock className="w-4 h-4 text-persona-red" />
+            <Clock className="w-4 h-4 text-coffee" />
           </div>
           <div className="text-2xl font-black font-mono text-text-primary">{stats.totalSessions}</div>
           <p className="text-[10px] text-text-secondary mt-1">Sesi bermain tercatat</p>
@@ -230,7 +230,7 @@ export default function MemberGamingProfilePage({
 
       <div className="bg-surface-card border border-surface-border p-5 rounded-[4px]">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-1.5 h-3.5 bg-amber-400 persona-slash rounded-[1px]"></div>
+          <div className="w-1.5 h-3.5 bg-amber-400 rounded-[1px]"></div>
           <h2 className="text-xs font-mono font-bold tracking-wider text-text-primary uppercase">
             Favorite Games
           </h2>
@@ -246,7 +246,7 @@ export default function MemberGamingProfilePage({
             {favoriteGames.map((fg) => (
               <div
                 key={fg.id}
-                className="bg-surface-dark/40 border border-surface-border p-3.5 rounded-[4px] hover:border-persona-red/40 transition-colors"
+                className="bg-surface-dark/40 border border-surface-border p-3.5 rounded-[4px] hover:border-coffee-border/40 transition-colors"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
@@ -255,7 +255,7 @@ export default function MemberGamingProfilePage({
                       {fg.gameGenre} • {""}
                     </p>
                   </div>
-                  <Flame className="w-4 h-4 text-persona-red shrink-0" />
+                  <Flame className="w-4 h-4 text-coffee shrink-0" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
@@ -276,7 +276,7 @@ export default function MemberGamingProfilePage({
 
       <div className="bg-surface-card border border-surface-border p-5 rounded-[4px]">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-1.5 h-3.5 bg-persona-blue persona-slash rounded-[1px]"></div>
+          <div className="w-1.5 h-3.5 bg-persona-blue rounded-[1px]"></div>
           <h2 className="text-xs font-mono font-bold tracking-wider text-text-primary uppercase">
             Recent Activity
           </h2>
@@ -298,7 +298,7 @@ export default function MemberGamingProfilePage({
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded bg-surface-dark border border-surface-border flex items-center justify-center shrink-0">
                       {act.stationType === "PC" ? (
-                        <Monitor className="w-4 h-4 text-persona-red" />
+                        <Monitor className="w-4 h-4 text-coffee" />
                       ) : (
                         <Gamepad2 className="w-4 h-4 text-persona-blue" />
                       )}

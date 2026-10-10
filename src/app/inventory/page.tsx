@@ -220,8 +220,8 @@ export default function InventoryPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             Inventory & Supply Control
           </h2>
         </div>
@@ -232,7 +232,7 @@ export default function InventoryPage() {
             onClick={() => handleOpenAdjust(undefined, "STOCK_IN")}
             className="flex items-center gap-1.5"
           >
-            <Plus className="w-3.5 h-3.5 text-p3r-blue" />
+            <Plus className="w-3.5 h-3.5 text-sage" />
             Stock In
           </Button>
           <Button
@@ -256,7 +256,7 @@ export default function InventoryPage() {
           <button
             onClick={() => fetchData()}
             disabled={isLoading}
-            className="p-1.5 rounded-[6px] text-text-secondary hover:text-[#F2F3F5] bg-surface border border-surface-border cursor-pointer transition-colors"
+            className="p-1.5 rounded-[6px] text-text-secondary hover:text-text-primary bg-surface border border-surface-border cursor-pointer transition-colors"
             title="Refresh Data"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -266,14 +266,14 @@ export default function InventoryPage() {
 
       {/* Global Alerts */}
       {errorMsg && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[8px] flex items-center justify-between text-xs text-persona-red">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[8px] flex items-center justify-between text-xs text-coffee">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
           </div>
           <button
             onClick={() => setErrorMsg(null)}
-            className="text-text-muted hover:text-persona-red text-xs underline cursor-pointer"
+            className="text-text-muted hover:text-coffee text-xs underline cursor-pointer"
           >
             Tutup
           </button>
@@ -281,14 +281,14 @@ export default function InventoryPage() {
       )}
 
       {successMsg && (
-        <div className="p-3 bg-p3r-blue-subtle border border-p3r-blue-border rounded-[8px] flex items-center justify-between text-xs text-p3r-blue">
+        <div className="p-3 bg-sage-subtle border border-sage-border rounded-[8px] flex items-center justify-between text-xs text-sage">
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 shrink-0" />
             <span>{successMsg}</span>
           </div>
           <button
             onClick={() => setSuccessMsg(null)}
-            className="text-text-muted hover:text-p3r-blue text-xs underline cursor-pointer"
+            className="text-text-muted hover:text-sage text-xs underline cursor-pointer"
           >
             Tutup
           </button>
@@ -302,7 +302,7 @@ export default function InventoryPage() {
             <span>Total Produk</span>
             <Package className="w-3.5 h-3.5 text-text-muted" />
           </div>
-          <div className="text-lg font-extrabold text-[#F2F3F5]">
+          <div className="text-lg font-extrabold text-text-primary">
             {summary ? summary.totalProducts : products.length}
           </div>
           <div className="text-[10px] text-text-secondary font-sans">Katalog aktif</div>
@@ -313,7 +313,7 @@ export default function InventoryPage() {
             <span>Total Stok Fisik</span>
             <Boxes className="w-3.5 h-3.5 text-text-muted" />
           </div>
-          <div className="text-lg font-extrabold text-[#F2F3F5]">
+          <div className="text-lg font-extrabold text-text-primary">
             {summary ? summary.totalStock : products.reduce((acc, p) => acc + p.stock, 0)}{" "}
             <span className="text-xs font-normal text-text-muted">pcs</span>
           </div>
@@ -334,9 +334,9 @@ export default function InventoryPage() {
         <div className="bg-surface border border-surface-border p-3 rounded-[8px] space-y-1">
           <div className="text-[11px] text-text-muted flex items-center justify-between">
             <span>Stok Habis</span>
-            <AlertCircle className="w-3.5 h-3.5 text-persona-red" />
+            <AlertCircle className="w-3.5 h-3.5 text-coffee" />
           </div>
-          <div className="text-lg font-extrabold text-persona-red">
+          <div className="text-lg font-extrabold text-coffee">
             {summary ? summary.outOfStockProducts : products.filter((p) => p.isOutOfStock).length}
           </div>
           <div className="text-[10px] text-text-secondary font-sans">Segera lakukan restock</div>
@@ -347,7 +347,7 @@ export default function InventoryPage() {
             <span>Total Valuasi</span>
             <span className="text-[10px] text-text-muted font-mono">HPP</span>
           </div>
-          <div className="text-base sm:text-lg font-extrabold text-[#F2F3F5] truncate">
+          <div className="text-base sm:text-lg font-extrabold text-text-primary truncate">
             {formatRupiah(summary ? summary.totalValuation : products.reduce((acc, p) => acc + p.costPrice * p.stock, 0))}
           </div>
           <div className="text-[10px] text-text-secondary font-sans">Modal barang tertahan</div>
@@ -360,8 +360,8 @@ export default function InventoryPage() {
           onClick={() => setActiveTab("stock")}
           className={`px-3 py-1.5 rounded-[4px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "stock"
-              ? "bg-persona-red-subtle text-white border-l-2 border-persona-red"
-              : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+              ? "bg-coffee-subtle text-white border-l-2 border-coffee-border"
+              : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
           }`}
         >
           <Package className="w-3.5 h-3.5" />
@@ -371,8 +371,8 @@ export default function InventoryPage() {
           onClick={() => setActiveTab("history")}
           className={`px-3 py-1.5 rounded-[4px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
             activeTab === "history"
-              ? "bg-persona-red-subtle text-white border-l-2 border-persona-red"
-              : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+              ? "bg-coffee-subtle text-white border-l-2 border-coffee-border"
+              : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
           }`}
         >
           <History className="w-3.5 h-3.5" />
@@ -391,7 +391,7 @@ export default function InventoryPage() {
                 placeholder="Cari produk atau barcode..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red"
+                className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border"
               />
             </div>
 
@@ -400,7 +400,7 @@ export default function InventoryPage() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none cursor-pointer"
+                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Semua Kategori</option>
                 {categories.map((c) => (
@@ -414,7 +414,7 @@ export default function InventoryPage() {
               <select
                 value={stockStatusFilter}
                 onChange={(e) => setStockStatusFilter(e.target.value)}
-                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none cursor-pointer"
+                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Semua Status</option>
                 <option value="AVAILABLE">Tersedia (In Stock)</option>
@@ -459,17 +459,17 @@ export default function InventoryPage() {
 
                   return (
                     <TableRow key={p.id}>
-                      <TableCell className="font-semibold text-[#F2F3F5] font-sans">
+                      <TableCell className="font-semibold text-text-primary font-sans">
                         <div>{p.name}</div>
                         <div className="text-[10px] font-mono text-text-muted">{p.barcode || "-"}</div>
                       </TableCell>
                       <TableCell className="text-xs text-text-secondary">{p.categoryName}</TableCell>
                       <TableCell className="font-mono text-text-secondary">{formatRupiah(p.costPrice)}</TableCell>
-                      <TableCell className="font-mono text-[#F2F3F5] font-semibold">
+                      <TableCell className="font-mono text-text-primary font-semibold">
                         {formatRupiah(p.price)}
                       </TableCell>
-                      <TableCell className="font-mono font-bold text-[#F2F3F5]">
-                        <span className={isOut ? "text-persona-red" : isLow ? "text-pamber" : "text-[#F2F3F5]"}>
+                      <TableCell className="font-mono font-bold text-text-primary">
+                        <span className={isOut ? "text-coffee" : isLow ? "text-pamber" : "text-text-primary"}>
                           {p.stock}
                         </span>{" "}
                         <span className="text-[10px] text-text-muted font-normal">{p.unit}</span>
@@ -479,18 +479,18 @@ export default function InventoryPage() {
                       </TableCell>
                       <TableCell>
                         {isOut ? (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-persona-red-subtle text-persona-red border border-persona-red-border font-bold">
-                            <span className="w-1.5 h-1.5 rounded-[1px] bg-persona-red persona-slash"></span>
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-coffee-subtle text-coffee border border-coffee-border font-bold">
+                            <span className="w-1.5 h-1.5 rounded-[1px] bg-coffee"></span>
                             OUT OF STOCK
                           </span>
                         ) : isLow ? (
                           <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-pamber-subtle text-pamber border border-pamber-border font-bold">
-                            <span className="w-1.5 h-1.5 rounded-[1px] bg-pamber persona-slash"></span>
+                            <span className="w-1.5 h-1.5 rounded-[1px] bg-pamber"></span>
                             LOW STOCK
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-p3r-blue-subtle text-p3r-blue border border-p3r-blue-border font-bold">
-                            <span className="w-1.5 h-1.5 rounded-[1px] bg-p3r-blue persona-slash"></span>
+                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-sage-subtle text-sage border border-sage-border font-bold">
+                            <span className="w-1.5 h-1.5 rounded-[1px] bg-sage"></span>
                             AVAILABLE
                           </span>
                         )}
@@ -501,9 +501,9 @@ export default function InventoryPage() {
                             <span
                               className={`font-bold ${
                                 p.lastMovement.action === "STOCK_IN"
-                                  ? "text-p3r-blue"
+                                  ? "text-sage"
                                   : p.lastMovement.action === "STOCK_OUT"
-                                  ? "text-persona-red"
+                                  ? "text-coffee"
                                   : "text-pamber"
                               }`}
                             >
@@ -519,7 +519,7 @@ export default function InventoryPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => handleOpenAdjust(p, "STOCK_IN")}
-                            className="p-1 px-2 text-xs bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-[#F2F3F5] rounded-[4px] border border-surface-border font-sans font-medium cursor-pointer transition-colors"
+                            className="p-1 px-2 text-xs bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary rounded-[4px] border border-surface-border font-sans font-medium cursor-pointer transition-colors"
                             title="Tambah Stok (Stock In)"
                           >
                             +In
@@ -530,7 +530,7 @@ export default function InventoryPage() {
                             className={`p-1 px-2 text-xs rounded-[4px] border font-sans font-medium transition-colors ${
                               p.stock <= 0
                                 ? "bg-surface-muted border-surface-border text-text-muted cursor-not-allowed"
-                                : "bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-[#F2F3F5] border-surface-border cursor-pointer"
+                                : "bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary border-surface-border cursor-pointer"
                             }`}
                             title="Kurang Stok (Stock Out)"
                           >
@@ -538,7 +538,7 @@ export default function InventoryPage() {
                           </button>
                           <button
                             onClick={() => handleOpenAdjust(p, "ADJUSTMENT")}
-                            className="p-1 px-2 text-xs bg-persona-red hover:bg-persona-red-hover text-white rounded-[4px] font-sans font-bold cursor-pointer transition-colors"
+                            className="p-1 px-2 text-xs bg-coffee hover:bg-coffee-hover text-white rounded-[4px] font-sans font-bold cursor-pointer transition-colors"
                             title="Audit / Sesuaikan Stok Fisik"
                           >
                             Audit
@@ -561,7 +561,7 @@ export default function InventoryPage() {
               <select
                 value={logProductFilter}
                 onChange={(e) => setLogProductFilter(e.target.value)}
-                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none cursor-pointer"
+                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Semua Produk</option>
                 {products.map((p) => (
@@ -575,7 +575,7 @@ export default function InventoryPage() {
               <select
                 value={logActionFilter}
                 onChange={(e) => setLogActionFilter(e.target.value)}
-                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none cursor-pointer"
+                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Semua Aksi</option>
                 <option value="STOCK_IN">STOCK_IN (Penambahan)</option>
@@ -585,7 +585,7 @@ export default function InventoryPage() {
             </div>
 
             <div className="text-xs font-mono text-text-secondary shrink-0">
-              Total Log: <span className="text-[#F2F3F5] font-bold">{logs.length}</span>
+              Total Log: <span className="text-text-primary font-bold">{logs.length}</span>
             </div>
           </div>
 
@@ -622,22 +622,22 @@ export default function InventoryPage() {
                     <TableCell className="text-[11px] font-mono text-text-secondary whitespace-nowrap">
                       {formatDateTime(log.createdAt)}
                     </TableCell>
-                    <TableCell className="font-semibold text-[#F2F3F5] font-sans">{log.productName}</TableCell>
+                    <TableCell className="font-semibold text-text-primary font-sans">{log.productName}</TableCell>
                     <TableCell className="text-xs text-text-secondary">{log.categoryName}</TableCell>
                     <TableCell>
                       <span
                         className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] border ${
                           log.action === "STOCK_IN"
-                            ? "bg-p3r-blue-subtle text-p3r-blue border-p3r-blue-border"
+                            ? "bg-sage-subtle text-sage border-sage-border"
                             : log.action === "STOCK_OUT"
-                            ? "bg-persona-red-subtle text-persona-red border-persona-red-border"
+                            ? "bg-coffee-subtle text-coffee border-coffee-border"
                             : "bg-pamber-subtle text-pamber border-pamber-border"
                         }`}
                       >
                         {log.action}
                       </span>
                     </TableCell>
-                    <TableCell className="font-mono font-bold text-[#F2F3F5]">
+                    <TableCell className="font-mono font-bold text-text-primary">
                       {log.action === "STOCK_IN"
                         ? `+${log.quantity}`
                         : log.action === "STOCK_OUT"
@@ -645,7 +645,7 @@ export default function InventoryPage() {
                         : `${log.newStock >= log.previousStock ? "+" : ""}${log.newStock - log.previousStock}`}
                     </TableCell>
                     <TableCell className="font-mono text-text-secondary">
-                      {log.previousStock} → <span className="font-bold text-[#F2F3F5]">{log.newStock}</span>
+                      {log.previousStock} → <span className="font-bold text-text-primary">{log.newStock}</span>
                     </TableCell>
                     <TableCell className="text-text-secondary text-xs">{log.reason}</TableCell>
                     <TableCell className="text-text-secondary text-xs font-semibold">{log.recordedBy}</TableCell>
@@ -673,7 +673,7 @@ export default function InventoryPage() {
       >
         <form onSubmit={handleConfirmAdjust} className="space-y-3.5 font-sans">
           {modalError && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium flex items-center gap-1.5">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium flex items-center gap-1.5">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{modalError}</span>
             </div>
@@ -690,7 +690,7 @@ export default function InventoryPage() {
                   setAdjustQuantity(p.stock);
                 }
               }}
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red cursor-pointer"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-text-primary focus:outline-none focus:border-coffee-border cursor-pointer"
             >
               {products.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -718,7 +718,7 @@ export default function InventoryPage() {
                   setAdjustReason("Barang rusak / kadaluarsa");
                 }
               }}
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red cursor-pointer"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-text-primary focus:outline-none focus:border-coffee-border cursor-pointer"
             >
               <option value="STOCK_IN">STOCK_IN — Penambahan Pasokan (Restock)</option>
               <option value="STOCK_OUT">STOCK_OUT — Pengurangan Manual (Rusak / Hilang / Kadaluarsa)</option>
@@ -736,7 +736,7 @@ export default function InventoryPage() {
               step="1"
               value={adjustQuantity}
               onChange={(e) => setAdjustQuantity(Number(e.target.value))}
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs font-mono font-bold text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs font-mono font-bold text-text-primary focus:outline-none focus:border-coffee-border"
               required
             />
           </div>
@@ -746,7 +746,7 @@ export default function InventoryPage() {
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px] text-xs font-mono space-y-1">
               <div className="flex justify-between text-text-secondary">
                 <span>Stok Sistem Saat Ini:</span>
-                <span className="text-[#F2F3F5] font-bold">
+                <span className="text-text-primary font-bold">
                   {currentStock} {selectedProduct.unit}
                 </span>
               </div>
@@ -755,13 +755,13 @@ export default function InventoryPage() {
                 <>
                   <div className="flex justify-between text-text-secondary">
                     <span>Hasil Opname Baru:</span>
-                    <span className="text-[#F2F3F5] font-bold">
+                    <span className="text-text-primary font-bold">
                       {adjustQuantity} {selectedProduct.unit}
                     </span>
                   </div>
                   <div className="flex justify-between pt-1 border-t border-surface-border font-bold">
                     <span>Selisih (Adjustment):</span>
-                    <span className={adjustmentDifference < 0 ? "text-persona-red" : "text-p3r-blue"}>
+                    <span className={adjustmentDifference < 0 ? "text-coffee" : "text-sage"}>
                       {adjustmentDifference > 0 ? `+${adjustmentDifference}` : adjustmentDifference}{" "}
                       {selectedProduct.unit}
                     </span>
@@ -770,7 +770,7 @@ export default function InventoryPage() {
               ) : (
                 <div className="flex justify-between pt-1 border-t border-surface-border font-bold">
                   <span>Estimasi Stok Baru:</span>
-                  <span className={projectedStock < 0 ? "text-persona-red" : "text-p3r-blue"}>
+                  <span className={projectedStock < 0 ? "text-coffee" : "text-sage"}>
                     {projectedStock} {selectedProduct.unit}
                   </span>
                 </div>
@@ -787,7 +787,7 @@ export default function InventoryPage() {
               value={adjustReason}
               onChange={(e) => setAdjustReason(e.target.value)}
               placeholder="e.g. Faktur pembelian #102 / Rusak saat unboxing / Opname shift malam"
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-text-primary focus:outline-none focus:border-coffee-border"
               required
             />
           </div>
@@ -799,7 +799,7 @@ export default function InventoryPage() {
               value={recordedBy}
               onChange={(e) => setRecordedBy(e.target.value)}
               placeholder="e.g. Admin / Supervisor Kasir"
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-text-primary focus:outline-none focus:border-coffee-border"
               required
             />
           </div>

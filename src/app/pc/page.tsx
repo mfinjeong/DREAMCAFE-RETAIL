@@ -296,8 +296,8 @@ export default function PCManagementPage() {
       {/* Top Action Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             PC Station Fleet
           </h2>
           <span className="text-[11px] font-mono text-text-secondary">
@@ -307,8 +307,8 @@ export default function PCManagementPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleManualRefresh}
-            className={`p-1.5 text-text-secondary hover:text-[#F2F3F5] bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
-              isRefreshing ? "animate-spin text-persona-red" : ""
+            className={`p-1.5 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
+              isRefreshing ? "animate-spin text-coffee" : ""
             }`}
             title="Refresh database records"
           >
@@ -323,7 +323,7 @@ export default function PCManagementPage() {
 
       {/* Error Banner */}
       {errorMsg && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[8px] text-xs text-persona-red flex items-center justify-between">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[8px] text-xs text-coffee flex items-center justify-between">
           <div className="flex items-center gap-2 font-medium">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>Connection Error: {errorMsg}</span>
@@ -333,7 +333,7 @@ export default function PCManagementPage() {
               setIsLoading(true);
               fetchPCs(searchQuery, zoneFilter, statusFilter);
             }}
-            className="px-2.5 py-1 bg-persona-red hover:bg-persona-red-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
+            className="px-2.5 py-1 bg-coffee hover:bg-coffee-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
           >
             Retry
           </button>
@@ -349,7 +349,7 @@ export default function PCManagementPage() {
             placeholder="Search station or specs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red font-sans"
+            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border font-sans"
           />
         </div>
 
@@ -357,7 +357,7 @@ export default function PCManagementPage() {
           <select
             value={zoneFilter}
             onChange={(e) => setZoneFilter(e.target.value)}
-            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none font-medium cursor-pointer"
+            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none font-medium cursor-pointer"
           >
             <option value="ALL">All Zones</option>
             <option value="REGULAR">REGULAR</option>
@@ -368,7 +368,7 @@ export default function PCManagementPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none font-medium cursor-pointer"
+            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none font-medium cursor-pointer"
           >
             <option value="ALL">All Status</option>
             <option value="AVAILABLE">AVAILABLE</option>
@@ -397,7 +397,7 @@ export default function PCManagementPage() {
             <TableRow>
               <TableCell colSpan={7} className="h-32 text-center text-text-secondary text-xs font-mono">
                 <div className="flex flex-col items-center justify-center gap-2">
-                  <RefreshCw className="w-4 h-4 animate-spin text-persona-red" />
+                  <RefreshCw className="w-4 h-4 animate-spin text-coffee" />
                   <span>Loading PC stations from database...</span>
                 </div>
               </TableCell>
@@ -411,13 +411,13 @@ export default function PCManagementPage() {
           ) : (
             pcs.map((pc) => (
               <TableRow key={pc.id}>
-                <TableCell className="font-extrabold text-[#F2F3F5] font-sans">
+                <TableCell className="font-extrabold text-text-primary font-sans">
                   {pc.stationNumber}
                 </TableCell>
                 <TableCell className="font-mono text-[11px] text-text-secondary">
                   {pc.zone}
                 </TableCell>
-                <TableCell className="font-mono text-[#F2F3F5] font-semibold">
+                <TableCell className="font-mono text-text-primary font-semibold">
                   {formatRupiah(pc.hourlyRate)}
                 </TableCell>
                 <TableCell>
@@ -429,7 +429,7 @@ export default function PCManagementPage() {
                 <TableCell className="text-xs">
                   {pc.status === "IN_USE" && pc.activeSession ? (
                     <div className="space-y-0.5 font-mono">
-                      <span className="text-persona-red font-bold block">
+                      <span className="text-coffee font-bold block">
                         {pc.activeSession.memberName || pc.activeSession.guestName || "Guest"}
                       </span>
                       <span className="text-text-secondary text-[10px] block">
@@ -446,7 +446,7 @@ export default function PCManagementPage() {
                     {pc.status === "AVAILABLE" && (
                       <button
                         onClick={() => handleOpenStartSession(pc)}
-                        className="p-1.5 text-white bg-persona-red hover:bg-persona-red-hover active:bg-persona-red-active rounded-[4px] cursor-pointer transition-colors"
+                        className="p-1.5 text-white bg-coffee hover:bg-coffee-hover active:bg-coffee-hover rounded-[4px] cursor-pointer transition-colors"
                         title="Start Session"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
@@ -457,7 +457,7 @@ export default function PCManagementPage() {
                       <>
                         <button
                           onClick={() => handleOpenCheckout(pc)}
-                          className="p-1.5 text-p3r-blue hover:text-white bg-p3r-blue-subtle hover:bg-p3r-blue border border-p3r-blue-border rounded-[4px] cursor-pointer transition-colors"
+                          className="p-1.5 text-sage hover:text-white bg-sage-subtle hover:bg-sage border border-sage-border rounded-[4px] cursor-pointer transition-colors"
                           title="Checkout & Pay Cash"
                         >
                           <DollarSign className="w-3.5 h-3.5" />
@@ -471,7 +471,7 @@ export default function PCManagementPage() {
                               alert(err instanceof Error ? err.message : "Failed to stop session");
                             }
                           }}
-                          className="p-1.5 text-persona-red hover:text-white bg-persona-red-subtle hover:bg-persona-red border border-persona-red-border rounded-[4px] cursor-pointer transition-colors"
+                          className="p-1.5 text-coffee hover:text-white bg-coffee-subtle hover:bg-coffee border border-coffee-border rounded-[4px] cursor-pointer transition-colors"
                           title="Stop Session"
                         >
                           <Square className="w-3.5 h-3.5 fill-current" />
@@ -485,21 +485,21 @@ export default function PCManagementPage() {
                         setSelectedPC(pc);
                         setDetailModalOpen(true);
                       }}
-                      className="p-1.5 text-text-secondary hover:text-[#F2F3F5] bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border cursor-pointer transition-colors"
+                      className="p-1.5 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border cursor-pointer transition-colors"
                       title="Detail"
                     >
                       <Eye className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleOpenEdit(pc)}
-                      className="p-1.5 text-text-secondary hover:text-[#F2F3F5] bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border cursor-pointer transition-colors"
+                      className="p-1.5 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border cursor-pointer transition-colors"
                       title="Edit"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeletePC(pc.id, pc.stationNumber)}
-                      className="p-1.5 text-persona-red hover:text-white bg-persona-red-subtle hover:bg-persona-red rounded-[4px] border border-persona-red-border cursor-pointer transition-colors disabled:opacity-30"
+                      className="p-1.5 text-coffee hover:text-white bg-coffee-subtle hover:bg-coffee rounded-[4px] border border-coffee-border cursor-pointer transition-colors disabled:opacity-30"
                       title="Delete"
                       disabled={pc.status === "IN_USE"}
                     >
@@ -522,7 +522,7 @@ export default function PCManagementPage() {
       >
         <form onSubmit={handleSavePC} className="space-y-3.5">
           {actionError && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
               {actionError}
             </div>
           )}

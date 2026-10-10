@@ -259,7 +259,7 @@ export default function GameLibraryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-4 bg-persona-red persona-slash rounded-[1px]"></div>
+            <div className="w-1.5 h-4 bg-coffee rounded-[1px]"></div>
             <h1 className="text-xl font-black tracking-wider text-text-primary uppercase">
               Game Library & Station Compatibility
             </h1>
@@ -295,9 +295,9 @@ export default function GameLibraryPage() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[4px] flex items-center justify-between text-xs text-white">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[4px] flex items-center justify-between text-xs text-white">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-persona-red shrink-0" />
+            <AlertTriangle className="w-4 h-4 text-coffee shrink-0" />
             <span>{errorMessage}</span>
           </div>
           <Button variant="outline" size="sm" onClick={handleRefresh}>
@@ -329,9 +329,9 @@ export default function GameLibraryPage() {
         <div className="bg-surface-card border border-surface-border p-3.5 rounded-[4px]">
           <div className="flex items-center justify-between text-text-muted mb-1">
             <span className="text-[10px] font-mono uppercase tracking-wider">Console Games</span>
-            <Gamepad2 className="w-3.5 h-3.5 text-persona-red" />
+            <Gamepad2 className="w-3.5 h-3.5 text-coffee" />
           </div>
-          <div className="text-lg font-bold text-persona-red font-mono">{consoleCount}</div>
+          <div className="text-lg font-bold text-coffee font-mono">{consoleCount}</div>
           <div className="text-[10px] text-text-muted mt-0.5">PS5 / Nintendo Switch</div>
         </div>
 
@@ -356,7 +356,7 @@ export default function GameLibraryPage() {
               placeholder="Cari judul game, publisher, genre, atau tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-persona-red"
+              className="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-coffee-border"
             />
           </div>
 
@@ -368,7 +368,7 @@ export default function GameLibraryPage() {
                 onClick={() => setPlatformFilter(plat)}
                 className={`px-3 py-1 text-[11px] font-medium rounded-[3px] transition-colors ${
                   platformFilter === plat
-                    ? "bg-persona-red text-white"
+                    ? "bg-coffee text-white"
                     : "text-text-secondary hover:text-white"
                 }`}
               >
@@ -382,7 +382,7 @@ export default function GameLibraryPage() {
             <select
               value={genreFilter}
               onChange={(e) => setGenreFilter(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-persona-red"
+              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-coffee-border"
             >
               <option value="ALL">Semua Genre</option>
               {genres.map((g) => (
@@ -398,7 +398,7 @@ export default function GameLibraryPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as "ALL" | "ACTIVE" | "INACTIVE")}
-              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-persona-red"
+              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-coffee-border"
             >
               <option value="ALL">Semua Status</option>
               <option value="ACTIVE">Aktif</option>
@@ -411,7 +411,7 @@ export default function GameLibraryPage() {
       {/* Game Cards Grid */}
       {isLoading ? (
         <div className="p-12 text-center bg-surface-card border border-surface-border rounded-[4px]">
-          <RefreshCw className="w-6 h-6 animate-spin text-persona-red mx-auto mb-2" />
+          <RefreshCw className="w-6 h-6 animate-spin text-coffee mx-auto mb-2" />
           <p className="text-xs text-text-secondary font-mono">Memuat pustaka game dari Supabase...</p>
         </div>
       ) : games.length === 0 ? (
@@ -447,7 +447,7 @@ export default function GameLibraryPage() {
                         </span>
                       )}
                       {game.isInstalledConsole && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-persona-red/15 text-persona-red border border-persona-red/30 rounded">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-coffee/15 text-coffee border border-coffee-border/30 rounded">
                           CONSOLE
                         </span>
                       )}
@@ -529,7 +529,7 @@ export default function GameLibraryPage() {
 
                     <button
                       onClick={() => handleDelete(game)}
-                      className="p-1.5 text-text-muted hover:text-persona-red hover:bg-surface-dark rounded transition-colors"
+                      className="p-1.5 text-text-muted hover:text-coffee hover:bg-surface-dark rounded transition-colors"
                       title="Hapus / Nonaktifkan"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -550,7 +550,7 @@ export default function GameLibraryPage() {
       >
         <form onSubmit={handleCreateSubmit} className="space-y-4">
           {formError && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded text-xs text-white">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded text-xs text-white">
               {formError}
             </div>
           )}
@@ -558,7 +558,7 @@ export default function GameLibraryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Judul Game <span className="text-persona-red">*</span>
+                Judul Game <span className="text-coffee">*</span>
               </label>
               <Input
                 required
@@ -570,7 +570,7 @@ export default function GameLibraryPage() {
 
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Publisher <span className="text-persona-red">*</span>
+                Publisher <span className="text-coffee">*</span>
               </label>
               <Input
                 required
@@ -584,7 +584,7 @@ export default function GameLibraryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Genre <span className="text-persona-red">*</span>
+                Genre <span className="text-coffee">*</span>
               </label>
               <Input
                 required
@@ -630,7 +630,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledOnPc: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-persona-red focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
                 />
                 <span>Terpasang di PC Stations</span>
               </label>
@@ -642,7 +642,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledConsole: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-persona-red focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
                 />
                 <span>Terpasang di Console Stations (PS5/Switch)</span>
               </label>
@@ -674,7 +674,7 @@ export default function GameLibraryPage() {
       >
         <form onSubmit={handleEditSubmit} className="space-y-4">
           {formError && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded text-xs text-white">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded text-xs text-white">
               {formError}
             </div>
           )}
@@ -682,7 +682,7 @@ export default function GameLibraryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Judul Game <span className="text-persona-red">*</span>
+                Judul Game <span className="text-coffee">*</span>
               </label>
               <Input
                 required
@@ -693,7 +693,7 @@ export default function GameLibraryPage() {
 
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Publisher <span className="text-persona-red">*</span>
+                Publisher <span className="text-coffee">*</span>
               </label>
               <Input
                 required
@@ -706,7 +706,7 @@ export default function GameLibraryPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">
-                Genre <span className="text-persona-red">*</span>
+                Genre <span className="text-coffee">*</span>
               </label>
               <Input
                 required
@@ -748,7 +748,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledOnPc: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-persona-red focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
                 />
                 <span>Support PC</span>
               </label>
@@ -760,7 +760,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledConsole: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-persona-red focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
                 />
                 <span>Support Console</span>
               </label>
@@ -772,7 +772,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isActive: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-persona-red focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
                 />
                 <span>Status Aktif</span>
               </label>

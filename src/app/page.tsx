@@ -215,31 +215,31 @@ export default function DashboardPage() {
           <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold">
             TOTAL PC
           </span>
-          <span className="text-2xl font-black font-sans text-[#F2F3F5] mt-1 block">
+          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
             {isLoading ? "..." : totalPC}
           </span>
         </div>
 
         {/* AVAILABLE: Persona 3 Reload Blue Accent */}
         <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-p3r-blue"></span>
+          <span className="absolute top-0 left-0 right-0 h-[2px] bg-sage"></span>
           <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-p3r-blue persona-slash rounded-[1px]"></span>
+            <span className="w-1.5 h-1.5 bg-sage rounded-[1px]"></span>
             AVAILABLE
           </span>
-          <span className="text-2xl font-black font-sans text-[#F2F3F5] mt-1 block">
+          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
             {isLoading ? "..." : availableCount}
           </span>
         </div>
 
         {/* IN USE: Persona Red Accent */}
         <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-persona-red"></span>
+          <span className="absolute top-0 left-0 right-0 h-[2px] bg-coffee"></span>
           <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-persona-red persona-slash rounded-[1px]"></span>
+            <span className="w-1.5 h-1.5 bg-coffee rounded-[1px]"></span>
             IN USE
           </span>
-          <span className="text-2xl font-black font-sans text-[#F2F3F5] mt-1 block">
+          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
             {isLoading ? "..." : inUseCount}
           </span>
         </div>
@@ -248,10 +248,10 @@ export default function DashboardPage() {
         <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
           <span className="absolute top-0 left-0 right-0 h-[2px] bg-pamber"></span>
           <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-pamber persona-slash rounded-[1px]"></span>
+            <span className="w-1.5 h-1.5 bg-pamber rounded-[1px]"></span>
             MAINTENANCE
           </span>
-          <span className="text-2xl font-black font-sans text-[#F2F3F5] mt-1 block">
+          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
             {isLoading ? "..." : maintenanceCount}
           </span>
         </div>
@@ -273,14 +273,14 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* ACTIVE SESSIONS */}
         <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5 flex items-center justify-between">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-persona-red"></span>
+          <span className="absolute top-0 left-0 right-0 h-[2px] bg-coffee"></span>
           <div>
             <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-persona-red animate-pulse" />
+              <Activity className="w-3.5 h-3.5 text-coffee animate-pulse" />
               ACTIVE SESSIONS
             </span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black font-sans text-[#F2F3F5]">
+              <span className="text-2xl font-black font-sans text-text-primary">
                 {isLoading ? "..." : liveActiveSessions}
               </span>
               <span className="text-xs font-mono text-text-muted">
@@ -290,34 +290,34 @@ export default function DashboardPage() {
           </div>
           <div className="hidden sm:flex flex-col items-end text-right">
             <span className="text-[11px] font-mono text-text-secondary">Prisma Live State</span>
-            <span className="text-[10px] font-mono text-persona-red font-semibold uppercase">Real-Time Sync</span>
+            <span className="text-[10px] font-mono text-coffee font-semibold uppercase">Real-Time Sync</span>
           </div>
         </div>
 
         {/* TODAY'S REVENUE */}
         <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5 flex items-center justify-between">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-p3r-blue"></span>
+          <span className="absolute top-0 left-0 right-0 h-[2px] bg-sage"></span>
           <div>
             <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-p3r-blue" />
+              <DollarSign className="w-3.5 h-3.5 text-sage" />
               TODAY&apos;S REVENUE
             </span>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black font-mono text-[#F2F3F5]">
+              <span className="text-2xl font-black font-mono text-text-primary">
                 {isLoading ? "..." : formatRupiah(todayRevenue)}
               </span>
             </div>
           </div>
           <div className="hidden sm:flex flex-col items-end text-right">
             <span className="text-[11px] font-mono text-text-secondary">Cash Transactions</span>
-            <span className="text-[10px] font-mono text-p3r-blue font-semibold uppercase">Verified Backend</span>
+            <span className="text-[10px] font-mono text-sage font-semibold uppercase">Verified Backend</span>
           </div>
         </div>
       </div>
 
       {/* Error State Banner */}
       {errorMessage && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[8px] text-xs text-persona-red flex items-center justify-between">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[8px] text-xs text-coffee flex items-center justify-between">
           <div className="flex items-center gap-2 font-medium">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>Connection Error: {errorMessage}</span>
@@ -327,7 +327,7 @@ export default function DashboardPage() {
               setIsLoading(true);
               fetchData();
             }}
-            className="px-2.5 py-1 bg-persona-red hover:bg-persona-red-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer transition-colors"
+            className="px-2.5 py-1 bg-coffee hover:bg-coffee-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer transition-colors"
           >
             Retry Connection
           </button>
@@ -338,8 +338,8 @@ export default function DashboardPage() {
       <div className="bg-surface border border-surface-border rounded-[8px] px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2.5 select-none">
         <div className="flex items-center gap-2 text-xs">
           <div className="flex items-center gap-1.5 mr-2">
-            <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-            <span className="text-xs font-extrabold text-[#F2F3F5] uppercase tracking-wider font-sans">
+            <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+            <span className="text-xs font-extrabold text-text-primary uppercase tracking-wider font-sans">
               PC STATIONS
             </span>
           </div>
@@ -350,8 +350,8 @@ export default function DashboardPage() {
               onClick={() => setSelectedZone(zone)}
               className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors duration-100 cursor-pointer ${
                 selectedZone === zone
-                  ? "bg-persona-red text-white"
-                  : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                  ? "bg-coffee text-white"
+                  : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
               }`}
             >
               {zone}
@@ -368,7 +368,7 @@ export default function DashboardPage() {
               className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors duration-100 cursor-pointer ${
                 selectedStatus === status
                   ? "bg-surface-muted text-white border border-surface-border"
-                  : "text-text-secondary hover:text-[#F2F3F5]"
+                  : "text-text-secondary hover:text-text-primary"
               }`}
             >
               {status === "IN_USE" ? "IN USE" : status}
@@ -376,8 +376,8 @@ export default function DashboardPage() {
           ))}
           <button
             onClick={handleManualRefresh}
-            className={`p-1.5 text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover rounded-[4px] ml-1 transition-colors cursor-pointer ${
-              isRefreshing ? "animate-spin text-persona-red" : ""
+            className={`p-1.5 text-text-secondary hover:text-text-primary hover:bg-surface-hover rounded-[4px] ml-1 transition-colors cursor-pointer ${
+              isRefreshing ? "animate-spin text-coffee" : ""
             }`}
             title="Refresh Stations"
           >
@@ -389,7 +389,7 @@ export default function DashboardPage() {
       {/* Main PC Grid */}
       {isLoading ? (
         <div className="h-44 border border-surface-border rounded-[8px] bg-surface flex flex-col items-center justify-center gap-2 text-text-secondary text-xs font-mono">
-          <RefreshCw className="w-5 h-5 animate-spin text-persona-red" />
+          <RefreshCw className="w-5 h-5 animate-spin text-coffee" />
           <span>Loading stations from database...</span>
         </div>
       ) : filteredPCs.length === 0 ? (

@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className="bg-background text-[#F2F3F5] antialiased selection:bg-persona-red selection:text-white">
+      <body className="bg-background text-text-primary antialiased selection:bg-coffee selection:text-white">
         <DashboardShell>{children}</DashboardShell>
       </body>
     </html>

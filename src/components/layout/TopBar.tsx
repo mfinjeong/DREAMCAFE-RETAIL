@@ -5,18 +5,18 @@ import { usePathname } from "next/navigation";
 import { Search, Bell, User } from "lucide-react";
 
 const pageTitles: Record<string, string> = {
-  "/": "Dashboard Overview",
-  "/pc": "PC Management",
+  "/": "Dashboard",
+  "/pc": "PC Stations",
   "/consoles": "Console Lounge",
   "/sessions": "Active Sessions",
   "/booking": "Reservations",
   "/store": "Store & POS",
-  "/inventory": "Inventory & Stock",
-  "/members": "Members Directory",
+  "/inventory": "Inventory",
+  "/members": "Members",
   "/games": "Game Library",
-  "/maintenance": "Maintenance & Support",
-  "/reports": "Financial Reports",
-  "/settings": "System Settings",
+  "/maintenance": "Maintenance",
+  "/reports": "Reports",
+  "/settings": "Settings",
 };
 
 export const TopBar: React.FC = () => {
@@ -25,43 +25,41 @@ export const TopBar: React.FC = () => {
   const title = pageTitles[pathname] || "Dashboard";
 
   return (
-    <header className="h-12 bg-surface-muted border-b border-surface-border px-4 flex items-center justify-between sticky top-0 z-30 select-none">
-      {/* Left: Page Title with small red diagonal accent */}
-      <div className="flex items-center gap-2">
-        <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-        <h1 className="text-xs font-bold text-[#F2F3F5] tracking-wide font-sans">
+    <header className="h-14 bg-surface border-b border-surface-border px-4 lg:px-6 flex items-center justify-between sticky top-0 z-30">
+      <div className="flex items-center gap-3 lg:gap-4">
+        <div className="hidden lg:block w-1 h-6 bg-coffee rounded-sm"></div>
+        <h1 className="text-base lg:text-lg font-bold text-coffee tracking-tight ml-12 lg:ml-0">
           {title}
         </h1>
       </div>
 
-      {/* Right: Search, Notifications, Admin Profile */}
-      <div className="flex items-center gap-2.5">
-        <div className="relative hidden md:block w-48">
-          <Search className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+      <div className="flex items-center gap-3">
+        <div className="relative hidden md:block w-56">
+          <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search stations, users..."
+            placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red transition-colors"
+            className="w-full bg-surface-muted border border-surface-border rounded-md pl-10 pr-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-sage transition-colors"
           />
         </div>
 
         <button
-          className="p-1.5 rounded-[6px] text-text-secondary hover:text-[#F2F3F5] hover:bg-surface transition-colors relative cursor-pointer"
+          className="p-2 rounded-md text-text-secondary hover:text-coffee hover:bg-surface-hover transition-colors relative"
           title="Notifications"
         >
-          <Bell className="w-4 h-4" />
-          <span className="w-1.5 h-1.5 rounded-full bg-persona-red absolute top-1.5 right-1.5"></span>
+          <Bell className="w-5 h-5" />
+          <span className="w-2 h-2 rounded-full bg-pamber absolute top-1.5 right-1.5"></span>
         </button>
 
-        <div className="h-3.5 w-px bg-surface-border"></div>
+        <div className="h-5 w-px bg-surface-border hidden sm:block"></div>
 
-        <div className="flex items-center gap-2 text-xs text-text-secondary">
-          <div className="w-6 h-6 rounded-[4px] bg-surface border border-surface-border flex items-center justify-center text-text-secondary">
-            <User className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-md bg-coffee-subtle border border-coffee-border flex items-center justify-center">
+            <User className="w-4 h-4 text-coffee" />
           </div>
-          <span className="text-[#F2F3F5] text-xs font-semibold hidden sm:inline">Admin</span>
+          <span className="text-sm font-medium text-text-primary hidden sm:inline">Admin</span>
         </div>
       </div>
     </header>

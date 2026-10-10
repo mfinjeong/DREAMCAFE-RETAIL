@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -16,6 +16,8 @@ import {
   Wrench,
   Users,
   Flame,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface NavItem {
@@ -40,22 +42,21 @@ const mainNavItems: NavItem[] = [
 
 export const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <aside className="w-52 bg-surface-muted border-r border-surface-border flex flex-col shrink-0 h-screen sticky top-0 select-none">
-      {/* Brand Header */}
-      <div className="h-12 flex items-center px-4 border-b border-surface-border gap-2">
-        <div className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></div>
-        <span className="text-xs font-black tracking-widest text-[#F2F3F5] uppercase">
-          DREAM<span className="text-persona-red">CAFÉ</span>
-        </span>
-        <span className="text-[9px] font-mono text-text-muted border border-surface-border px-1 py-0.5 rounded-[2px] ml-auto">
-          v2.4
-        </span>
+  const nav = (
+    <>
+      <div className="h-14 flex items-center px-4 border-b border-surface-border gap-3">
+        <div className="pixel-mark scale-75"></div>
+        <div className="flex flex-col leading-tight">
+          <span className="text-xs font-bold tracking-wide text-coffee">
+            DREAMCAFÉ
+          </span>
+          <span className="text-[10px] text-text-muted font-mono">Retail</span>
+        </div>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="flex-1 px-2.5 py-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {mainNavItems.map((item) => {
           const isActive =
             pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
@@ -65,47 +66,62 @@ export const Sidebar: React.FC = () => {
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex items-center gap-2.5 px-3 py-2 rounded-[6px] text-xs font-medium transition-colors duration-100 ${
+              onClick={() => setMobileOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all ${
                 isActive
-                  ? "bg-persona-red-subtle text-white border border-persona-red-border/70 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:bg-persona-red before:rounded-l-[2px]"
-                  : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                  ? "bg-coffee text-white shadow-sm"
+                  : "text-text-secondary hover:text-coffee hover:bg-surface-hover"
               }`}
             >
-              <Icon
-                className={`w-4 h-4 shrink-0 transition-colors ${
-                  isActive ? "text-persona-red" : "text-text-muted"
-                }`}
-              />
+              <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? "text-white" : ""}`} />
               <span>{item.label}</span>
-              {isActive && (
-                <span className="ml-auto w-1 h-2 bg-persona-red persona-slash"></span>
-              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Settings at the bottom */}
-      <div className="p-2.5 border-t border-surface-border">
+      <div className="p-3 border-t border-surface-border">
         <Link
           href="/settings"
-          className={`relative flex items-center gap-2.5 px-3 py-2 rounded-[6px] text-xs font-medium transition-colors duration-100 ${
+          onClick={() => setMobileOpen(false)}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all ${
             pathname === "/settings"
-              ? "bg-persona-red-subtle text-white border border-persona-red-border/70 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:bg-persona-red before:rounded-l-[2px]"
-              : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+              ? "bg-coffee text-white shadow-sm"
+              : "text-text-secondary hover:text-coffee hover:bg-surface-hover"
           }`}
         >
-          <Settings
-            className={`w-4 h-4 shrink-0 ${
-              pathname === "/settings" ? "text-persona-red" : "text-text-muted"
-            }`}
-          />
+          <Settings className={`w-[18px] h-[18px] shrink-0 ${pathname === "/settings" ? "text-white" : ""}`} />
           <span>Settings</span>
-          {pathname === "/settings" && (
-            <span className="ml-auto w-1 h-2 bg-persona-red persona-slash"></span>
-          )}
         </Link>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      <button
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="fixed top-3 left-3 z-50 lg:hidden p-2 bg-surface border border-surface-border rounded-md shadow-sm text-coffee hover:bg-surface-hover transition-colors"
+        aria-label="Toggle menu"
+      >
+        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
+      <aside className="hidden lg:flex w-56 bg-surface border-r border-surface-border flex-col shrink-0 h-screen sticky top-0">
+        {nav}
+      </aside>
+
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-text-primary/40 z-40 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="fixed top-0 left-0 w-64 h-screen bg-surface border-r border-surface-border flex flex-col z-40 lg:hidden shadow-xl">
+            {nav}
+          </aside>
+        </>
+      )}
+    </>
   );
 };

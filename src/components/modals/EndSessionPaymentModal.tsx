@@ -84,7 +84,7 @@ export const EndSessionPaymentModal: React.FC<EndSessionPaymentModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-3.5">
         {error && (
-          <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+          <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
             {error}
           </div>
         )}
@@ -93,11 +93,11 @@ export const EndSessionPaymentModal: React.FC<EndSessionPaymentModalProps> = ({
         <div className="p-3 bg-surface-muted border border-surface-border rounded-[8px]">
           <div className="flex items-center justify-between text-xs text-text-secondary mb-1">
             <span>Payment Method:</span>
-            <span className="text-persona-red font-bold font-mono">CASH ONLY</span>
+            <span className="text-coffee font-bold font-mono">CASH ONLY</span>
           </div>
           <div className="flex items-baseline justify-between pt-1 border-t border-surface-border">
             <span className="text-xs text-text-secondary font-medium">Total Bill:</span>
-            <span className="text-base font-extrabold text-[#F2F3F5] font-mono">{formatRupiah(totalAmount)}</span>
+            <span className="text-base font-extrabold text-text-primary font-mono">{formatRupiah(totalAmount)}</span>
           </div>
         </div>
 
@@ -120,7 +120,7 @@ export const EndSessionPaymentModal: React.FC<EndSessionPaymentModalProps> = ({
                 setCashInput(e.target.value);
                 setError(null);
               }}
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-9 pr-3 py-2 text-sm font-mono font-bold text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-9 pr-3 py-2 text-sm font-mono font-bold text-text-primary focus:outline-none focus:border-coffee-border"
               autoFocus
               required
             />
@@ -136,7 +136,7 @@ export const EndSessionPaymentModal: React.FC<EndSessionPaymentModalProps> = ({
                   setCashInput(q.value.toString());
                   setError(null);
                 }}
-                className="py-1.5 px-1 bg-surface-muted hover:bg-surface-hover border border-surface-border text-xs font-mono text-text-secondary hover:text-[#F2F3F5] rounded-[6px] transition-colors text-center cursor-pointer"
+                className="py-1.5 px-1 bg-surface-muted hover:bg-surface-hover border border-surface-border text-xs font-mono text-text-secondary hover:text-text-primary rounded-[6px] transition-colors text-center cursor-pointer"
               >
                 {q.label}
               </button>
@@ -150,8 +150,8 @@ export const EndSessionPaymentModal: React.FC<EndSessionPaymentModalProps> = ({
             cashReceived === 0
               ? "bg-surface-muted border-surface-border text-text-secondary"
               : isInsufficient
-              ? "bg-persona-red-subtle border-persona-red-border text-persona-red"
-              : "bg-p3r-blue-subtle border-p3r-blue-border text-p3r-blue font-bold"
+              ? "bg-coffee-subtle border-coffee-border text-coffee"
+              : "bg-sage-subtle border-sage-border text-sage font-bold"
           }`}
         >
           <span>Change:</span>

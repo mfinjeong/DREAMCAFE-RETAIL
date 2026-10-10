@@ -90,7 +90,7 @@ export default function ReportsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-1.5 h-3.5 bg-persona-red persona-slash" />
+          <div className="w-1.5 h-3.5 bg-coffee" />
           <div>
             <h2 className="text-sm font-bold text-text-primary tracking-tight font-sans">
               Financial Reports & Analytics
@@ -110,7 +110,7 @@ export default function ReportsPage() {
                 onClick={() => setPeriod(p)}
                 className={`px-2.5 py-1 text-xs font-mono rounded-[4px] capitalize transition-colors ${
                   period === p
-                    ? "bg-persona-red text-white font-semibold shadow-sm"
+                    ? "bg-coffee text-white font-semibold shadow-sm"
                     : "text-text-secondary hover:text-text-primary"
                 }`}
               >
@@ -120,7 +120,7 @@ export default function ReportsPage() {
           </div>
 
           <Button variant="outline" size="sm" onClick={() => fetchReports()} disabled={isLoading}>
-            <RotateCcw className={`w-3.5 h-3.5 mr-1 ${isLoading ? "animate-spin text-persona-red" : ""}`} />
+            <RotateCcw className={`w-3.5 h-3.5 mr-1 ${isLoading ? "animate-spin text-coffee" : ""}`} />
             Refresh
           </Button>
         </div>
@@ -136,7 +136,7 @@ export default function ReportsPage() {
               type="date"
               value={customStartDate}
               onChange={(e) => setCustomStartDate(e.target.value)}
-              className="bg-surface-muted border border-surface-border rounded-[4px] px-2 py-0.5 text-text-primary focus:outline-none focus:border-persona-red font-mono"
+              className="bg-surface-muted border border-surface-border rounded-[4px] px-2 py-0.5 text-text-primary focus:outline-none focus:border-coffee-border font-mono"
             />
           </div>
           <div className="flex items-center gap-1.5">
@@ -145,7 +145,7 @@ export default function ReportsPage() {
               type="date"
               value={customEndDate}
               onChange={(e) => setCustomEndDate(e.target.value)}
-              className="bg-surface-muted border border-surface-border rounded-[4px] px-2 py-0.5 text-text-primary focus:outline-none focus:border-persona-red font-mono"
+              className="bg-surface-muted border border-surface-border rounded-[4px] px-2 py-0.5 text-text-primary focus:outline-none focus:border-coffee-border font-mono"
             />
           </div>
           <Button variant="primary" size="sm" onClick={() => fetchReports()}>
@@ -155,14 +155,14 @@ export default function ReportsPage() {
       )}
 
       {errorMsg && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee">
           {errorMsg}
         </div>
       )}
 
       {/* Primary Metric Cards (Preserved DREAMCAFE Visual Hierarchy) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 bg-surface border border-surface-border rounded-[6px] border-t-2 border-t-persona-red relative overflow-hidden">
+        <div className="p-3.5 bg-surface border border-surface-border rounded-[6px] border-t-2 border-t-coffee relative overflow-hidden">
           <span className="text-[10px] font-mono uppercase text-text-muted font-semibold block tracking-wider">
             Total Revenue (Cash)
           </span>
@@ -175,7 +175,7 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="p-3.5 bg-surface border border-surface-border rounded-[6px] border-t-2 border-t-p3r-blue relative overflow-hidden">
+        <div className="p-3.5 bg-surface border border-surface-border rounded-[6px] border-t-2 border-t-sage relative overflow-hidden">
           <span className="text-[10px] font-mono uppercase text-text-muted font-semibold block tracking-wider">
             Station Sessions
           </span>
@@ -208,7 +208,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("overview")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap ${
             activeTab === "overview"
-              ? "bg-surface text-persona-red border border-surface-border"
+              ? "bg-surface text-coffee border border-surface-border"
               : "text-text-muted hover:text-text-primary"
           }`}
         >
@@ -220,7 +220,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("stations")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap ${
             activeTab === "stations"
-              ? "bg-surface text-persona-red border border-surface-border"
+              ? "bg-surface text-coffee border border-surface-border"
               : "text-text-muted hover:text-text-primary"
           }`}
         >
@@ -232,7 +232,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("store")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap ${
             activeTab === "store"
-              ? "bg-surface text-persona-red border border-surface-border"
+              ? "bg-surface text-coffee border border-surface-border"
               : "text-text-muted hover:text-text-primary"
           }`}
         >
@@ -244,7 +244,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("bookings_members")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap ${
             activeTab === "bookings_members"
-              ? "bg-surface text-persona-red border border-surface-border"
+              ? "bg-surface text-coffee border border-surface-border"
               : "text-text-muted hover:text-text-primary"
           }`}
         >
@@ -256,7 +256,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("transactions")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap ${
             activeTab === "transactions"
-              ? "bg-surface text-persona-red border border-surface-border"
+              ? "bg-surface text-coffee border border-surface-border"
               : "text-text-muted hover:text-text-primary"
           }`}
         >
@@ -267,7 +267,7 @@ export default function ReportsPage() {
 
       {isLoading ? (
         <div className="py-12 flex flex-col items-center justify-center gap-2 text-text-muted">
-          <Loader2 className="w-6 h-6 animate-spin text-persona-red" />
+          <Loader2 className="w-6 h-6 animate-spin text-coffee" />
           <span className="text-xs font-mono">Aggregating real database reports...</span>
         </div>
       ) : (
@@ -336,13 +336,13 @@ export default function ReportsPage() {
                           <TableCell className="font-mono text-xs font-semibold text-text-primary">
                             {d.date}
                           </TableCell>
-                          <TableCell className="font-mono text-xs font-bold text-persona-red">
+                          <TableCell className="font-mono text-xs font-bold text-coffee">
                             {formatRupiah(d.revenue)}
                           </TableCell>
                           <TableCell className="font-mono text-xs text-text-secondary">
                             {d.transactionCount}
                           </TableCell>
-                          <TableCell className="font-mono text-xs text-p3r-blue">
+                          <TableCell className="font-mono text-xs text-sage">
                             {formatRupiah(d.sessionRevenue)}
                           </TableCell>
                           <TableCell className="font-mono text-xs text-emerald-400">
@@ -383,7 +383,7 @@ export default function ReportsPage() {
 
                 <div className="p-3 bg-surface border border-surface-border rounded-[6px]">
                   <span className="text-[10px] font-mono text-text-muted uppercase">Most Active PC</span>
-                  <div className="text-base font-bold font-mono text-persona-red mt-0.5">
+                  <div className="text-base font-bold font-mono text-coffee mt-0.5">
                     {stat?.mostUsedPC || "None"}
                   </div>
                   <span className="text-[11px] font-mono text-text-muted">
@@ -427,7 +427,7 @@ export default function ReportsPage() {
                     ) : (
                       stat.stations.map((s) => (
                         <TableRow key={s.id}>
-                          <TableCell className="font-extrabold text-[#F2F3F5] font-sans">
+                          <TableCell className="font-extrabold text-text-primary font-sans">
                             {s.stationNumber} ({s.name})
                           </TableCell>
                           <TableCell className="font-mono text-xs text-text-muted">
@@ -441,7 +441,7 @@ export default function ReportsPage() {
                           <TableCell className="font-mono text-xs text-text-secondary">
                             {s.totalPlayHours} hrs
                           </TableCell>
-                          <TableCell className="font-mono text-xs font-bold text-persona-red">
+                          <TableCell className="font-mono text-xs font-bold text-coffee">
                             {formatRupiah(s.revenue)}
                           </TableCell>
                         </TableRow>
@@ -479,7 +479,7 @@ export default function ReportsPage() {
 
                 <div className="p-3 bg-surface border border-surface-border rounded-[6px]">
                   <span className="text-[10px] font-mono text-text-muted uppercase">Low Stock Alerts</span>
-                  <div className="text-base font-bold font-mono text-persona-red mt-0.5">
+                  <div className="text-base font-bold font-mono text-coffee mt-0.5">
                     {inv?.lowStockProducts || 0} Low / {inv?.outOfStockProducts || 0} Empty
                   </div>
                   <span className="text-[11px] font-mono text-text-muted">
@@ -489,7 +489,7 @@ export default function ReportsPage() {
 
                 <div className="p-3 bg-surface border border-surface-border rounded-[6px]">
                   <span className="text-[10px] font-mono text-text-muted uppercase">Total Inventory Value</span>
-                  <div className="text-base font-bold font-mono text-[#F2F3F5] mt-0.5">
+                  <div className="text-base font-bold font-mono text-text-primary mt-0.5">
                     {formatRupiah(inv?.totalValuation || 0)}
                   </div>
                   <span className="text-[11px] font-mono text-text-muted">
@@ -535,7 +535,7 @@ export default function ReportsPage() {
                           <TableCell className="font-mono text-xs text-text-secondary">
                             {formatRupiah(p.averagePrice)}
                           </TableCell>
-                          <TableCell className="font-mono text-xs font-bold text-persona-red">
+                          <TableCell className="font-mono text-xs font-bold text-coffee">
                             {formatRupiah(p.revenue)}
                           </TableCell>
                         </TableRow>
@@ -602,7 +602,7 @@ export default function ReportsPage() {
                     placeholder="Search invoice, member..."
                     value={searchTransactionQuery}
                     onChange={(e) => setSearchTransactionQuery(e.target.value)}
-                    className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-persona-red"
+                    className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border"
                   />
                 </div>
                 <span className="text-xs font-mono text-text-muted">
@@ -645,13 +645,13 @@ export default function ReportsPage() {
                         <TableCell className="font-mono text-[10px] text-text-muted">
                           {trx.type}
                         </TableCell>
-                        <TableCell className="font-mono text-xs font-bold text-persona-red">
+                        <TableCell className="font-mono text-xs font-bold text-coffee">
                           {formatRupiah(trx.totalAmount)}
                         </TableCell>
                         <TableCell className="font-mono text-xs text-text-muted">
                           {formatRupiah(trx.cashReceived)}
                         </TableCell>
-                        <TableCell className="font-mono text-xs text-p3r-blue font-medium">
+                        <TableCell className="font-mono text-xs text-sage font-medium">
                           {formatRupiah(trx.cashChange)}
                         </TableCell>
                         <TableCell className="text-xs text-text-dim">{trx.cashierName}</TableCell>

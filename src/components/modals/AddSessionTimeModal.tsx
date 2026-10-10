@@ -72,8 +72,8 @@ export const AddSessionTimeModal: React.FC<AddSessionTimeModalProps> = ({
                 onClick={() => setMinutes(p.value)}
                 className={`py-2 px-1 rounded-[6px] text-xs font-bold transition-colors border text-center cursor-pointer ${
                   minutes === p.value
-                    ? "bg-persona-red-subtle border-persona-red text-white"
-                    : "bg-surface-muted border-surface-border text-text-secondary hover:text-[#F2F3F5]"
+                    ? "bg-coffee-subtle border-coffee-border text-white"
+                    : "bg-surface-muted border-surface-border text-text-secondary hover:text-text-primary"
                 }`}
               >
                 {p.label}
@@ -84,7 +84,7 @@ export const AddSessionTimeModal: React.FC<AddSessionTimeModalProps> = ({
 
         <div className="p-3 bg-surface-muted border border-surface-border rounded-[6px] flex items-center justify-between text-xs">
           <span className="text-text-secondary font-medium">Additional Cost:</span>
-          <span className="text-sm font-bold text-[#F2F3F5] font-mono">{formatRupiah(cost)}</span>
+          <span className="text-sm font-bold text-text-primary font-mono">{formatRupiah(cost)}</span>
         </div>
 
         <div className="flex justify-end gap-2 pt-2 border-t border-surface-border">

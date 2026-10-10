@@ -58,7 +58,7 @@ export const PCDetailModal: React.FC<PCDetailModalProps> = ({
     >
       <div className="space-y-3.5">
         {errorMsg && (
-          <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium">
+          <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium">
             {errorMsg}
           </div>
         )}
@@ -77,25 +77,25 @@ export const PCDetailModal: React.FC<PCDetailModalProps> = ({
               <div className="grid grid-cols-2 gap-2 text-xs pt-1">
               <div>
                 <span className="text-[11px] text-text-muted block">Member</span>
-                <span className="text-[#F2F3F5] font-bold">
+                <span className="text-text-primary font-bold">
                   {pc.activeSession.memberName || pc.activeSession.guestName || "Guest"}
                 </span>
               </div>
               <div>
                 <span className="text-[11px] text-text-muted block">Active Game</span>
-                <span className="text-[#F2F3F5] font-semibold">
+                <span className="text-text-primary font-semibold">
                   {pc.currentGame || pc.activeSession.currentGame || "Game"}
                 </span>
               </div>
               <div>
                 <span className="text-[11px] text-text-muted block">Duration / Remaining</span>
-                <span className="text-persona-red font-bold font-mono">
+                <span className="text-coffee font-bold font-mono">
                   {pc.activeSession.durationMinutes}m ({pc.activeSession.remainingMinutes}m left)
                 </span>
               </div>
               <div>
                 <span className="text-[11px] text-text-muted block">Session Amount</span>
-                <span className="text-[#F2F3F5] font-bold font-mono">
+                <span className="text-text-primary font-bold font-mono">
                   {formatRupiah(pc.activeSession.totalPrice)}
                 </span>
               </div>
@@ -119,7 +119,7 @@ export const PCDetailModal: React.FC<PCDetailModalProps> = ({
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="text-xs text-persona-red border-persona-red-border hover:bg-persona-red hover:text-white"
+                  className="text-xs text-coffee border-coffee-border hover:bg-coffee hover:text-white"
                   onClick={async () => {
                     if (!confirm(`Stop active session for ${pc.stationNumber}?`)) return;
                     try {
@@ -148,7 +148,7 @@ export const PCDetailModal: React.FC<PCDetailModalProps> = ({
                   ? "Station under maintenance"
                   : "Station offline"}
               </span>
-              <span className="text-[#F2F3F5] font-bold font-mono">
+              <span className="text-text-primary font-bold font-mono">
                 Rate: {formatRupiah(pc.hourlyRate)} / hr
               </span>
             </div>
@@ -163,35 +163,35 @@ export const PCDetailModal: React.FC<PCDetailModalProps> = ({
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
               <span className="text-[10px] text-text-muted uppercase block font-semibold">CPU</span>
-              <span className="text-[#F2F3F5] text-xs font-medium truncate block">{pc.specsCpu}</span>
+              <span className="text-text-primary text-xs font-medium truncate block">{pc.specsCpu}</span>
             </div>
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
               <span className="text-[10px] text-text-muted uppercase block font-semibold">GPU</span>
-              <span className="text-[#F2F3F5] text-xs font-medium truncate block">{pc.specsGpu}</span>
+              <span className="text-text-primary text-xs font-medium truncate block">{pc.specsGpu}</span>
             </div>
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
               <span className="text-[10px] text-text-muted uppercase block font-semibold">RAM</span>
-              <span className="text-[#F2F3F5] text-xs font-medium">{pc.specsRam}</span>
+              <span className="text-text-primary text-xs font-medium">{pc.specsRam}</span>
             </div>
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
               <span className="text-[10px] text-text-muted uppercase block font-semibold">Monitor</span>
-              <span className="text-[#F2F3F5] text-xs font-medium truncate block">{pc.specsMonitor}</span>
+              <span className="text-text-primary text-xs font-medium truncate block">{pc.specsMonitor}</span>
             </div>
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
               <span className="text-[10px] text-text-muted uppercase block font-semibold">Storage</span>
-              <span className="text-[#F2F3F5] text-xs font-medium">{pc.specsStorage}</span>
+              <span className="text-text-primary text-xs font-medium">{pc.specsStorage}</span>
             </div>
             <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px]">
               <span className="text-[10px] text-text-muted uppercase block font-semibold">Peripherals</span>
-              <span className="text-[#F2F3F5] text-xs font-medium truncate block">{pc.specsPeripherals}</span>
+              <span className="text-text-primary text-xs font-medium truncate block">{pc.specsPeripherals}</span>
             </div>
           </div>
         </div>
 
         {/* Network & Diagnostics */}
         <div className="p-2.5 bg-surface-muted border border-surface-border rounded-[6px] flex items-center justify-between text-xs font-mono text-text-secondary">
-          <span>IP: <strong className="text-[#F2F3F5] font-semibold">{pc.ipAddress || "-"}</strong></span>
-          <span>MAC: <strong className="text-[#F2F3F5] font-semibold">{pc.macAddress || "-"}</strong></span>
+          <span>IP: <strong className="text-text-primary font-semibold">{pc.ipAddress || "-"}</strong></span>
+          <span>MAC: <strong className="text-text-primary font-semibold">{pc.macAddress || "-"}</strong></span>
         </div>
 
         {/* Status Control */}
@@ -203,7 +203,7 @@ export const PCDetailModal: React.FC<PCDetailModalProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as PCStatus)}
-              className="flex-1 bg-surface-muted border border-surface-border rounded-[6px] px-3 py-1.5 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red cursor-pointer"
+              className="flex-1 bg-surface-muted border border-surface-border rounded-[6px] px-3 py-1.5 text-xs text-text-primary focus:outline-none focus:border-coffee-border cursor-pointer"
             >
               <option value="">Select status...</option>
               <option value="AVAILABLE" disabled={pc.status === "AVAILABLE"}>

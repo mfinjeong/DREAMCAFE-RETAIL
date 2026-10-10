@@ -250,8 +250,8 @@ export default function BookingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             Station Reservations
           </h2>
         </div>
@@ -273,7 +273,7 @@ export default function BookingPage() {
           className={`p-3 rounded-[6px] border text-xs flex items-center justify-between ${
             notificationMsg.type === "success"
               ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-400"
-              : "bg-persona-red-subtle border-persona-red-border text-persona-red"
+              : "bg-coffee-subtle border-coffee-border text-coffee"
           }`}
         >
           <div className="flex items-center gap-2">
@@ -286,7 +286,7 @@ export default function BookingPage() {
           </div>
           <button
             onClick={() => setNotificationMsg(null)}
-            className="text-text-muted hover:text-[#F2F3F5] ml-4 text-xs font-mono"
+            className="text-text-muted hover:text-text-primary ml-4 text-xs font-mono"
           >
             ✕
           </button>
@@ -304,7 +304,7 @@ export default function BookingPage() {
               placeholder="Search code, station, member..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red"
+              className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border"
             />
           </div>
 
@@ -312,7 +312,7 @@ export default function BookingPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none focus:border-coffee-border"
           >
             <option value="ALL">All Status</option>
             <option value="PENDING">PENDING</option>
@@ -325,7 +325,7 @@ export default function BookingPage() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+            className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none focus:border-coffee-border"
           >
             <option value="ALL">All Station Types</option>
             <option value="PC">PC Stations</option>
@@ -339,12 +339,12 @@ export default function BookingPage() {
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              className="bg-transparent text-xs text-[#F2F3F5] focus:outline-none"
+              className="bg-transparent text-xs text-text-primary focus:outline-none"
             />
             {dateFilter && (
               <button
                 onClick={() => setDateFilter("")}
-                className="text-[10px] text-text-muted hover:text-persona-red"
+                className="text-[10px] text-text-muted hover:text-coffee"
                 title="Clear date"
               >
                 ✕
@@ -378,7 +378,7 @@ export default function BookingPage() {
             <TableRow>
               <TableCell colSpan={9} className="text-center py-8 text-text-muted">
                 <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-persona-red" />
+                  <Loader2 className="w-4 h-4 animate-spin text-coffee" />
                   <span>Loading reservations from database...</span>
                 </div>
               </TableCell>
@@ -396,10 +396,10 @@ export default function BookingPage() {
 
               return (
                 <TableRow key={b.id}>
-                  <TableCell className="font-mono text-xs font-bold text-persona-red">
+                  <TableCell className="font-mono text-xs font-bold text-coffee">
                     {b.bookingCode}
                   </TableCell>
-                  <TableCell className="font-extrabold text-[#F2F3F5] font-sans">
+                  <TableCell className="font-extrabold text-text-primary font-sans">
                     <span className="flex items-center gap-1.5">
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-muted text-text-secondary border border-surface-border">
                         {b.type}
@@ -407,7 +407,7 @@ export default function BookingPage() {
                       <span>{stationLabel}</span>
                     </span>
                   </TableCell>
-                  <TableCell className="text-xs text-[#F2F3F5] font-semibold">
+                  <TableCell className="text-xs text-text-primary font-semibold">
                     <div>{b.memberName}</div>
                     {b.username && (
                       <div className="text-[10px] font-mono text-text-muted">@{b.username}</div>
@@ -416,13 +416,13 @@ export default function BookingPage() {
                   <TableCell className="text-xs text-text-secondary font-mono">
                     {b.bookingDate}
                   </TableCell>
-                  <TableCell className="text-xs font-mono font-medium text-[#F2F3F5]">
+                  <TableCell className="text-xs font-mono font-medium text-text-primary">
                     {b.startTime} - {b.endTime}
                   </TableCell>
                   <TableCell className="text-xs text-text-secondary font-mono">
                     {b.durationHours}h
                   </TableCell>
-                  <TableCell className="font-mono text-xs font-bold text-[#F2F3F5]">
+                  <TableCell className="font-mono text-xs font-bold text-text-primary">
                     {formatRupiah(b.totalPrice)}
                   </TableCell>
                   <TableCell>
@@ -448,7 +448,7 @@ export default function BookingPage() {
                         <button
                           onClick={() => handleStartSession(b.id)}
                           disabled={isBusy}
-                          className="px-2 py-1 text-[11px] font-medium rounded bg-persona-red text-white hover:bg-persona-red-hover flex items-center gap-1 disabled:opacity-50"
+                          className="px-2 py-1 text-[11px] font-medium rounded bg-coffee text-white hover:bg-coffee-hover flex items-center gap-1 disabled:opacity-50"
                           title="Start Session on Station"
                         >
                           <Play className="w-3 h-3" />
@@ -465,7 +465,7 @@ export default function BookingPage() {
                             setCancelModalOpen(true);
                           }}
                           disabled={isBusy}
-                          className="px-2 py-1 text-[11px] font-medium rounded bg-surface-muted text-text-muted hover:text-persona-red hover:bg-persona-red-subtle border border-surface-border flex items-center gap-1 disabled:opacity-50"
+                          className="px-2 py-1 text-[11px] font-medium rounded bg-surface-muted text-text-muted hover:text-coffee hover:bg-coffee-subtle border border-surface-border flex items-center gap-1 disabled:opacity-50"
                           title="Cancel Reservation"
                         >
                           <XCircle className="w-3 h-3" />
@@ -498,7 +498,7 @@ export default function BookingPage() {
       >
         <form onSubmit={handleCreateBooking} className="space-y-3.5">
           {errorMsg && (
-            <div className="p-2.5 bg-persona-red-subtle border border-persona-red-border rounded-[6px] text-xs text-persona-red font-medium flex items-center gap-2">
+            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded-[6px] text-xs text-coffee font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -586,7 +586,7 @@ export default function BookingPage() {
             <div className="flex flex-col justify-end">
               <div className="bg-surface-muted border border-surface-border rounded-[6px] px-3 py-2 flex items-center justify-between">
                 <span className="text-[11px] text-text-muted uppercase font-mono">Estimated Bill:</span>
-                <span className="text-sm font-bold font-mono text-[#F2F3F5]">{formatRupiah(estimatedBill)}</span>
+                <span className="text-sm font-bold font-mono text-text-primary">{formatRupiah(estimatedBill)}</span>
               </div>
             </div>
           </div>
@@ -628,11 +628,11 @@ export default function BookingPage() {
         <div className="space-y-3.5">
           <p className="text-xs text-text-secondary">
             Are you sure you want to cancel reservation{" "}
-            <span className="font-mono font-bold text-persona-red">
+            <span className="font-mono font-bold text-coffee">
               {selectedBookingForCancel?.bookingCode}
             </span>{" "}
             for{" "}
-            <span className="font-bold text-[#F2F3F5]">
+            <span className="font-bold text-text-primary">
               {selectedBookingForCancel?.memberName}
             </span>
             ?

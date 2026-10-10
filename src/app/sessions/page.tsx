@@ -111,14 +111,14 @@ export default function SessionsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             Active Rental Sessions
           </h2>
         </div>
         <button
           onClick={() => fetchSessions()}
-          className="p-1.5 rounded-[6px] text-text-secondary hover:text-[#F2F3F5] bg-surface border border-surface-border cursor-pointer transition-colors"
+          className="p-1.5 rounded-[6px] text-text-secondary hover:text-text-primary bg-surface border border-surface-border cursor-pointer transition-colors"
           title="Refresh Sessions"
         >
           <RefreshCw className="w-3.5 h-3.5" />
@@ -134,7 +134,7 @@ export default function SessionsPage() {
             placeholder="Search session, user, station..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red"
+            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border"
           />
         </div>
 
@@ -145,8 +145,8 @@ export default function SessionsPage() {
               onClick={() => setStatusFilter(st)}
               className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
                 statusFilter === st
-                  ? "bg-persona-red text-white"
-                  : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                  ? "bg-coffee text-white"
+                  : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
               }`}
             >
               {st}
@@ -188,11 +188,11 @@ export default function SessionsPage() {
                 <TableCell className="font-mono text-[11px] text-text-secondary font-semibold">
                   {s.sessionNumber}
                 </TableCell>
-                <TableCell className="font-extrabold text-[#F2F3F5] font-sans">
+                <TableCell className="font-extrabold text-text-primary font-sans">
                   {s.pcStationNumber || s.consoleStationNumber}
                 </TableCell>
                 <TableCell className="text-xs">
-                  <span className="font-bold text-[#F2F3F5] block font-sans">
+                  <span className="font-bold text-text-primary block font-sans">
                     {s.memberName || s.guestName || "Guest"}
                   </span>
                   {s.currentGame && (
@@ -208,7 +208,7 @@ export default function SessionsPage() {
                 <TableCell>
                   <StatusBadge status={s.status} />
                 </TableCell>
-                <TableCell className="font-mono font-bold text-[#F2F3F5]">
+                <TableCell className="font-mono font-bold text-text-primary">
                   {formatRupiah(s.totalPrice)}
                 </TableCell>
                 <TableCell className="text-right">
@@ -216,13 +216,13 @@ export default function SessionsPage() {
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => handleOpenAddTime(s)}
-                        className="px-2.5 py-1 text-xs bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-[#F2F3F5] rounded-[4px] border border-surface-border font-sans font-medium cursor-pointer transition-colors"
+                        className="px-2.5 py-1 text-xs bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary rounded-[4px] border border-surface-border font-sans font-medium cursor-pointer transition-colors"
                       >
                         +Time
                       </button>
                       <button
                         onClick={() => handleOpenEnd(s)}
-                        className="px-2.5 py-1 text-xs bg-persona-red hover:bg-persona-red-hover text-white font-bold rounded-[4px] font-sans cursor-pointer transition-colors"
+                        className="px-2.5 py-1 text-xs bg-coffee hover:bg-coffee-hover text-white font-bold rounded-[4px] font-sans cursor-pointer transition-colors"
                       >
                         Checkout
                       </button>

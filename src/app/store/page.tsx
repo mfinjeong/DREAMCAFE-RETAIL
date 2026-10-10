@@ -242,8 +242,8 @@ export default function StorePOSPage() {
       {/* Top Bar Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-persona-red persona-slash rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
             Store & Cash Register
           </h2>
         </div>
@@ -251,7 +251,7 @@ export default function StorePOSPage() {
           <button
             onClick={() => fetchData()}
             disabled={isLoading}
-            className="p-1.5 rounded-[6px] text-text-secondary hover:text-[#F2F3F5] bg-surface border border-surface-border cursor-pointer transition-colors"
+            className="p-1.5 rounded-[6px] text-text-secondary hover:text-text-primary bg-surface border border-surface-border cursor-pointer transition-colors"
             title="Refresh Catalog"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -261,14 +261,14 @@ export default function StorePOSPage() {
 
       {/* Global Alerts */}
       {errorMsg && (
-        <div className="p-3 bg-persona-red-subtle border border-persona-red-border rounded-[8px] flex items-center justify-between text-xs text-persona-red">
+        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[8px] flex items-center justify-between text-xs text-coffee">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
           </div>
           <button
             onClick={() => setErrorMsg(null)}
-            className="text-text-muted hover:text-persona-red text-xs underline cursor-pointer"
+            className="text-text-muted hover:text-coffee text-xs underline cursor-pointer"
           >
             Tutup
           </button>
@@ -276,14 +276,14 @@ export default function StorePOSPage() {
       )}
 
       {successMsg && (
-        <div className="p-3 bg-p3r-blue-subtle border border-p3r-blue-border rounded-[8px] flex items-center justify-between text-xs text-p3r-blue">
+        <div className="p-3 bg-sage-subtle border border-sage-border rounded-[8px] flex items-center justify-between text-xs text-sage">
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 shrink-0" />
             <span>{successMsg}</span>
           </div>
           <button
             onClick={() => setSuccessMsg(null)}
-            className="text-text-muted hover:text-p3r-blue text-xs underline cursor-pointer"
+            className="text-text-muted hover:text-sage text-xs underline cursor-pointer"
           >
             Tutup
           </button>
@@ -302,7 +302,7 @@ export default function StorePOSPage() {
                 placeholder="Cari produk, minuman, makanan..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-[#F2F3F5] placeholder-text-muted focus:outline-none focus:border-persona-red"
+                className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border"
               />
             </div>
 
@@ -311,8 +311,8 @@ export default function StorePOSPage() {
                 onClick={() => setSelectedCategory("ALL")}
                 className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
                   selectedCategory === "ALL"
-                    ? "bg-persona-red text-white"
-                    : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                    ? "bg-coffee text-white"
+                    : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
                 }`}
               >
                 SEMUA
@@ -323,8 +323,8 @@ export default function StorePOSPage() {
                   onClick={() => setSelectedCategory(c.id)}
                   className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
                     selectedCategory === c.id
-                      ? "bg-persona-red text-white"
-                      : "text-text-secondary hover:text-[#F2F3F5] hover:bg-surface-hover"
+                      ? "bg-coffee text-white"
+                      : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
                   }`}
                 >
                   {c.name}
@@ -364,7 +364,7 @@ export default function StorePOSPage() {
                         <span
                           className={`px-1.5 py-0.5 rounded text-[10px] ${
                             isOut
-                              ? "bg-persona-red-subtle text-persona-red font-bold"
+                              ? "bg-coffee-subtle text-coffee font-bold"
                               : isLow
                               ? "bg-pamber/10 text-pamber font-bold"
                               : "bg-surface-muted text-text-secondary"
@@ -373,13 +373,13 @@ export default function StorePOSPage() {
                           {isOut ? "HABIS" : `Stok: ${p.stock}`}
                         </span>
                       </div>
-                      <div className="text-xs font-bold text-[#F2F3F5] line-clamp-2 font-sans mt-0.5">
+                      <div className="text-xs font-bold text-text-primary line-clamp-2 font-sans mt-0.5">
                         {p.name}
                       </div>
                     </div>
 
                     <div className="mt-3 pt-2 border-t border-surface-border flex items-center justify-between text-xs font-mono">
-                      <span className="font-extrabold text-[#F2F3F5]">{formatRupiah(p.price)}</span>
+                      <span className="font-extrabold text-text-primary">{formatRupiah(p.price)}</span>
                       <button
                         type="button"
                         disabled={isOut}
@@ -390,7 +390,7 @@ export default function StorePOSPage() {
                         className={`p-1 rounded-[4px] border transition-colors cursor-pointer ${
                           isOut
                             ? "bg-surface-muted border-surface-border text-text-muted cursor-not-allowed"
-                            : "bg-surface-muted hover:bg-persona-red text-text-secondary hover:text-white border-surface-border"
+                            : "bg-surface-muted hover:bg-coffee text-text-secondary hover:text-white border-surface-border"
                         }`}
                         title={isOut ? "Stok habis" : "Tambah ke keranjang"}
                       >
@@ -408,14 +408,14 @@ export default function StorePOSPage() {
         <div className="bg-surface border border-surface-border rounded-[8px] p-3.5 h-fit flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-2.5 border-b border-surface-border">
-              <span className="text-xs font-bold text-[#F2F3F5] uppercase tracking-wider font-sans flex items-center gap-1.5">
-                <ShoppingBag className="w-3.5 h-3.5 text-persona-red" />
+              <span className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans flex items-center gap-1.5">
+                <ShoppingBag className="w-3.5 h-3.5 text-coffee" />
                 Keranjang Kasir ({cart.reduce((a, b) => a + b.quantity, 0)})
               </span>
               {cart.length > 0 && (
                 <button
                   onClick={clearCart}
-                  className="text-xs text-text-secondary hover:text-persona-red cursor-pointer font-medium"
+                  className="text-xs text-text-secondary hover:text-coffee cursor-pointer font-medium"
                 >
                   Bersihkan
                 </button>
@@ -436,8 +436,8 @@ export default function StorePOSPage() {
                   }}
                   className={`py-1.5 px-2 rounded-[4px] text-xs font-sans font-semibold border text-center transition-colors cursor-pointer ${
                     checkoutMode === "DIRECT"
-                      ? "bg-persona-red border-persona-red text-white"
-                      : "bg-surface-muted border-surface-border text-text-secondary hover:text-[#F2F3F5]"
+                      ? "bg-coffee border-coffee-border text-white"
+                      : "bg-surface-muted border-surface-border text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   Toko Langsung
@@ -447,8 +447,8 @@ export default function StorePOSPage() {
                   onClick={() => setCheckoutMode("SESSION")}
                   className={`py-1.5 px-2 rounded-[4px] text-xs font-sans font-semibold border text-center transition-colors cursor-pointer ${
                     checkoutMode === "SESSION"
-                      ? "bg-persona-red border-persona-red text-white"
-                      : "bg-surface-muted border-surface-border text-text-secondary hover:text-[#F2F3F5]"
+                      ? "bg-coffee border-coffee-border text-white"
+                      : "bg-surface-muted border-surface-border text-text-secondary hover:text-text-primary"
                   }`}
                 >
                   Gabung Sesi Aktif
@@ -469,7 +469,7 @@ export default function StorePOSPage() {
                     className="p-2 bg-surface-muted border border-surface-border rounded-[6px] flex items-center justify-between text-xs"
                   >
                     <div className="truncate min-w-0 flex-1">
-                      <div className="text-[#F2F3F5] font-semibold truncate font-sans">{item.product.name}</div>
+                      <div className="text-text-primary font-semibold truncate font-sans">{item.product.name}</div>
                       <div className="text-[11px] font-mono text-text-secondary">
                         {formatRupiah(item.product.price)} x {item.quantity} = {formatRupiah(item.product.price * item.quantity)}
                       </div>
@@ -478,24 +478,24 @@ export default function StorePOSPage() {
                     <div className="flex items-center gap-1 shrink-0 ml-2">
                       <button
                         onClick={() => updateQuantity(item.product.id, -1)}
-                        className="p-1 rounded-[3px] bg-surface text-text-secondary hover:text-[#F2F3F5] border border-surface-border cursor-pointer"
+                        className="p-1 rounded-[3px] bg-surface text-text-secondary hover:text-text-primary border border-surface-border cursor-pointer"
                         title="Kurangi"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="text-xs font-mono font-bold w-4 text-center text-[#F2F3F5]">
+                      <span className="text-xs font-mono font-bold w-4 text-center text-text-primary">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.product.id, 1)}
-                        className="p-1 rounded-[3px] bg-surface text-text-secondary hover:text-[#F2F3F5] border border-surface-border cursor-pointer"
+                        className="p-1 rounded-[3px] bg-surface text-text-secondary hover:text-text-primary border border-surface-border cursor-pointer"
                         title="Tambah"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="p-1 text-text-muted hover:text-persona-red ml-0.5 cursor-pointer"
+                        className="p-1 text-text-muted hover:text-coffee ml-0.5 cursor-pointer"
                         title="Hapus"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -515,7 +515,7 @@ export default function StorePOSPage() {
                 <select
                   value={selectedMemberId}
                   onChange={(e) => setSelectedMemberId(e.target.value)}
-                  className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-[#F2F3F5] focus:outline-none cursor-pointer"
+                  className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-text-primary focus:outline-none cursor-pointer"
                 >
                   <option value="">Guest (Tamu Non-Member)</option>
                   {members.map((m) => (
@@ -533,7 +533,7 @@ export default function StorePOSPage() {
                 <select
                   value={selectedSessionId}
                   onChange={(e) => setSelectedSessionId(e.target.value)}
-                  className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-[#F2F3F5] focus:outline-none cursor-pointer"
+                  className="w-full bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1.5 text-xs text-text-primary focus:outline-none cursor-pointer"
                 >
                   <option value="">-- Pilih Sesi Aktif --</option>
                   {activeSessions.map((s) => {
@@ -551,19 +551,19 @@ export default function StorePOSPage() {
                   <div className="p-2 bg-surface-muted border border-surface-border rounded-[6px] text-xs font-mono space-y-1">
                     <div className="flex justify-between text-text-secondary">
                       <span>Station:</span>
-                      <span className="text-[#F2F3F5] font-bold">
+                      <span className="text-text-primary font-bold">
                         {selectedSession.pcStationNumber || selectedSession.consoleStationNumber}
                       </span>
                     </div>
                     <div className="flex justify-between text-text-secondary">
                       <span>User:</span>
-                      <span className="text-[#F2F3F5]">
+                      <span className="text-text-primary">
                         {selectedSession.memberName || selectedSession.guestName || "Guest"}
                       </span>
                     </div>
                     <div className="flex justify-between text-text-secondary">
                       <span>Tarif Sesi:</span>
-                      <span className="text-persona-red font-bold">
+                      <span className="text-coffee font-bold">
                         {formatRupiah(selectedSession.totalPrice)}
                       </span>
                     </div>
@@ -581,11 +581,11 @@ export default function StorePOSPage() {
                 <>
                   <div className="flex justify-between text-text-secondary">
                     <span>Sesi Rental:</span>
-                    <span className="text-[#F2F3F5] font-semibold">{formatRupiah(sessionFee)}</span>
+                    <span className="text-text-primary font-semibold">{formatRupiah(sessionFee)}</span>
                   </div>
                   <div className="flex justify-between text-text-secondary">
                     <span>Belanja Toko:</span>
-                    <span className="text-[#F2F3F5] font-semibold">{formatRupiah(cartSubtotal)}</span>
+                    <span className="text-text-primary font-semibold">{formatRupiah(cartSubtotal)}</span>
                   </div>
                 </>
               )}
@@ -593,7 +593,7 @@ export default function StorePOSPage() {
                 <span className="text-xs text-text-secondary font-bold uppercase tracking-wider">
                   Total Tagihan:
                 </span>
-                <span className="text-base font-extrabold text-[#F2F3F5]">
+                <span className="text-base font-extrabold text-text-primary">
                   {formatRupiah(finalTotal)}
                 </span>
               </div>
@@ -612,7 +612,7 @@ export default function StorePOSPage() {
                   placeholder="Jumlah Uang Tunai"
                   value={cashReceived}
                   onChange={(e) => setCashReceived(e.target.value)}
-                  className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-9 pr-2.5 py-1.5 text-xs font-mono font-bold text-[#F2F3F5] focus:outline-none focus:border-persona-red"
+                  className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-9 pr-2.5 py-1.5 text-xs font-mono font-bold text-text-primary focus:outline-none focus:border-coffee-border"
                   required
                 />
               </div>
@@ -629,7 +629,7 @@ export default function StorePOSPage() {
                     key={i}
                     type="button"
                     onClick={() => setCashReceived(q.val.toString())}
-                    className="py-1 bg-surface-muted hover:bg-surface-hover border border-surface-border text-xs text-text-secondary hover:text-[#F2F3F5] rounded-[4px] text-center cursor-pointer transition-colors"
+                    className="py-1 bg-surface-muted hover:bg-surface-hover border border-surface-border text-xs text-text-secondary hover:text-text-primary rounded-[4px] text-center cursor-pointer transition-colors"
                   >
                     {q.label}
                   </button>
@@ -643,8 +643,8 @@ export default function StorePOSPage() {
                 cashNum === 0
                   ? "bg-surface-muted border-surface-border text-text-secondary"
                   : isInsufficient
-                  ? "bg-persona-red-subtle border-persona-red-border text-persona-red"
-                  : "bg-p3r-blue-subtle border-p3r-blue-border text-p3r-blue font-bold"
+                  ? "bg-coffee-subtle border-coffee-border text-coffee"
+                  : "bg-sage-subtle border-sage-border text-sage font-bold"
               }`}
             >
               <span>{isInsufficient ? "Kurang Bayar:" : "Kembalian:"}</span>
@@ -685,24 +685,24 @@ export default function StorePOSPage() {
             <div className="p-3 bg-surface-muted rounded-[6px] border border-surface-border space-y-1.5">
               <div className="flex justify-between text-text-secondary">
                 <span>Tanggal:</span>
-                <span className="text-[#F2F3F5] font-semibold">{formatDateTime(completedTrx.createdAt)}</span>
+                <span className="text-text-primary font-semibold">{formatDateTime(completedTrx.createdAt)}</span>
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Pelanggan:</span>
-                <span className="text-[#F2F3F5] font-semibold">{completedTrx.memberName || "Guest (Tamu)"}</span>
+                <span className="text-text-primary font-semibold">{completedTrx.memberName || "Guest (Tamu)"}</span>
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Metode:</span>
-                <span className="text-persona-red font-bold">CASH ONLY (TUNAI)</span>
+                <span className="text-coffee font-bold">CASH ONLY (TUNAI)</span>
               </div>
               <div className="flex justify-between text-text-secondary">
                 <span>Tipe:</span>
-                <span className="text-[#F2F3F5] font-semibold">{completedTrx.type}</span>
+                <span className="text-text-primary font-semibold">{completedTrx.type}</span>
               </div>
 
               <div className="pt-2 border-t border-surface-border space-y-1">
                 {completedTrx.items.map((it) => (
-                  <div key={it.id} className="flex justify-between text-[#F2F3F5]">
+                  <div key={it.id} className="flex justify-between text-text-primary">
                     <span className="truncate max-w-[180px]">
                       {it.quantity}x {it.description}
                     </span>
@@ -712,7 +712,7 @@ export default function StorePOSPage() {
               </div>
 
               <div className="pt-2 border-t border-surface-border space-y-1">
-                <div className="flex justify-between font-extrabold text-[#F2F3F5]">
+                <div className="flex justify-between font-extrabold text-text-primary">
                   <span>Total Tagihan:</span>
                   <span>{formatRupiah(completedTrx.totalAmount)}</span>
                 </div>
@@ -720,7 +720,7 @@ export default function StorePOSPage() {
                   <span>Tunai Diterima:</span>
                   <span>{formatRupiah(completedTrx.cashReceived)}</span>
                 </div>
-                <div className="flex justify-between text-p3r-blue font-bold">
+                <div className="flex justify-between text-sage font-bold">
                   <span>Kembalian:</span>
                   <span>{formatRupiah(completedTrx.cashChange)}</span>
                 </div>

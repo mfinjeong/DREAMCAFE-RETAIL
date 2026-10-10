@@ -16,7 +16,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-semibold transition-colors duration-100 rounded-[6px] select-none disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer tracking-wide";
+    "inline-flex items-center justify-center font-semibold transition-colors duration-150 rounded-md select-none disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage";
 
   const sizeStyles = {
     sm: "text-xs px-3 py-1.5 gap-1.5",
@@ -26,17 +26,17 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      "bg-persona-red hover:bg-persona-red-hover active:bg-persona-red-active text-white border border-persona-red/40",
+      "bg-coffee hover:bg-coffee-hover active:bg-coffee-hover text-white border border-coffee-border",
     p3r:
-      "bg-p3r-blue hover:bg-p3r-blue-hover active:bg-p3r-blue text-white border border-p3r-blue/40",
+      "bg-sage hover:bg-sage-hover active:bg-sage-hover text-white border border-sage-border",
     secondary:
-      "bg-surface hover:bg-surface-hover text-[#F2F3F5] border border-surface-border active:bg-surface-muted",
+      "bg-surface hover:bg-surface-hover text-text-primary border border-surface-border active:bg-surface-muted",
     danger:
-      "bg-persona-red-subtle hover:bg-persona-red/30 text-persona-red border border-persona-red-border",
+      "bg-coffee-subtle hover:bg-coffee-subtle text-coffee border border-coffee-border",
     outline:
-      "bg-transparent hover:bg-surface text-text-secondary hover:text-[#F2F3F5] border border-surface-border",
+      "bg-transparent hover:bg-surface text-text-secondary hover:text-text-primary border border-surface-border",
     ghost:
-      "bg-transparent hover:bg-surface text-text-secondary hover:text-[#F2F3F5]",
+      "bg-transparent hover:bg-surface text-text-secondary hover:text-text-primary",
   };
 
   return (
