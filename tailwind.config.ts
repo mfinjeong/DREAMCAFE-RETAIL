@@ -56,7 +56,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          '"DM Sans"',
+          "var(--font-plus-jakarta)",
           "-apple-system",
           "BlinkMacSystemFont",
           '"Segoe UI"',
@@ -68,7 +68,7 @@ const config: Config = {
           "monospace",
         ],
         pixel: [
-          '"Press Start 2P"',
+          "var(--font-pixel)",
           "monospace",
         ],
       },

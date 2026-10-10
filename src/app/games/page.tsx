@@ -454,10 +454,10 @@ export default function GameLibraryPage() {
                     </div>
 
                     <span
-                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                      className={`text-[10px] font-mono font-semibold px-2 py-1 rounded border status-transition ${
                         game.isActive
-                          ? "bg-emerald-950/40 text-emerald-400 border border-emerald-800/40"
-                          : "bg-zinc-800 text-zinc-400 border border-zinc-700"
+                          ? "bg-sage-subtle text-sage border-sage-border"
+                          : "bg-surface-muted text-text-muted border-surface-border"
                       }`}
                     >
                       {game.isActive ? "AKTIF" : "OFF"}

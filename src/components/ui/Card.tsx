@@ -14,7 +14,7 @@ export const Card: React.FC<CardProps> = ({
   const variantStyles = {
     default: "bg-surface border-surface-border",
     elevated: "bg-surface-hover border-surface-border",
-    interactive: "bg-surface border-surface-border hover:border-surface-hover transition-colors cursor-pointer",
+      interactive: "bg-surface border-surface-border hover:border-surface-hover transition-colors cursor-pointer hover-lift",
   };
 
   return (

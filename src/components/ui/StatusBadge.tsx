@@ -18,8 +18,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     dotColor = "bg-sage";
     label = "AVAILABLE";
   } else if (s === "IN_USE" || s === "ACTIVE") {
-    styles = "bg-coffee-subtle text-coffee border-coffee-border";
-    dotColor = "bg-coffee";
+    styles = "bg-sage-subtle text-sage border-sage-border";
+    dotColor = "bg-sage";
     label = "IN USE";
   } else if (s === "MAINTENANCE") {
     styles = "bg-pamber-subtle text-pamber border-pamber-border";
@@ -45,7 +45,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold tracking-wider px-2 py-0.5 rounded-[4px] border uppercase ${styles}`}
+      className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-semibold tracking-wider px-2 py-0.5 rounded-[4px] border uppercase status-transition ${styles}`}
     >
       <span className={`w-1.5 h-1.5 rounded-[1px] ${dotColor}`}></span>
       <span>{label}</span>
