@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { formatRupiah, formatDateTime } from "@/lib/formatters";
+import { StoreProductImage } from "./StoreProductImage";
 import { Search, Plus, Minus, Trash2, RefreshCw, AlertCircle, ShoppingBag, Monitor, Gamepad2, Check } from "lucide-react";
 
 export default function StorePOSPage() {
@@ -352,12 +353,13 @@ export default function StorePOSPage() {
                   <div
                     key={p.id}
                     onClick={() => !isOut && addToCart(p)}
-                    className={`p-3 rounded-[8px] border bg-surface flex flex-col justify-between transition-colors select-none ${
+                    className={`p-3 rounded-[8px] border bg-surface flex flex-col gap-2.5 transition-colors select-none ${
                       isOut
-                        ? "opacity-45 border-surface-border cursor-not-allowed bg-surface-muted/50"
+                        ? "opacity-60 border-surface-border cursor-not-allowed bg-surface-muted/50"
                         : "border-surface-border hover:border-surface-hover cursor-pointer"
                     }`}
                   >
+                    <StoreProductImage productName={p.name} categoryName={p.categoryName ?? ""} />
                     <div>
                       <div className="flex items-center justify-between text-[11px] font-mono text-text-secondary mb-1">
                         <span className="truncate max-w-[90px]">{p.categoryName}</span>

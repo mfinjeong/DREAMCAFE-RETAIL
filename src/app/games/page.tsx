@@ -761,17 +761,18 @@ export default function GameLibraryPage() {
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         title={`EDIT GAME: ${selectedGame?.title || ""}`}
+        maxWidth="lg"
       >
         <form onSubmit={handleEditSubmit} className="space-y-4">
           {formError && (
-            <div className="p-2.5 bg-maroon-subtle border border-maroon-border rounded text-xs text-maroon font-semibold">
+            <div className="p-3 bg-maroon-subtle border border-maroon-border rounded text-sm text-maroon font-semibold">
               {formError}
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1.5">
                 Judul Game <span className="text-orange">*</span>
               </label>
               <Input
@@ -782,7 +783,7 @@ export default function GameLibraryPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1.5">
                 Publisher <span className="text-orange">*</span>
               </label>
               <Input
@@ -793,9 +794,9 @@ export default function GameLibraryPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
+              <label className="block text-sm font-semibold text-text-primary mb-1.5">
                 Genre <span className="text-orange">*</span>
               </label>
               <Input
@@ -806,7 +807,7 @@ export default function GameLibraryPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-1.5">
                 Min. GPU Requirement
               </label>
               <Input
@@ -817,7 +818,7 @@ export default function GameLibraryPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-text-secondary mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-1.5">
               Tags (Pisahkan dengan koma)
             </label>
             <Input
@@ -826,11 +827,11 @@ export default function GameLibraryPage() {
             />
           </div>
 
-          <div className="p-3 bg-surface-dark border border-surface-border rounded-[4px] space-y-2">
-            <span className="text-xs font-medium text-text-secondary block">
+          <div className="p-3.5 bg-surface-muted border border-surface-border rounded-[6px] space-y-2.5">
+            <span className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
               Pengaturan Status & Kompatibilitas:
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-text-primary">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-text-primary font-medium">
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -838,7 +839,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledOnPc: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-orange focus:ring-0"
+                  className="rounded border-surface-border bg-surface text-orange focus:ring-0"
                 />
                 <span>Support PC</span>
               </label>
@@ -850,7 +851,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledConsole: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-orange focus:ring-0"
+                  className="rounded border-surface-border bg-surface text-orange focus:ring-0"
                 />
                 <span>Support Console</span>
               </label>
@@ -862,14 +863,14 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isActive: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-orange focus:ring-0"
+                  className="rounded border-surface-border bg-surface text-orange focus:ring-0"
                 />
                 <span>Status Aktif</span>
               </label>
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="sticky bottom-0 bg-surface/95 backdrop-blur-sm -mx-4 -mb-4 p-4 border-t border-surface-border flex justify-end gap-2.5 mt-4">
             <Button
               type="button"
               variant="outline"

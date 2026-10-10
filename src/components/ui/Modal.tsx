@@ -47,18 +47,18 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/45 animate-fade-in-scale">
       <div
-        className={`w-full ${maxWidthStyles[maxWidth]} bg-surface border border-surface-border rounded-[8px] overflow-hidden flex flex-col max-h-[92vh] select-none`}
+        className={`w-full ${maxWidthStyles[maxWidth]} bg-surface border border-surface-border rounded-[8px] overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] min-h-0 select-none`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-surface-border bg-surface-muted">
+        <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-surface-border bg-surface-muted">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-3.5 bg-maroon rounded-[1px]"></span>
             <div>
-              <h3 className="text-xs font-bold text-text-primary tracking-wide font-sans">
+              <h3 className="text-sm font-bold text-text-primary tracking-wide font-sans">
                 {title}
               </h3>
-              {subtitle && <p className="text-[11px] text-text-secondary mt-0.5">{subtitle}</p>}
+              {subtitle && <p className="text-xs text-text-secondary mt-0.5">{subtitle}</p>}
             </div>
           </div>
           <button
@@ -70,7 +70,9 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto text-xs text-text-primary">{children}</div>
+        <div className="p-4 overflow-y-auto overscroll-contain text-xs text-text-primary min-h-0 flex-1">
+          {children}
+        </div>
       </div>
     </div>
   );

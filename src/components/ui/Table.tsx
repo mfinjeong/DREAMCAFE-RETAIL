@@ -5,12 +5,12 @@ export const Table: React.FC<{ children: React.ReactNode; className?: string }> 
   className = "",
 }) => (
   <div className="w-full overflow-x-auto rounded-[8px] border border-surface-border bg-surface">
-    <table className={`w-full text-left text-xs text-text-primary ${className}`}>{children}</table>
+    <table className={`w-full text-left text-sm text-text-primary ${className}`}>{children}</table>
   </div>
 );
 
 export const TableHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <thead className="bg-surface-muted text-[11px] font-semibold tracking-wider text-text-secondary border-b border-surface-border">
+  <thead className="bg-surface-muted text-sm font-semibold tracking-wider text-text-primary border-b border-surface-border">
     {children}
   </thead>
 );

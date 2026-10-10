@@ -220,8 +220,8 @@ export default function InventoryPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-orange rounded-[1px]"></span>
+          <h2 className="text-lg font-bold text-text-primary uppercase tracking-wider font-sans">
             Inventory & Supply Control
           </h2>
         </div>
@@ -297,110 +297,110 @@ export default function InventoryPage() {
 
       {/* KPI Dashboard Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 font-mono">
-        <div className="bg-surface border border-surface-border p-3 rounded-[8px] space-y-1">
-          <div className="text-[11px] text-text-muted flex items-center justify-between">
+        <div className="bg-surface border border-surface-border p-3.5 rounded-[8px] space-y-1.5 shadow-sm">
+          <div className="text-xs font-semibold text-text-secondary flex items-center justify-between">
             <span>Total Produk</span>
-            <Package className="w-3.5 h-3.5 text-text-muted" />
+            <Package className="w-4 h-4 text-orange" />
           </div>
-          <div className="text-lg font-extrabold text-text-primary">
+          <div className="text-xl font-extrabold text-text-primary">
             {summary ? summary.totalProducts : products.length}
           </div>
-          <div className="text-[10px] text-text-secondary font-sans">Katalog aktif</div>
+          <div className="text-xs text-text-secondary font-sans font-medium">Katalog aktif</div>
         </div>
 
-        <div className="bg-surface border border-surface-border p-3 rounded-[8px] space-y-1">
-          <div className="text-[11px] text-text-muted flex items-center justify-between">
+        <div className="bg-surface border border-surface-border p-3.5 rounded-[8px] space-y-1.5 shadow-sm">
+          <div className="text-xs font-semibold text-text-secondary flex items-center justify-between">
             <span>Total Stok Fisik</span>
-            <Boxes className="w-3.5 h-3.5 text-text-muted" />
+            <Boxes className="w-4 h-4 text-orange" />
           </div>
-          <div className="text-lg font-extrabold text-text-primary">
+          <div className="text-xl font-extrabold text-text-primary">
             {summary ? summary.totalStock : products.reduce((acc, p) => acc + p.stock, 0)}{" "}
-            <span className="text-xs font-normal text-text-muted">pcs</span>
+            <span className="text-sm font-semibold text-text-secondary">pcs</span>
           </div>
-          <div className="text-[10px] text-text-secondary font-sans">Semua unit produk</div>
+          <div className="text-xs text-text-secondary font-sans font-medium">Semua unit produk</div>
         </div>
 
-        <div className="bg-surface border border-surface-border p-3 rounded-[8px] space-y-1">
-          <div className="text-[11px] text-text-muted flex items-center justify-between">
+        <div className="bg-surface border border-surface-border p-3.5 rounded-[8px] space-y-1.5 shadow-sm">
+          <div className="text-xs font-semibold text-pamber flex items-center justify-between">
             <span>Stok Rendah</span>
-            <AlertTriangle className="w-3.5 h-3.5 text-pamber" />
+            <AlertTriangle className="w-4 h-4 text-pamber" />
           </div>
-          <div className="text-lg font-extrabold text-pamber">
+          <div className="text-xl font-extrabold text-pamber">
             {summary ? summary.lowStockProducts : products.filter((p) => p.isLowStock).length}
           </div>
-          <div className="text-[10px] text-text-secondary font-sans">≤ batas minimum alert</div>
+          <div className="text-xs text-text-secondary font-sans font-medium">≤ batas minimum alert</div>
         </div>
 
-        <div className="bg-surface border border-surface-border p-3 rounded-[8px] space-y-1">
-          <div className="text-[11px] text-text-muted flex items-center justify-between">
+        <div className="bg-surface border border-surface-border p-3.5 rounded-[8px] space-y-1.5 shadow-sm">
+          <div className="text-xs font-semibold text-maroon flex items-center justify-between">
             <span>Stok Habis</span>
-            <AlertCircle className="w-3.5 h-3.5 text-coffee" />
+            <AlertCircle className="w-4 h-4 text-maroon" />
           </div>
-          <div className="text-lg font-extrabold text-coffee">
+          <div className="text-xl font-extrabold text-maroon">
             {summary ? summary.outOfStockProducts : products.filter((p) => p.isOutOfStock).length}
           </div>
-          <div className="text-[10px] text-text-secondary font-sans">Segera lakukan restock</div>
+          <div className="text-xs text-text-secondary font-sans font-medium">Segera lakukan restock</div>
         </div>
 
-        <div className="bg-surface border border-surface-border p-3 rounded-[8px] space-y-1 col-span-2 sm:col-span-1">
-          <div className="text-[11px] text-text-muted flex items-center justify-between">
+        <div className="bg-surface border border-surface-border p-3.5 rounded-[8px] space-y-1.5 col-span-2 sm:col-span-1 shadow-sm">
+          <div className="text-xs font-semibold text-text-secondary flex items-center justify-between">
             <span>Total Valuasi</span>
-            <span className="text-[10px] text-text-muted font-mono">HPP</span>
+            <span className="text-xs text-text-primary font-mono font-bold bg-surface-muted px-1 rounded">HPP</span>
           </div>
           <div className="text-base sm:text-lg font-extrabold text-text-primary truncate">
             {formatRupiah(summary ? summary.totalValuation : products.reduce((acc, p) => acc + p.costPrice * p.stock, 0))}
           </div>
-          <div className="text-[10px] text-text-secondary font-sans">Modal barang tertahan</div>
+          <div className="text-xs text-text-secondary font-sans font-medium">Modal barang tertahan</div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1.5 border-b border-surface-border pb-1.5 text-xs font-sans">
+      <div className="flex items-center gap-2 border-b border-surface-border pb-2 text-sm font-sans">
         <button
           onClick={() => setActiveTab("stock")}
-          className={`px-3 py-1.5 rounded-[4px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-[6px] font-bold transition-colors cursor-pointer flex items-center gap-2 ${
             activeTab === "stock"
-              ? "bg-coffee-subtle text-white border-l-2 border-coffee-border"
+              ? "bg-orange text-white shadow-sm"
               : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
           }`}
         >
-          <Package className="w-3.5 h-3.5" />
+          <Package className="w-4 h-4" />
           Item Stok & Pasokan ({products.length})
         </button>
         <button
           onClick={() => setActiveTab("history")}
-          className={`px-3 py-1.5 rounded-[4px] font-semibold transition-colors cursor-pointer flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-[6px] font-bold transition-colors cursor-pointer flex items-center gap-2 ${
             activeTab === "history"
-              ? "bg-coffee-subtle text-white border-l-2 border-coffee-border"
+              ? "bg-orange text-white shadow-sm"
               : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
           }`}
         >
-          <History className="w-3.5 h-3.5" />
+          <History className="w-4 h-4" />
           Riwayat Audit Log ({logs.length})
         </button>
       </div>
 
       {activeTab === "stock" ? (
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {/* Filters for Stock Items */}
-          <div className="bg-surface border border-surface-border rounded-[8px] px-3.5 py-2.5 flex flex-col md:flex-row gap-2.5 items-center justify-between">
-            <div className="relative w-full md:w-64">
-              <Search className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2" />
+          <div className="bg-surface border border-surface-border rounded-[8px] px-4 py-3 flex flex-col md:flex-row gap-3 items-center justify-between shadow-sm">
+            <div className="relative w-full md:w-72">
+              <Search className="w-4 h-4 text-text-secondary absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Cari produk atau barcode..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-coffee-border"
+                className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-9 pr-3 py-1.5 text-sm text-text-primary placeholder:text-text-secondary/70 focus:outline-none focus:border-orange font-medium"
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
               {/* Category Filter */}
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none cursor-pointer"
+                className="bg-surface-muted border border-surface-border rounded-[6px] px-3 py-1.5 text-sm text-text-primary font-medium focus:outline-none focus:border-orange cursor-pointer"
               >
                 <option value="ALL">Semua Kategori</option>
                 {categories.map((c) => (
@@ -414,7 +414,7 @@ export default function InventoryPage() {
               <select
                 value={stockStatusFilter}
                 onChange={(e) => setStockStatusFilter(e.target.value)}
-                className="bg-surface-muted border border-surface-border rounded-[6px] px-2.5 py-1 text-xs text-text-primary focus:outline-none cursor-pointer"
+                className="bg-surface-muted border border-surface-border rounded-[6px] px-3 py-1.5 text-sm text-text-primary font-medium focus:outline-none focus:border-orange cursor-pointer"
               >
                 <option value="ALL">Semua Status</option>
                 <option value="AVAILABLE">Tersedia (In Stock)</option>
@@ -459,43 +459,43 @@ export default function InventoryPage() {
 
                   return (
                     <TableRow key={p.id}>
-                      <TableCell className="font-semibold text-text-primary font-sans">
+                      <TableCell className="font-bold text-text-primary font-sans text-sm">
                         <div>{p.name}</div>
-                        <div className="text-[10px] font-mono text-text-muted">{p.barcode || "-"}</div>
+                        <div className="text-xs font-mono text-text-secondary mt-0.5">{p.barcode || "-"}</div>
                       </TableCell>
-                      <TableCell className="text-xs text-text-secondary">{p.categoryName}</TableCell>
-                      <TableCell className="font-mono text-text-secondary">{formatRupiah(p.costPrice)}</TableCell>
-                      <TableCell className="font-mono text-text-primary font-semibold">
+                      <TableCell className="text-sm font-medium text-text-secondary">{p.categoryName}</TableCell>
+                      <TableCell className="font-mono text-sm text-text-secondary">{formatRupiah(p.costPrice)}</TableCell>
+                      <TableCell className="font-mono text-sm text-text-primary font-bold">
                         {formatRupiah(p.price)}
                       </TableCell>
-                      <TableCell className="font-mono font-bold text-text-primary">
-                        <span className={isOut ? "text-coffee" : isLow ? "text-pamber" : "text-text-primary"}>
+                      <TableCell className="font-mono text-sm font-extrabold text-text-primary">
+                        <span className={isOut ? "text-maroon" : isLow ? "text-pamber" : "text-text-primary"}>
                           {p.stock}
                         </span>{" "}
-                        <span className="text-[10px] text-text-muted font-normal">{p.unit}</span>
+                        <span className="text-xs text-text-secondary font-normal">{p.unit}</span>
                       </TableCell>
-                      <TableCell className="font-mono text-text-secondary text-xs">
+                      <TableCell className="font-mono text-text-secondary text-sm font-medium">
                         {p.minStockAlert} {p.unit}
                       </TableCell>
                       <TableCell>
                         {isOut ? (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-coffee-subtle text-coffee border border-coffee-border font-bold">
-                            <span className="w-1.5 h-1.5 rounded-[1px] bg-coffee"></span>
+                          <span className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-[4px] bg-maroon-subtle text-maroon border border-maroon-border font-bold">
+                            <span className="w-2 h-2 rounded-[1px] bg-maroon"></span>
                             OUT OF STOCK
                           </span>
                         ) : isLow ? (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-pamber-subtle text-pamber border border-pamber-border font-bold">
-                            <span className="w-1.5 h-1.5 rounded-[1px] bg-pamber"></span>
+                          <span className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-[4px] bg-pamber-subtle text-pamber border border-pamber-border font-bold">
+                            <span className="w-2 h-2 rounded-[1px] bg-pamber"></span>
                             LOW STOCK
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-sage-subtle text-sage border border-sage-border font-bold">
-                            <span className="w-1.5 h-1.5 rounded-[1px] bg-sage"></span>
+                          <span className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded-[4px] bg-sage-subtle text-sage border border-sage-border font-bold">
+                            <span className="w-2 h-2 rounded-[1px] bg-sage"></span>
                             AVAILABLE
                           </span>
                         )}
                       </TableCell>
-                      <TableCell className="text-[11px] font-mono text-text-secondary">
+                      <TableCell className="text-xs font-mono text-text-secondary">
                         {p.lastMovement ? (
                           <div>
                             <span
@@ -503,23 +503,23 @@ export default function InventoryPage() {
                                 p.lastMovement.action === "STOCK_IN"
                                   ? "text-sage"
                                   : p.lastMovement.action === "STOCK_OUT"
-                                  ? "text-coffee"
+                                  ? "text-maroon"
                                   : "text-pamber"
                               }`}
                             >
                               {p.lastMovement.action} ({p.lastMovement.quantity})
                             </span>
-                            <div className="text-[10px] text-text-muted">{p.lastMovement.reason}</div>
+                            <div className="text-xs text-text-secondary mt-0.5">{p.lastMovement.reason}</div>
                           </div>
                         ) : (
-                          <span className="text-text-muted">-</span>
+                          <span className="text-text-secondary">-</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleOpenAdjust(p, "STOCK_IN")}
-                            className="p-1 px-2 text-xs bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary rounded-[4px] border border-surface-border font-sans font-medium cursor-pointer transition-colors"
+                            className="p-1 px-2.5 text-xs bg-surface-muted hover:bg-surface-hover text-text-primary rounded-[4px] border border-surface-border font-sans font-semibold cursor-pointer transition-colors"
                             title="Tambah Stok (Stock In)"
                           >
                             +In
@@ -527,10 +527,10 @@ export default function InventoryPage() {
                           <button
                             onClick={() => handleOpenAdjust(p, "STOCK_OUT")}
                             disabled={p.stock <= 0}
-                            className={`p-1 px-2 text-xs rounded-[4px] border font-sans font-medium transition-colors ${
+                            className={`p-1 px-2.5 text-xs rounded-[4px] border font-sans font-semibold transition-colors ${
                               p.stock <= 0
-                                ? "bg-surface-muted border-surface-border text-text-muted cursor-not-allowed"
-                                : "bg-surface-muted hover:bg-surface-hover text-text-secondary hover:text-text-primary border-surface-border cursor-pointer"
+                                ? "bg-surface-muted border-surface-border text-text-secondary/50 cursor-not-allowed"
+                                : "bg-surface-muted hover:bg-surface-hover text-text-primary border-surface-border cursor-pointer"
                             }`}
                             title="Kurang Stok (Stock Out)"
                           >
@@ -538,7 +538,7 @@ export default function InventoryPage() {
                           </button>
                           <button
                             onClick={() => handleOpenAdjust(p, "ADJUSTMENT")}
-                            className="p-1 px-2 text-xs bg-coffee hover:bg-coffee-hover text-white rounded-[4px] font-sans font-bold cursor-pointer transition-colors"
+                            className="p-1 px-2.5 text-xs bg-orange hover:bg-orange-deep text-white rounded-[4px] font-sans font-bold cursor-pointer transition-colors"
                             title="Audit / Sesuaikan Stok Fisik"
                           >
                             Audit
