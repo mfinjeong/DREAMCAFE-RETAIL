@@ -33,7 +33,6 @@ const GAME_COVERS: Record<string, string> = {
   "Rainbow Six Siege": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/359550/6b69a8d5ac8d0542bba5c735a8bcc5bb33cda42e/header_alt_assets_25.jpg",
   "EA Sports FC 24": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2195250/header.jpg",
   "Tekken 8": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1778820/c7b0b80639fc8c7d386922f414f293ca849e8e81/header.jpg",
-  "Minecraft": "https://cdn.cloudflare.steamstatic.com/steam/apps/1928870/header.jpg",
 };
 
 function gameCover(game: GameItem): string | null {
@@ -303,7 +302,7 @@ export default function GameLibraryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-4 bg-coffee rounded-[1px]"></div>
+            <div className="w-1.5 h-4 bg-orange rounded-[1px]"></div>
             <h1 className="text-xl font-black tracking-wider text-text-primary uppercase">
               Game Library & Station Compatibility
             </h1>
@@ -339,9 +338,9 @@ export default function GameLibraryPage() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[4px] flex items-center justify-between text-xs text-white">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-coffee shrink-0" />
+        <div className="p-3 bg-maroon-subtle border border-maroon-border rounded-[4px] flex items-center justify-between text-xs text-maroon">
+          <div className="flex items-center gap-2 font-semibold">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
           <Button variant="outline" size="sm" onClick={handleRefresh}>
@@ -373,9 +372,9 @@ export default function GameLibraryPage() {
         <div className="bg-surface-card border border-surface-border p-3.5 rounded-[4px]">
           <div className="flex items-center justify-between text-text-muted mb-1">
             <span className="text-[10px] font-mono uppercase tracking-wider">Console Games</span>
-            <Gamepad2 className="w-3.5 h-3.5 text-coffee" />
+            <Gamepad2 className="w-3.5 h-3.5 text-orange" />
           </div>
-          <div className="text-lg font-bold text-coffee font-mono">{consoleCount}</div>
+          <div className="text-lg font-bold text-orange font-mono">{consoleCount}</div>
           <div className="text-[10px] text-text-muted mt-0.5">PS5 / Nintendo Switch</div>
         </div>
 
@@ -400,7 +399,7 @@ export default function GameLibraryPage() {
               placeholder="Cari judul game, publisher, genre, atau tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-coffee-border"
+              className="w-full pl-9 pr-3 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-orange"
             />
           </div>
 
@@ -412,8 +411,8 @@ export default function GameLibraryPage() {
                 onClick={() => setPlatformFilter(plat)}
                 className={`px-3 py-1 text-[11px] font-medium rounded-[3px] transition-colors ${
                   platformFilter === plat
-                    ? "bg-coffee text-white"
-                    : "text-text-secondary hover:text-white"
+                    ? "bg-orange text-white"
+                    : "text-text-secondary hover:text-orange hover:bg-orange-subtle"
                 }`}
               >
                 {plat === "ALL" ? "Semua Platform" : plat}
@@ -426,7 +425,7 @@ export default function GameLibraryPage() {
             <select
               value={genreFilter}
               onChange={(e) => setGenreFilter(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-coffee-border"
+              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-orange"
             >
               <option value="ALL">Semua Genre</option>
               {genres.map((g) => (
@@ -442,7 +441,7 @@ export default function GameLibraryPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as "ALL" | "ACTIVE" | "INACTIVE")}
-              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-coffee-border"
+              className="w-full px-2.5 py-1.5 text-xs bg-surface-dark border border-surface-border rounded-[4px] text-text-primary focus:outline-none focus:border-orange"
             >
               <option value="ALL">Semua Status</option>
               <option value="ACTIVE">Aktif</option>
@@ -455,7 +454,7 @@ export default function GameLibraryPage() {
       {/* Game Cards Grid */}
       {isLoading ? (
         <div className="p-12 text-center bg-surface-card border border-surface-border rounded-[4px]">
-          <RefreshCw className="w-6 h-6 animate-spin text-coffee mx-auto mb-2" />
+          <RefreshCw className="w-6 h-6 animate-spin text-orange mx-auto mb-2" />
           <p className="text-xs text-text-secondary font-mono">Memuat pustaka game dari Supabase...</p>
         </div>
       ) : games.length === 0 ? (
@@ -495,7 +494,7 @@ export default function GameLibraryPage() {
                         </span>
                       )}
                       {game.isInstalledConsole && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-coffee/15 text-coffee border border-coffee-border/30 rounded">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 bg-orange/15 text-orange border border-orange-border/30 rounded font-semibold">
                           CONSOLE
                         </span>
                       )}
@@ -577,7 +576,7 @@ export default function GameLibraryPage() {
 
                     <button
                       onClick={() => handleDelete(game)}
-                      className="p-1.5 text-text-muted hover:text-coffee hover:bg-surface-dark rounded transition-colors"
+                      className="p-1.5 text-text-muted hover:text-maroon hover:bg-surface-dark rounded transition-colors"
                       title="Hapus / Nonaktifkan"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -599,15 +598,15 @@ export default function GameLibraryPage() {
       >
         <form onSubmit={handleCreateSubmit} className="space-y-4">
           {formError && (
-            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded text-xs text-white">
+            <div className="p-2.5 bg-maroon-subtle border border-maroon-border rounded text-xs text-maroon font-semibold">
               {formError}
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Judul Game <span className="text-coffee">*</span>
+              <label className="block text-xs font-semibold text-text-secondary mb-1">
+                Judul Game <span className="text-orange">*</span>
               </label>
               <Input
                 required
@@ -618,8 +617,8 @@ export default function GameLibraryPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Publisher <span className="text-coffee">*</span>
+              <label className="block text-xs font-semibold text-text-secondary mb-1">
+                Publisher <span className="text-orange">*</span>
               </label>
               <Input
                 required
@@ -632,8 +631,8 @@ export default function GameLibraryPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Genre <span className="text-coffee">*</span>
+              <label className="block text-xs font-semibold text-text-secondary mb-1">
+                Genre <span className="text-orange">*</span>
               </label>
               <Input
                 required
@@ -723,15 +722,15 @@ export default function GameLibraryPage() {
       >
         <form onSubmit={handleEditSubmit} className="space-y-4">
           {formError && (
-            <div className="p-2.5 bg-coffee-subtle border border-coffee-border rounded text-xs text-white">
+            <div className="p-2.5 bg-maroon-subtle border border-maroon-border rounded text-xs text-maroon font-semibold">
               {formError}
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Judul Game <span className="text-coffee">*</span>
+              <label className="block text-xs font-semibold text-text-secondary mb-1">
+                Judul Game <span className="text-orange">*</span>
               </label>
               <Input
                 required
@@ -741,8 +740,8 @@ export default function GameLibraryPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Publisher <span className="text-coffee">*</span>
+              <label className="block text-xs font-semibold text-text-secondary mb-1">
+                Publisher <span className="text-orange">*</span>
               </label>
               <Input
                 required
@@ -754,8 +753,8 @@ export default function GameLibraryPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Genre <span className="text-coffee">*</span>
+              <label className="block text-xs font-semibold text-text-secondary mb-1">
+                Genre <span className="text-orange">*</span>
               </label>
               <Input
                 required
@@ -797,7 +796,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledOnPc: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-orange focus:ring-0"
                 />
                 <span>Support PC</span>
               </label>
@@ -809,7 +808,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isInstalledConsole: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-orange focus:ring-0"
                 />
                 <span>Support Console</span>
               </label>
@@ -821,7 +820,7 @@ export default function GameLibraryPage() {
                   onChange={(e) =>
                     setGameForm({ ...gameForm, isActive: e.target.checked })
                   }
-                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
+                  className="rounded border-surface-border bg-surface-card text-orange focus:ring-0"
                 />
                 <span>Status Aktif</span>
               </label>

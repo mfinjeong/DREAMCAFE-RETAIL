@@ -27,8 +27,8 @@ export const TopBar: React.FC = () => {
   return (
     <header className="h-14 bg-surface border-b border-surface-border px-4 lg:px-6 flex items-center justify-between sticky top-0 z-30">
       <div className="flex items-center gap-3 lg:gap-4">
-        <div className="hidden lg:block w-1 h-6 bg-coffee rounded-sm"></div>
-        <h1 className="text-base lg:text-lg font-bold text-coffee tracking-tight ml-12 lg:ml-0">
+        <div className="hidden lg:block w-1 h-6 bg-orange rounded-sm"></div>
+        <h1 className="text-base lg:text-lg font-extrabold text-maroon tracking-tight ml-12 lg:ml-0">
           {title}
         </h1>
       </div>
@@ -40,7 +40,7 @@ export const TopBar: React.FC = () => {
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-surface-muted border border-surface-border rounded-md pl-10 pr-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-sage transition-colors"
+          className="w-full bg-surface-muted border border-surface-border rounded-md pl-10 pr-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-orange transition-colors"
         />
       </div>
     </header>

@@ -280,8 +280,8 @@ export default function ConsolesPage() {
       {/* Top Action Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-3.5 bg-sage rounded-[1px]"></span>
-          <h2 className="text-xs font-bold text-text-primary uppercase tracking-wider font-sans">
+          <span className="w-1.5 h-3.5 bg-orange rounded-[1px]"></span>
+          <h2 className="text-xs font-black text-text-primary uppercase tracking-wider">
             Console Lounge Fleet
           </h2>
           <span className="text-[11px] font-mono text-text-secondary">
@@ -292,8 +292,8 @@ export default function ConsolesPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleManualRefresh}
-            className={`p-1.5 text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
-              isRefreshing ? "animate-spin text-sage" : ""
+                      className={`p-1.5 text-text-secondary hover:text-orange bg-surface-muted hover:bg-surface-hover rounded-[4px] border border-surface-border transition-colors cursor-pointer ${
+                        isRefreshing ? "animate-spin text-orange" : ""
             }`}
             title="Refresh database records"
           >
@@ -308,8 +308,8 @@ export default function ConsolesPage() {
 
       {/* Error Banner */}
       {errorMessage && (
-        <div className="p-3 bg-coffee-subtle border border-coffee-border rounded-[8px] text-xs text-coffee flex items-center justify-between">
-          <div className="flex items-center gap-2 font-medium">
+        <div className="p-3 bg-maroon-subtle border border-maroon-border rounded-[8px] text-xs text-maroon flex items-center justify-between">
+          <div className="flex items-center gap-2 font-semibold">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>Connection Error: {errorMessage}</span>
           </div>
@@ -318,7 +318,7 @@ export default function ConsolesPage() {
               setIsLoading(true);
               fetchConsoles(searchQuery, selectedType, selectedStatus);
             }}
-            className="px-2.5 py-1 bg-coffee hover:bg-coffee-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
+            className="px-2.5 py-1 bg-orange hover:bg-orange-hover text-white rounded-[4px] text-xs font-semibold cursor-pointer"
           >
             Retry
           </button>
@@ -334,7 +334,7 @@ export default function ConsolesPage() {
             placeholder="Search console, TV specs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-sage-border font-sans"
+            className="w-full bg-surface-muted border border-surface-border rounded-[6px] pl-8 pr-2.5 py-1 text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-orange font-sans"
           />
         </div>
 
@@ -347,8 +347,8 @@ export default function ConsolesPage() {
                 onClick={() => setSelectedType(t)}
                 className={`px-2.5 py-1 rounded-[4px] text-xs font-semibold transition-colors cursor-pointer ${
                   selectedType === t
-                    ? "bg-sage text-white"
-                    : "text-text-secondary hover:text-text-primary hover:bg-surface-hover"
+                    ? "bg-orange text-white"
+                    : "text-text-secondary hover:text-orange hover:bg-orange-subtle"
                 }`}
               >
                 {t}
@@ -374,7 +374,7 @@ export default function ConsolesPage() {
       {/* Main Grid */}
       {isLoading ? (
         <div className="h-44 border border-surface-border rounded-[8px] bg-surface flex flex-col items-center justify-center gap-2 text-text-secondary text-xs font-mono">
-          <RefreshCw className="w-5 h-5 animate-spin text-sage" />
+          <RefreshCw className="w-5 h-5 animate-spin text-orange" />
           <span>Loading console stations from database...</span>
         </div>
       ) : consoles.length === 0 ? (
@@ -386,51 +386,29 @@ export default function ConsolesPage() {
           {consoles.map((con) => (
             <div
               key={con.id}
-              className="p-3.5 bg-surface border border-surface-border rounded-[8px] flex flex-col justify-between relative overflow-hidden select-none hover:border-surface-hover transition-colors"
+              className="bg-surface border border-surface-border rounded-xl overflow-hidden flex flex-col select-none shadow-sm hover:shadow-md hover:border-orange-border transition-all"
             >
-              {/* Corner badge reflecting status */}
-              {con.status === "IN_USE" ? (
-                <span
-                  className="absolute top-0 right-0 w-3.5 h-3.5 bg-coffee"
-                  style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-                  title="Active Session"
-                />
-              ) : con.status === "AVAILABLE" ? (
-                <span
-                  className="absolute top-0 right-0 w-3.5 h-3.5 bg-sage"
-                  style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-                  title="Available Console"
-                />
-              ) : con.status === "MAINTENANCE" ? (
-                <span
-                  className="absolute top-0 right-0 w-3.5 h-3.5 bg-pamber"
-                  style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-                  title="Under Maintenance"
-                />
-              ) : (
-                <span
-                  className="absolute top-0 right-0 w-3.5 h-3.5 bg-surface-border"
-                  style={{ clipPath: "polygon(100% 0, 0 0, 100% 100%)" }}
-                />
-              )}
-
-              <div>
-                {/* Header */}
-                <div className="flex items-start justify-between mb-1.5 pr-2">
+              <div className="aspect-[16/6] bg-surface-muted border-b border-surface-border flex items-center justify-between px-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-lg bg-teal-subtle border border-teal-border flex items-center justify-center">
+                    <Gamepad2 className="w-5 h-5 text-teal" aria-hidden="true" />
+                  </div>
                   <div>
-                    <span className="text-sm font-extrabold text-text-primary font-sans block">
-                      {con.stationNumber}
-                    </span>
-                    <span className="text-[11px] font-mono text-text-secondary truncate block max-w-[140px]">
-                      {con.name}
-                    </span>
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-text-muted font-bold">Gaming station</p>
+                    <p className="text-sm font-bold text-text-primary">{con.consoleType}</p>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-mono uppercase bg-surface-muted border border-surface-border px-1.5 py-0.5 rounded-[3px] text-sage font-bold">
-                      {con.consoleType}
-                    </span>
-                    <StatusBadge status={con.status} />
-                  </div>
+                </div>
+                <StatusBadge status={con.status} />
+              </div>
+
+              <div className="p-4 flex flex-col justify-between flex-1">
+              <div>
+                {/* Station identity */}
+                <div>
+                  <p className="text-lg font-bold text-text-primary leading-tight">{con.stationNumber}</p>
+                  <p className="text-[11px] text-text-secondary truncate mt-1" title={con.name}>
+                    {con.name}
+                  </p>
                 </div>
 
                 {/* Specs Box */}
@@ -566,6 +544,7 @@ export default function ConsolesPage() {
                     </button>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           ))}

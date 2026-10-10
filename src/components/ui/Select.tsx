@@ -24,8 +24,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={`w-full bg-surface-muted border ${
-            error ? "border-coffee" : "border-surface-border focus:border-sage"
-          } rounded-md px-3 py-2 text-sm text-text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-sage/30 disabled:opacity-50 disabled:bg-surface cursor-pointer ${className}`}
+            error ? "border-maroon" : "border-surface-border focus:border-orange"
+          } rounded-md px-3 py-2 text-sm text-text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-orange/30 disabled:opacity-50 disabled:bg-surface cursor-pointer ${className}`}
           {...props}
         >
           {options.map((opt) => (
@@ -34,7 +34,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {error && <p className="mt-1 text-[11px] text-coffee font-medium">{error}</p>}
+        {error && <p className="mt-1 text-[11px] text-maroon font-medium">{error}</p>}
       </div>
     );
   }

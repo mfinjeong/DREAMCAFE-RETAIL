@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${plusJakartaSans.variable} ${pressStart2P.variable}`}>
-      <body className="bg-background text-text-primary antialiased selection:bg-coffee selection:text-white font-sans">
+      <body className="bg-background text-text-primary antialiased selection:bg-orange selection:text-white font-sans">
         <DashboardShell>{children}</DashboardShell>
       </body>
     </html>

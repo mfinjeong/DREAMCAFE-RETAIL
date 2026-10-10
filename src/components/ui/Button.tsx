@@ -16,7 +16,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-semibold transition-all duration-150 rounded-md select-none disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage btn-press";
+    "inline-flex items-center justify-center font-semibold transition-all duration-150 rounded-md select-none disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange btn-press";
 
   const sizeStyles = {
     sm: "text-xs px-3 py-1.5 gap-1.5",
@@ -26,17 +26,17 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      "bg-coffee hover:bg-coffee-hover active:bg-coffee-hover text-white border border-coffee-border",
+      "bg-orange hover:bg-orange-hover active:bg-orange-active text-white border border-orange-border shadow-sm",
     p3r:
-      "bg-sage hover:bg-sage-hover active:bg-sage-hover text-white border border-sage-border",
+      "bg-maroon hover:bg-maroon-hover active:bg-maroon-active text-white border border-maroon-border shadow-sm",
     secondary:
       "bg-surface hover:bg-surface-hover text-text-primary border border-surface-border active:bg-surface-muted",
     danger:
-      "bg-coffee-subtle hover:bg-coffee-subtle text-coffee border border-coffee-border",
+      "bg-coffee-subtle hover:bg-coffee text-coffee hover:text-white border border-coffee-border",
     outline:
-      "bg-transparent hover:bg-surface text-text-secondary hover:text-text-primary border border-surface-border",
+      "bg-transparent hover:bg-orange-subtle text-text-secondary hover:text-orange border border-surface-border hover:border-orange-border",
     ghost:
-      "bg-transparent hover:bg-surface text-text-secondary hover:text-text-primary",
+      "bg-transparent hover:bg-orange-subtle text-text-secondary hover:text-orange",
   };
 
   return (

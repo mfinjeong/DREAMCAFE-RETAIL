@@ -53,7 +53,7 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-surface-border bg-surface-muted">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
+            <span className="w-1.5 h-3.5 bg-maroon rounded-[1px]"></span>
             <div>
               <h3 className="text-xs font-bold text-text-primary tracking-wide font-sans">
                 {title}

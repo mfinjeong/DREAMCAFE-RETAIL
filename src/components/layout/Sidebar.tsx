@@ -49,7 +49,7 @@ export const Sidebar: React.FC = () => {
       <div className="h-14 flex items-center px-4 border-b border-surface-border gap-3">
         <div className="pixel-mark scale-75"></div>
         <div className="flex flex-col leading-tight">
-          <span className="text-xs font-bold tracking-wide text-coffee">
+          <span className="text-xs font-black tracking-wider text-maroon uppercase">
             DREAMCAFÉ
           </span>
           <span className="text-[10px] text-text-muted font-mono">Retail</span>
@@ -67,10 +67,10 @@ export const Sidebar: React.FC = () => {
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all ${
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-all ${
                 isActive
-                  ? "bg-coffee text-white shadow-sm"
-                  : "text-text-secondary hover:text-coffee hover:bg-surface-hover"
+                  ? "bg-orange text-white shadow-sm"
+                  : "text-text-secondary hover:text-orange hover:bg-surface-hover"
               }`}
             >
               <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? "text-white" : ""}`} />
@@ -84,10 +84,10 @@ export const Sidebar: React.FC = () => {
         <Link
           href="/settings"
           onClick={() => setMobileOpen(false)}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all ${
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-all ${
             pathname === "/settings"
-              ? "bg-coffee text-white shadow-sm"
-              : "text-text-secondary hover:text-coffee hover:bg-surface-hover"
+              ? "bg-orange text-white shadow-sm"
+              : "text-text-secondary hover:text-orange hover:bg-surface-hover"
           }`}
         >
           <Settings className={`w-[18px] h-[18px] shrink-0 ${pathname === "/settings" ? "text-white" : ""}`} />
@@ -101,7 +101,7 @@ export const Sidebar: React.FC = () => {
     <>
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-3 left-3 z-50 lg:hidden p-2 bg-surface border border-surface-border rounded-md shadow-sm text-coffee hover:bg-surface-hover transition-colors"
+        className="fixed top-3 left-3 z-50 lg:hidden p-2 bg-surface border border-surface-border rounded-md shadow-sm text-orange hover:bg-surface-hover transition-colors"
         aria-label="Toggle menu"
       >
         {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

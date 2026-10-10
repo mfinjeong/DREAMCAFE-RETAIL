@@ -9,23 +9,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#FAF8F2",
+        background: "#FEFEFE",
         surface: {
           DEFAULT: "#FFFFFF",
-          muted: "#F5F1E8",
-          hover: "#EFEADE",
-          border: "#E5DED3",
-          "border-subtle": "#EDE8DE",
-          "border-active": "#C9C1B3",
+          muted: "#FFF7ED",
+          hover: "#FFF1E6",
+          border: "#E7DDE1",
+          "border-subtle": "#F3EBEE",
+          "border-active": "#D8C5CD",
           card: "#FFFFFF",
-          dark: "#F0EBE1",
+          dark: "#F8F2F4",
         },
         coffee: {
-          DEFAULT: "#76513C",
-          hover: "#5F4130",
-          active: "#483225",
-          subtle: "#F5ECE6",
-          border: "#C7B3A6",
+          DEFAULT: "#F97316",
+          hover: "#EA580C",
+          active: "#C2410C",
+          subtle: "#FFF7ED",
+          border: "#FED7AA",
         },
         sage: {
           DEFAULT: "#71866A",
@@ -68,10 +68,24 @@ const config: Config = {
           "blue-border": "#B5D4D2",
         },
         text: {
-          primary: "#29231F",
-          secondary: "#5F574F",
-          muted: "#8A8378",
+                  primary: "#211C20",
+                  secondary: "#51464C",
+                  muted: "#7A6F75",
         },
+                orange: {
+                  DEFAULT: "#F97316",
+                  hover: "#EA580C",
+                  active: "#C2410C",
+                  subtle: "#FFF7ED",
+                  border: "#FED7AA",
+                },
+                maroon: {
+                  DEFAULT: "#7F1D3A",
+                  hover: "#64172F",
+                  active: "#450A1A",
+                  subtle: "#FDF2F8",
+                  border: "#FBCFE8",
+                },
       },
       fontFamily: {
         sans: [
