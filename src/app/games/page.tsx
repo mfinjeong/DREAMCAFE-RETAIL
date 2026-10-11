@@ -5,15 +5,11 @@ import { useRouter } from "next/navigation";
 import { GameItem } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import SharingAccountsPanel from "@/components/games/SharingAccountsPanel";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
 import {
   Gamepad2,
   Monitor,
   Search,
-  Plus,
-  Edit2,
   Trash2,
   RefreshCw,
   AlertTriangle,
@@ -111,27 +107,8 @@ export default function GameLibraryPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Modals state
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState<GameItem | null>(null);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-
-  // Form states
-  const [gameForm, setGameForm] = useState({
-    title: "",
-    genre: "",
-    publisher: "",
-    minGpuRequired: "GTX 1650",
-    popularityRank: 1,
-    isInstalledOnPc: true,
-    isInstalledConsole: false,
-    isActive: true,
-    tagsString: "",
-    description: "",
-  });
 
   // Fetch games from real API
   const fetchGames = useCallback(async () => {
@@ -185,144 +162,9 @@ export default function GameLibraryPage() {
     fetchGames();
   };
 
-  const handleOpenCreate = () => {
-    setFormError(null);
-    setGameForm({
-      title: "",
-      genre: genres[0] || "FPS",
-      publisher: "",
-      minGpuRequired: "GTX 1650",
-      popularityRank: games.length + 1,
-      isInstalledOnPc: true,
-      isInstalledConsole: false,
-      isActive: true,
-      tagsString: "",
-      description: "",
-    });
-    setCreateModalOpen(true);
-  };
-
-  const handleOpenEdit = (game: GameItem) => {
-    setFormError(null);
-    setSelectedGame(game);
-    setGameForm({
-      title: game.title,
-      genre: game.genre,
-      publisher: game.publisher,
-      minGpuRequired: game.minGpuRequired,
-      popularityRank: game.popularityRank,
-      isInstalledOnPc: game.isInstalledOnPc,
-      isInstalledConsole: game.isInstalledConsole,
-      isActive: game.isActive,
-      tagsString: game.tags?.join(", ") || "",
-      description: game.description || "",
-    });
-    setEditModalOpen(true);
-  };
-
   const handleOpenDetail = (game: GameItem) => {
     setSelectedGame(game);
     setDetailModalOpen(true);
-  };
-
-  const handleCreateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setFormError(null);
-
-    try {
-      const tags = gameForm.tagsString
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean);
-
-      const payload = {
-        title: gameForm.title.trim(),
-        genre: gameForm.genre.trim(),
-        publisher: gameForm.publisher.trim(),
-        minGpuRequired: gameForm.minGpuRequired.trim(),
-        popularityRank: Number(gameForm.popularityRank) || 1,
-        isInstalledOnPc: Boolean(gameForm.isInstalledOnPc),
-        isInstalledConsole: Boolean(gameForm.isInstalledConsole),
-        isActive: Boolean(gameForm.isActive),
-        tags,
-        description: gameForm.description.trim() || undefined,
-      };
-
-      const res = await fetch("/api/games", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify(payload),
-      });
-
-      const json = await res.json();
-      if (res.status === 401) {
-        router.replace("/login");
-        throw new Error("Sesi login tidak valid. Silakan masuk kembali.");
-      }
-      if (!res.ok || !json.success) {
-        throw new Error(json.message || "Gagal membuat game baru");
-      }
-
-      setCreateModalOpen(false);
-      fetchGames();
-    } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : "Terjadi kesalahan pengisian form");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedGame) return;
-
-    setIsSubmitting(true);
-    setFormError(null);
-
-    try {
-      const tags = gameForm.tagsString
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean);
-
-      const payload = {
-        title: gameForm.title.trim(),
-        genre: gameForm.genre.trim(),
-        publisher: gameForm.publisher.trim(),
-        minGpuRequired: gameForm.minGpuRequired.trim(),
-        popularityRank: Number(gameForm.popularityRank) || 1,
-        isInstalledOnPc: Boolean(gameForm.isInstalledOnPc),
-        isInstalledConsole: Boolean(gameForm.isInstalledConsole),
-        isActive: Boolean(gameForm.isActive),
-        tags,
-        description: gameForm.description.trim() || undefined,
-      };
-
-      const res = await fetch(`/api/games/${selectedGame.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify(payload),
-      });
-
-      const json = await res.json();
-      if (res.status === 401) {
-        router.replace("/login");
-        throw new Error("Sesi login tidak valid. Silakan masuk kembali.");
-      }
-      if (!res.ok || !json.success) {
-        throw new Error(json.message || "Gagal memperbarui game");
-      }
-
-      setEditModalOpen(false);
-      fetchGames();
-    } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : "Terjadi kesalahan saat menyimpan perubahan");
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const handleDelete = async (game: GameItem) => {
@@ -381,16 +223,6 @@ export default function GameLibraryPage() {
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
             <span>Sync DB</span>
-          </Button>
-
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleOpenCreate}
-            className="flex items-center gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Tambah Game</span>
           </Button>
         </div>
       </div>
@@ -523,7 +355,7 @@ export default function GameLibraryPage() {
           <p className="text-sm text-text-secondary mt-2 font-medium">
             {searchQuery || platformFilter !== "ALL" || genreFilter !== "ALL"
               ? "Coba ubah kata kunci pencarian atau reset filter platform/genre."
-              : "Belum ada data game di database. Klik tombol 'Tambah Game' untuk mendaftarkan game baru."}
+              : "Belum ada data game di database."}
           </p>
         </div>
       ) : (
@@ -626,14 +458,6 @@ export default function GameLibraryPage() {
 
                   <div className="flex items-center gap-1.5">
                     <button
-                      onClick={() => handleOpenEdit(game)}
-                      className="p-1.5 text-text-secondary hover:text-persona-blue hover:bg-surface-dark rounded transition-colors"
-                      title="Edit Game"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-
-                    <button
                       onClick={() => handleDelete(game)}
                       className="p-1.5 text-text-secondary hover:text-maroon hover:bg-surface-dark rounded transition-colors"
                       title="Hapus / Nonaktifkan"
@@ -648,263 +472,6 @@ export default function GameLibraryPage() {
           })}
         </div>
       )}
-
-      {/* CREATE MODAL */}
-      <Modal
-        isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        title="TAMBAH GAME KE PUSTAKA"
-      >
-        <form onSubmit={handleCreateSubmit} className="space-y-4">
-          {formError && (
-            <div className="p-2.5 bg-maroon-subtle border border-maroon-border rounded text-xs text-maroon font-semibold">
-              {formError}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
-                Judul Game <span className="text-orange">*</span>
-              </label>
-              <Input
-                required
-                placeholder="e.g. EA Sports FC 25"
-                value={gameForm.title}
-                onChange={(e) => setGameForm({ ...gameForm, title: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
-                Publisher <span className="text-orange">*</span>
-              </label>
-              <Input
-                required
-                placeholder="e.g. Electronic Arts"
-                value={gameForm.publisher}
-                onChange={(e) => setGameForm({ ...gameForm, publisher: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-text-secondary mb-1">
-                Genre <span className="text-orange">*</span>
-              </label>
-              <Input
-                required
-                placeholder="e.g. Tactical FPS, MOBA, Fighting"
-                value={gameForm.genre}
-                onChange={(e) => setGameForm({ ...gameForm, genre: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-text-secondary mb-1">
-                Min. GPU Requirement
-              </label>
-              <Input
-                placeholder="e.g. GTX 1650, RTX 3060"
-                value={gameForm.minGpuRequired}
-                onChange={(e) => setGameForm({ ...gameForm, minGpuRequired: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-text-secondary mb-1">
-              Tags (Pisahkan dengan koma)
-            </label>
-            <Input
-              placeholder="e.g. Shooter, Controller, Multiplayer"
-              value={gameForm.tagsString}
-              onChange={(e) => setGameForm({ ...gameForm, tagsString: e.target.value })}
-            />
-          </div>
-
-          {/* Platform Installation Checkboxes */}
-          <div className="p-3 bg-surface-dark border border-surface-border rounded-[4px] space-y-2">
-            <span className="text-xs font-medium text-text-secondary block">
-              Kompatibilitas Station DREAMCAFÉ:
-            </span>
-            <div className="flex items-center gap-6 text-xs text-text-primary">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={gameForm.isInstalledOnPc}
-                  onChange={(e) =>
-                    setGameForm({ ...gameForm, isInstalledOnPc: e.target.checked })
-                  }
-                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
-                />
-                <span>Terpasang di PC Stations</span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={gameForm.isInstalledConsole}
-                  onChange={(e) =>
-                    setGameForm({ ...gameForm, isInstalledConsole: e.target.checked })
-                  }
-                  className="rounded border-surface-border bg-surface-card text-coffee focus:ring-0"
-                />
-                <span>Terpasang di Console Stations (PS5/Switch)</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setCreateModalOpen(false)}
-              disabled={isSubmitting}
-            >
-              Batal
-            </Button>
-            <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? "Menyimpan..." : "Simpan Game"}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-
-      {/* EDIT MODAL */}
-      <Modal
-        isOpen={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        title={`EDIT GAME: ${selectedGame?.title || ""}`}
-        maxWidth="lg"
-        footer={
-          <div className="flex justify-end gap-2.5">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setEditModalOpen(false)}
-              disabled={isSubmitting}
-            >
-              Batal
-            </Button>
-            <Button type="submit" form="edit-game-form" variant="primary" size="sm" disabled={isSubmitting}>
-              {isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}
-            </Button>
-          </div>
-        }
-      >
-        <form id="edit-game-form" onSubmit={handleEditSubmit} className="space-y-4">
-          {formError && (
-            <div className="p-3 bg-maroon-subtle border border-maroon-border rounded text-sm text-maroon font-semibold">
-              {formError}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div>
-              <label className="block text-sm font-semibold text-text-primary mb-1.5">
-                Judul Game <span className="text-orange">*</span>
-              </label>
-              <Input
-                required
-                value={gameForm.title}
-                onChange={(e) => setGameForm({ ...gameForm, title: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-text-primary mb-1.5">
-                Publisher <span className="text-orange">*</span>
-              </label>
-              <Input
-                required
-                value={gameForm.publisher}
-                onChange={(e) => setGameForm({ ...gameForm, publisher: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div>
-              <label className="block text-sm font-semibold text-text-primary mb-1.5">
-                Genre <span className="text-orange">*</span>
-              </label>
-              <Input
-                required
-                value={gameForm.genre}
-                onChange={(e) => setGameForm({ ...gameForm, genre: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1.5">
-                Min. GPU Requirement
-              </label>
-              <Input
-                value={gameForm.minGpuRequired}
-                onChange={(e) => setGameForm({ ...gameForm, minGpuRequired: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
-              Tags (Pisahkan dengan koma)
-            </label>
-            <Input
-              value={gameForm.tagsString}
-              onChange={(e) => setGameForm({ ...gameForm, tagsString: e.target.value })}
-            />
-          </div>
-
-          <div className="p-3.5 bg-surface-muted border border-surface-border rounded-[6px] space-y-2.5">
-            <span className="text-xs font-bold text-text-secondary uppercase tracking-wider block">
-              Pengaturan Status & Kompatibilitas:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-text-primary font-medium">
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={gameForm.isInstalledOnPc}
-                  onChange={(e) =>
-                    setGameForm({ ...gameForm, isInstalledOnPc: e.target.checked })
-                  }
-                  className="rounded border-surface-border bg-surface text-orange focus:ring-0"
-                />
-                <span>Support PC</span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={gameForm.isInstalledConsole}
-                  onChange={(e) =>
-                    setGameForm({ ...gameForm, isInstalledConsole: e.target.checked })
-                  }
-                  className="rounded border-surface-border bg-surface text-orange focus:ring-0"
-                />
-                <span>Support Console</span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={gameForm.isActive}
-                  onChange={(e) =>
-                    setGameForm({ ...gameForm, isActive: e.target.checked })
-                  }
-                  className="rounded border-surface-border bg-surface text-orange focus:ring-0"
-                />
-                <span>Status Aktif</span>
-              </label>
-            </div>
-          </div>
-
-        </form>
-      </Modal>
 
       {/* DETAIL MODAL */}
       <Modal
