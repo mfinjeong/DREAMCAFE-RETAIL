@@ -9,6 +9,7 @@ const apiAuthRoutes = [
   "/api/auth/reset-password",
   "/api/auth/logout",
   "/api/auth/session",
+  "/api/auth/register",
 ];
 
 export function middleware(request: NextRequest) {

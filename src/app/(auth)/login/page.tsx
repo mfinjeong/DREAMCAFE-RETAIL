@@ -67,7 +67,7 @@ function LoginForm() {
           <p className="text-text-muted">
             Belum punya akun?{" "}
             <Link href="/sign-up" className="text-accent-blue hover:underline">
-              Informasi pendaftaran
+              Daftar di sini
             </Link>
           </p>
         </div>
