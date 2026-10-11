@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { GameItem } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
+import SharingAccountsPanel from "@/components/games/SharingAccountsPanel";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
@@ -999,6 +1000,8 @@ export default function GameLibraryPage() {
                 Tutup
               </Button>
             </div>
+
+            <SharingAccountsPanel gameId={selectedGame.id} gameTitle={selectedGame.title} />
           </div>
         )}
       </Modal>

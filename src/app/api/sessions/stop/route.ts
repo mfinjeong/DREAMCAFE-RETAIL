@@ -4,7 +4,7 @@ import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
-    await requireUser();
+    const user = await requireUser();
     const body = await request.json();
     const sessionId = body?.sessionId;
 
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const session = await stopSession(sessionId);
+    const session = await stopSession(sessionId, user.id);
 
     return NextResponse.json({
       success: true,

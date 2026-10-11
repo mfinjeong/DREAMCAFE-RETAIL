@@ -57,6 +57,18 @@ enum SessionStatus {
   CANCELLED
 }
 
+enum SharingAccountStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  OFFLINE
+}
+
+enum SharingAccountAllocationStatus {
+  ACTIVE
+  RELEASED
+}
+
 enum PaymentStatus {
   PENDING
   PAID
@@ -117,6 +129,7 @@ model User {
 
   sessionTokens      SessionToken[]
   passwordResetTokens PasswordResetToken[]
+  sharingAuditLogs   GameSharingAccountAuditLog[]
 
   @@index([role])
 }
@@ -222,6 +235,7 @@ model Session {
   gameId          String?
   isXpAwarded     Boolean       @default(false)
   game            Game?         @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  sharingAccounts GameSharingAccountAllocation[]
 
   @@index([status])
   @@index([pcId])
@@ -374,6 +388,7 @@ model Game {
 
   memberStats        MemberGameStat[]
   sessions           Session[]
+  sharingAccounts    GameSharingAccount[]
 
   @@index([genre])
   @@index([isActive])
@@ -468,4 +483,62 @@ model Maintenance {
   @@index([status])
   @@index([pcId])
   @@index([consoleId])
+}
+
+model GameSharingAccount {
+  id          String                @id @default(cuid())
+  accountCode String                @unique
+  gameId      String
+  status      SharingAccountStatus  @default(AVAILABLE)
+  secretRef   String?
+  notes       String?
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  game        Game                  @relation(fields: [gameId], references: [id], onDelete: Restrict)
+  allocations GameSharingAccountAllocation[]
+  auditLogs   GameSharingAccountAuditLog[]
+
+  @@index([gameId])
+  @@index([status])
+  @@index([isActive])
+  @@index([gameId, status])
+}
+
+model GameSharingAccountAllocation {
+  id          String                         @id @default(cuid())
+  accountId   String
+  sessionId   String
+  status      SharingAccountAllocationStatus @default(ACTIVE)
+  allocatedAt DateTime                       @default(now())
+  releasedAt  DateTime?
+
+  account     GameSharingAccount             @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  session     Session                        @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  @@index([accountId])
+  @@index([sessionId])
+  @@index([status])
+}
+
+model GameSharingAccountAuditLog {
+  id                  String             @id @default(cuid())
+  accountId           String
+  accountCodeSnapshot String
+  gameIdSnapshot      String
+  allocationId        String?
+  action              String
+  previousStatus      String?
+  newStatus           String?
+  performedByUserId   String
+  details             String?
+  createdAt           DateTime           @default(now())
+
+  account             GameSharingAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  performedBy         User               @relation(fields: [performedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([accountId])
+  @@index([allocationId])
+  @@index([createdAt])
 }

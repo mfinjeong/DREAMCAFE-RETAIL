@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       cashReceived: validated.data.cashReceived,
       cashierName: user.fullName || user.username,
       notes: validated.data.notes,
-    });
+    }, user.id);
 
     return NextResponse.json({
       success: true,

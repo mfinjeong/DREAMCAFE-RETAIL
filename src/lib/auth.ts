@@ -132,12 +132,29 @@ export function safeErrorMessage(err: unknown, fallback: string): string {
   return err.message;
 }
 
-export type ApiErrorCategory = "auth" | "internal" | "business";
+export function prismaErrorCode(err: unknown): string | null {
+  if (err && typeof err === "object" && "code" in err) {
+    const code = (err as { code?: unknown }).code;
+    if (typeof code === "string" && /^P\d{4}$/.test(code)) return code;
+  }
+  return null;
+}
+
+export class ApiConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ApiConflictError";
+  }
+}
+
+export type ApiErrorCategory = "auth" | "internal" | "business" | "conflict";
 
 export function classifyApiError(err: unknown): ApiErrorCategory {
   if (err instanceof Error && (err.message === "UNAUTHENTICATED" || err.message === "FORBIDDEN")) {
     return "auth";
   }
+  if (err instanceof ApiConflictError) return "conflict";
+  if (prismaErrorCode(err) === "P2002") return "conflict";
   if (isPrismaOrInternalError(err)) return "internal";
   return "business";
 }
@@ -150,6 +167,7 @@ export function apiErrorStatus(
   if (category === "auth") {
     return err instanceof Error && err.message === "FORBIDDEN" ? 403 : 401;
   }
+  if (category === "conflict") return 409;
   if (category === "internal") return 500;
   return businessStatus;
 }
@@ -163,7 +181,10 @@ export function apiErrorResponse(
     return authErrorResponse(err);
   }
   const status = apiErrorStatus(err, businessStatus);
-  const message = safeErrorMessage(err, fallbackMessage);
+  let message = safeErrorMessage(err, fallbackMessage);
+  if (status === 409 && message === fallbackMessage) {
+    message = "Konflik data: akun atau sesi sudah memiliki alokasi aktif.";
+  }
   return NextResponse.json({ success: false, message }, { status });
 }
 

@@ -10,8 +10,9 @@ export async function GET(request: Request) {
     const status = searchParams.get("status");
     const type = searchParams.get("type");
     const memberId = searchParams.get("memberId");
+    const gameId = searchParams.get("gameId");
 
-    const sessions = await listSessions({ status, type, memberId });
+    const sessions = await listSessions({ status, type, memberId, gameId });
     return NextResponse.json({ success: true, data: sessions });
   } catch (err: unknown) {
     return apiErrorResponse(err, "Terjadi kesalahan server saat memuat sesi", 500);

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { SessionStatus, PaymentStatus, PaymentMethod, PCStatus, ConsoleStatus, SessionType, Prisma, InventoryAction } from "@prisma/client";
 import { addMemberXP } from "./member.service";
 import { recordSessionCompletion } from "./gaming-profile.service";
+import { releaseActiveAllocationForSessionInTx } from "./game-sharing-account.service";
 
 export interface StartSessionInput {
   stationId: string;
@@ -31,6 +32,7 @@ export async function listSessions(filters: {
   status?: string | null;
   type?: string | null;
   memberId?: string | null;
+  gameId?: string | null;
   limit?: number;
 } = {}) {
   const where: Prisma.SessionWhereInput = {};
@@ -42,6 +44,9 @@ export async function listSessions(filters: {
   }
   if (filters.memberId) {
     where.memberId = filters.memberId;
+  }
+  if (filters.gameId && filters.gameId !== "ALL") {
+    where.gameId = filters.gameId;
   }
 
   const sessions = await prisma.session.findMany({
@@ -309,7 +314,7 @@ export async function addSessionTime(sessionId: string, additionalMinutes: numbe
   });
 }
 
-export async function stopSession(sessionId: string) {
+export async function stopSession(sessionId: string, actorUserId?: string) {
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
     include: { pc: true, console: true },
@@ -363,6 +368,18 @@ export async function stopSession(sessionId: string) {
       });
     }
 
+    if (actorUserId) {
+      await releaseActiveAllocationForSessionInTx(tx, sessionId, actorUserId);
+    } else {
+      const allocation = await tx.gameSharingAccountAllocation.findFirst({
+        where: { sessionId, status: "ACTIVE" },
+        select: { id: true },
+      });
+      if (allocation) {
+        throw new Error("Authenticated actor required to release sharing account allocation");
+      }
+    }
+
     return updatedSession;
   }, { maxWait: 15000, timeout: 30000 }).then(async (updatedSession) => {
     // Record server-authoritative session completion, XP, and game stats
@@ -371,7 +388,7 @@ export async function stopSession(sessionId: string) {
   });
 }
 
-export async function checkoutSession(data: CheckoutSessionInput) {
+export async function checkoutSession(data: CheckoutSessionInput, actorUserId?: string) {
   const session = await prisma.session.findUnique({
     where: { id: data.sessionId },
     include: {
@@ -569,6 +586,18 @@ export async function checkoutSession(data: CheckoutSessionInput) {
           currentGame: null,
         },
       });
+    }
+
+    if (actorUserId) {
+      await releaseActiveAllocationForSessionInTx(tx, session.id, actorUserId);
+    } else {
+      const allocation = await tx.gameSharingAccountAllocation.findFirst({
+        where: { sessionId: session.id, status: "ACTIVE" },
+        select: { id: true },
+      });
+      if (allocation) {
+        throw new Error("Authenticated actor required to release sharing account allocation");
+      }
     }
 
     return {
