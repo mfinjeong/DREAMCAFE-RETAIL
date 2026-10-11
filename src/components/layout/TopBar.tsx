@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, LogOut } from "lucide-react";
+import Link from "next/link";
+import { Search, LogOut, User } from "lucide-react";
 
 const pageTitles: Record<string, string> = {
   "/": "Dashboard",
@@ -18,6 +19,7 @@ const pageTitles: Record<string, string> = {
   "/reports": "Reports",
   "/settings": "Settings",
   "/login": "Login",
+  "/profile": "Profil Akun",
 };
 
 export const TopBar: React.FC = () => {
@@ -74,6 +76,13 @@ export const TopBar: React.FC = () => {
               <div className="text-xs font-semibold text-text-primary">{currentUser.fullName}</div>
               <div className="text-xs text-text-muted">{currentUser.role}</div>
             </div>
+            <Link
+              href="/profile"
+              className="p-2 text-text-secondary hover:text-orange hover:bg-surface-hover rounded-md transition-colors"
+              title="Profile"
+            >
+              <User className="w-4 h-4" />
+            </Link>
             <button
               onClick={handleLogout}
               className="p-2 text-text-secondary hover:text-orange hover:bg-surface-hover rounded-md transition-colors"

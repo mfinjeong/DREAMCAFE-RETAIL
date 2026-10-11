@@ -116,6 +116,7 @@ model User {
   updatedAt          DateTime         @updatedAt
 
   sessionTokens      SessionToken[]
+  passwordResetTokens PasswordResetToken[]
 
   @@index([role])
 }
@@ -395,6 +396,19 @@ model SessionToken {
   @@index([tokenHash])
   @@index([expiresAt])
   @@index([createdAt])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  usedAt     DateTime?
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 model MemberGameStat {

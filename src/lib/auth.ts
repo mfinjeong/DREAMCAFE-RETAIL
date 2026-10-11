@@ -82,7 +82,24 @@ export async function revokeCurrentSession(): Promise<void> {
       data: { revokedAt: new Date(), revokedReason: "logout" },
     });
   }
-  cookieStore.set(SESSION_COOKIE, "", { httpOnly: true, expires: new Date(0), path: "/" });
+  cookieStore.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: new Date(0),
+    path: "/",
+  });
+}
+
+export async function clearSessionCookie(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    expires: new Date(0),
+    path: "/",
+  });
 }
 
 export function authErrorResponse(error: unknown): { status: number; message: string } {

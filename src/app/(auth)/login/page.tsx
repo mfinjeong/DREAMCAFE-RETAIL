@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -55,6 +56,12 @@ export default function LoginPage() {
         <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? "Memproses..." : "Masuk"}
         </Button>
+
+        <div className="text-center text-sm">
+          <Link href="/forgot-password" className="text-accent-blue hover:underline">
+            Lupa password?
+          </Link>
+        </div>
       </form>
     </main>
   );

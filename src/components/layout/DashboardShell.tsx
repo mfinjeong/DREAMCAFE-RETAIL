@@ -7,7 +7,10 @@ import { TopBar } from "./TopBar";
 
 export const DashboardShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const pathname = usePathname();
-  const isAuthRoute = pathname.startsWith("/login");
+  const isAuthRoute =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/reset-password");
 
   if (isAuthRoute) {
     return <>{children}</>;

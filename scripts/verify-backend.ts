@@ -39,6 +39,11 @@ import {
   deleteGame,
 } from "../src/services/game.service";
 import {
+  createPasswordResetToken,
+  hashResetToken,
+  executePasswordReset,
+} from "../src/lib/password-reset";
+import {
   calculateLevelFromXP,
   calculateXPForLevel,
   calculateXPForNextLevel,
@@ -1732,9 +1737,138 @@ async function runTests() {
   });
   console.log("  ✓ Test 21: Isolated gaming profile test fixtures cleaned up cleanly.\n");
 
+  // -------------------------------------------------------------------
+  // TEST GROUP 22: STAFF AUTHENTICATION & PASSWORD RESET
+  // -------------------------------------------------------------------
+  console.log("▶ TEST GROUP 22: Staff Authentication & Password Reset");
+  // SAFETY: fixtures are tracked by explicit ID/username so cleanup can only
+  // ever remove records created by this test. No pattern/`contains` cleanup.
+  const staffFixtureSuffix = `${Date.now()}_${randomBytes(4).toString("hex")}`;
+  const staffUsername = `test_staff_${staffFixtureSuffix}`;
+  const staffEmail = `test_staff_${staffFixtureSuffix}@dreamcafe.local`;
+  let staffUser: { id: string } | null = null;
+  let staffResetTokenId: string | null = null;
+
+  try {
+    // 22a. Hash password helper
+    const testPasswordHash = await bcrypt.hash("staffpassword123", 12);
+
+    // 22b. Create a test staff user (role STAFF)
+    staffUser = await prisma.user.create({
+      data: {
+        username: staffUsername,
+        email: staffEmail,
+        passwordHash: testPasswordHash,
+        fullName: "Test Staff",
+        role: "STAFF",
+      },
+      select: { id: true },
+    });
+
+    assert(staffUser !== null, "Test 22a: Test staff user created");
+
+    // 22b. Reset token generation through the real service
+    const rawToken = await createPasswordResetToken(staffUser.id);
+    const expectedHash = hashResetToken(rawToken);
+    const createdToken = await prisma.passwordResetToken.findUnique({
+      where: { tokenHash: expectedHash },
+      select: { id: true, userId: true, usedAt: true },
+    });
+    assert(createdToken !== null, "Test 22b: createPasswordResetToken persisted a hashed token");
+    assert(createdToken?.userId === staffUser.id, "Test 22b2: reset token belongs to fixture user");
+    assert(createdToken?.usedAt === null, "Test 22b3: reset token starts unused");
+    staffResetTokenId = createdToken?.id ?? null;
+
+    // 22c. Existing sessions must be revoked by a successful password reset
+    const sessionTokenRaw = randomBytes(32).toString("hex");
+    const activeSession = await prisma.sessionToken.create({
+      data: {
+        userId: staffUser.id,
+        tokenHash: createHash("sha256").update(sessionTokenRaw).digest("hex"),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+      select: { id: true },
+    });
+
+    const newPasswordHash = await bcrypt.hash("newstaffpassword456", 12);
+    const resetResult = await executePasswordReset(rawToken, newPasswordHash);
+    assert(resetResult.success === true, "Test 22c: executePasswordReset succeeded with valid token");
+
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: staffUser.id },
+      select: { passwordHash: true },
+    });
+    assert(
+      updatedUser?.passwordHash === newPasswordHash,
+      "Test 22d: password hash updated by executePasswordReset"
+    );
+
+    const revokedSession = await prisma.sessionToken.findUnique({
+      where: { id: activeSession.id },
+      select: { revokedAt: true },
+    });
+    assert(revokedSession?.revokedAt !== null, "Test 22e: existing session revoked after password reset");
+
+    // 22f. Reusing the same token must fail
+    const reuseResult = await executePasswordReset(rawToken, await bcrypt.hash("thirdpassword789", 12));
+    assert(reuseResult.success === false, "Test 22f: token reuse rejected");
+    assert(reuseResult.code === "ALREADY_USED", `Test 22f2: reuse reported ALREADY_USED (${reuseResult.code})`);
+
+    const afterReuse = await prisma.user.findUnique({
+      where: { id: staffUser.id },
+      select: { passwordHash: true },
+    });
+    assert(
+      afterReuse?.passwordHash === newPasswordHash,
+      "Test 22g: rejected reuse did not alter password"
+    );
+
+    // 22h. Expired token must be rejected
+    const expiredRaw = await createPasswordResetToken(staffUser.id);
+    await prisma.passwordResetToken.update({
+      where: { tokenHash: hashResetToken(expiredRaw) },
+      data: { expiresAt: new Date(Date.now() - 60 * 1000) },
+    });
+    const expiredResult = await executePasswordReset(expiredRaw, await bcrypt.hash("expiredpw000", 12));
+    assert(expiredResult.success === false, "Test 22h: expired token rejected");
+    assert(
+      expiredResult.code === "INVALID_OR_EXPIRED",
+      `Test 22h2: expired token reported INVALID_OR_EXPIRED (${expiredResult.code})`
+    );
+
+    const afterExpired = await prisma.user.findUnique({
+      where: { id: staffUser.id },
+      select: { passwordHash: true },
+    });
+    assert(
+      afterExpired?.passwordHash === newPasswordHash,
+      "Test 22i: expired token attempt did not alter password"
+    );
+    console.log("  ✓ Test 22: Staff authentication & password reset verified via real service.\n");
+  } finally {
+    // Cleanup strictly scoped to fixture IDs created above.
+    if (staffUser) {
+      await prisma.sessionToken
+        .deleteMany({ where: { userId: staffUser.id } })
+        .catch((err) => console.error("  ! Test 22 cleanup (sessions) failed:", err instanceof Error ? err.name : err));
+      await prisma.passwordResetToken
+        .deleteMany({ where: { userId: staffUser.id } })
+        .catch((err) => console.error("  ! Test 22 cleanup (tokens) failed:", err instanceof Error ? err.name : err));
+      await prisma.user
+        .deleteMany({ where: { id: staffUser.id } })
+        .catch((err) => console.error("  ! Test 22 cleanup (user) failed:", err instanceof Error ? err.name : err));
+    } else if (staffResetTokenId) {
+      await prisma.passwordResetToken.deleteMany({ where: { id: staffResetTokenId } }).catch(() => {});
+    }
+    console.log("  ✓ Test 22j: Staff authentication fixtures cleaned by explicit ID.\n");
+  }
+
   console.log(`SUMMARY: ${passedCount} PASSED, ${failedCount} FAILED`);
   console.log("==================================================");
 }
+
+import bcrypt from "bcryptjs";
+import { createHash, randomBytes } from "node:crypto";
 
 runTests()
   .catch((err) => {
