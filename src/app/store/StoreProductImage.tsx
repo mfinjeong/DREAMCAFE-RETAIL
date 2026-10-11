@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GlassWater, Utensils, Cookie, Package } from "lucide-react";
 
 interface StoreProductImageProps {
   productName: string;
   categoryName: string;
+  imageUrl?: string | null;
   className?: string;
 }
 
@@ -18,26 +19,71 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
 };
 
 /**
- * Placeholder image component for Store products
- * Uses clean, consistent visual fallback because verified product images are not available
+ * Product image component with support for verified product photos and fallback icons.
+ * - If imageUrl is provided and valid, display it using Next.js Image for optimization.
+ * - If no image or image fails to load, show category-based icon as placeholder.
+ * - Ensures consistent dimensions and prevents layout shifts.
  */
 export const StoreProductImage: React.FC<StoreProductImageProps> = ({
   productName,
   categoryName,
+  imageUrl,
   className = "",
 }) => {
-  const icon = CATEGORY_ICON_MAP[categoryName] || <Package className="w-10 h-10" />;
+  const [failedLoading, setFailedLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    setFailedLoading(false);
+    setImageLoaded(false);
+  }, [imageUrl]);
+
+  // Use fallback icon only if no imageUrl OR if imageUrl loading failed
+  const shouldShowFallback = !imageUrl || failedLoading;
+  const icon = shouldShowFallback ? (CATEGORY_ICON_MAP[categoryName] || <Package className="w-10 h-10" />) : null;
+
+  // Determine rasio berdasarkan kategori untuk konsistensi tampilan produk
+  const getAspectRatio = (name: string): string => {
+    switch (name) {
+      case "Gaming Gear & Aksesoris":
+        return "aspect-[5/4]"; // Rasio lebar untuk aksesoris
+      default:
+        return "aspect-[4/3]"; // Standar untuk produk makanan/minuman
+    }
+  };
 
   return (
     <div
-      className={`flex items-center justify-center bg-surface-muted border border-surface-border rounded-[6px] aspect-[4/3] ${className}`}
+      className={`relative overflow-hidden bg-surface-muted border border-surface-border rounded-[6px] ${getAspectRatio(categoryName)} ${className}`}
     >
-      <div className="text-text-muted flex flex-col items-center justify-center gap-2 p-4">
-        {icon}
-        <span className="text-[11px] font-mono text-text-secondary text-center max-w-[80%] truncate">
-          {categoryName}
-        </span>
-      </div>
+      {imageUrl && !shouldShowFallback ? (
+        <>
+          <img
+            src={imageUrl}
+            alt={productName}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              setFailedLoading(true);
+              setImageLoaded(false);
+            }}
+            loading="lazy"
+            className={`w-full h-full object-contain p-2 transition-opacity duration-200 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          />
+          {!imageLoaded && (
+            <div
+              className="absolute inset-0 animate-pulse bg-surface-muted"
+              aria-hidden="true"
+            />
+          )}
+        </>
+      ) : (
+        <div className="flex flex-col items-center justify-center w-full h-full p-4 text-text-muted">
+          {icon}
+          <span className="text-[11px] font-mono text-text-secondary text-center max-w-[80%] truncate block mt-2">
+            {categoryName}
+          </span>
+        </div>
+      )}
     </div>
   );
 };

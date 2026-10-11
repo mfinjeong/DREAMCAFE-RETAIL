@@ -359,7 +359,7 @@ export default function StorePOSPage() {
                         : "border-surface-border hover:border-surface-hover cursor-pointer"
                     }`}
                   >
-                    <StoreProductImage productName={p.name} categoryName={p.categoryName ?? ""} />
+                    <StoreProductImage productName={p.name} categoryName={p.categoryName ?? ""} imageUrl={p.imageUrl} />
                     <div>
                       <div className="flex items-center justify-between text-[11px] font-mono text-text-secondary mb-1">
                         <span className="truncate max-w-[90px]">{p.categoryName}</span>

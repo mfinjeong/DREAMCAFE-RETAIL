@@ -104,6 +104,7 @@ export interface ProductItem {
   minStockAlert: number;
   unit: string;
   isActive: boolean;
+  imageUrl?: string | null;
   isLowStock?: boolean;
   isOutOfStock?: boolean;
   lastMovement?: {
