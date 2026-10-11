@@ -13,7 +13,6 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: { ...user, sessions } });
   } catch (error) {
-    const authError = authErrorResponse(error);
-    return NextResponse.json({ success: false, message: authError.message }, { status: authError.status });
+    return authErrorResponse(error);
   }
 }

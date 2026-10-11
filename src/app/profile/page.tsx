@@ -36,6 +36,12 @@ export default function ProfilePage() {
 
   useEffect(() => {
     loadProfile();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("tab") === "password") {
+        setChangePasswordModalOpen(true);
+      }
+    }
   }, []);
 
   const loadProfile = async () => {

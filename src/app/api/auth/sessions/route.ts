@@ -23,8 +23,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (session.userId !== user.id) {
-      const authError = authErrorResponse(new Error("FORBIDDEN"));
-      return NextResponse.json({ success: false, message: authError.message }, { status: authError.status });
+      return authErrorResponse(new Error("FORBIDDEN"));
     }
 
     if (session.revokedAt) {
@@ -38,7 +37,6 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Sesi berhasil dicabut" });
   } catch (error) {
-    const authError = authErrorResponse(error);
-    return NextResponse.json({ success: false, message: authError.message }, { status: authError.status });
+    return authErrorResponse(error);
   }
 }

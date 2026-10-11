@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { cookies, headers } from "next/headers";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import type { Role, User } from "@prisma/client";
 import { createHash, randomBytes } from "node:crypto";
@@ -50,20 +51,26 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
-  const session = await prisma.sessionToken.findUnique({
-    where: { tokenHash: hashToken(token) },
-    include: { user: true },
-  });
+  try {
+    const session = await prisma.sessionToken.findUnique({
+      where: { tokenHash: hashToken(token) },
+      include: { user: true },
+    });
 
-  if (!session || session.revokedAt || session.expiresAt <= new Date()) return null;
+    if (!session || session.revokedAt || session.expiresAt <= new Date()) return null;
 
-  return {
-    id: session.user.id,
-    username: session.user.username,
-    email: session.user.email,
-    fullName: session.user.fullName,
-    role: session.user.role,
-  };
+    return {
+      id: session.user.id,
+      username: session.user.username,
+      email: session.user.email,
+      fullName: session.user.fullName,
+      role: session.user.role,
+    };
+  } catch (error) {
+    // DB connection failure or query error: fail closed, do not assume anonymous
+    console.error("Auth DB query failed:", error instanceof Error ? error.message : String(error));
+    throw new Error("AUTH_DB_ERROR");
+  }
 }
 
 export async function requireUser(roles?: Role[]): Promise<AuthUser> {
@@ -102,8 +109,70 @@ export async function clearSessionCookie(): Promise<void> {
   });
 }
 
-export function authErrorResponse(error: unknown): { status: number; message: string } {
-  if (error instanceof Error && error.message === "UNAUTHENTICATED") return { status: 401, message: "Sesi login tidak valid" };
-  if (error instanceof Error && error.message === "FORBIDDEN") return { status: 403, message: "Anda tidak memiliki izin untuk operasi ini" };
-  return { status: 500, message: "Terjadi kesalahan server" };
+function isPrismaOrInternalError(err: unknown): boolean {
+  if (!(err instanceof Error)) return false;
+  const msg = err.message;
+  const name = err.constructor.name;
+  return (
+    msg === "AUTH_DB_ERROR" ||
+    name.includes("Prisma") ||
+    msg.includes("\nInvalid `prisma.") ||
+    msg.includes("PrismaClient") ||
+    msg.includes("Can't reach database server") ||
+    /timed out fetching a (new )?connection/i.test(msg)
+  );
+}
+
+export function safeErrorMessage(err: unknown, fallback: string): string {
+  if (!(err instanceof Error)) return fallback;
+  if (isPrismaOrInternalError(err)) {
+    console.error("[Internal Error]", err.constructor.name, err.message.slice(0, 200));
+    return fallback;
+  }
+  return err.message;
+}
+
+export type ApiErrorCategory = "auth" | "internal" | "business";
+
+export function classifyApiError(err: unknown): ApiErrorCategory {
+  if (err instanceof Error && (err.message === "UNAUTHENTICATED" || err.message === "FORBIDDEN")) {
+    return "auth";
+  }
+  if (isPrismaOrInternalError(err)) return "internal";
+  return "business";
+}
+
+export function apiErrorStatus(
+  err: unknown,
+  businessStatus = 400
+): number {
+  const category = classifyApiError(err);
+  if (category === "auth") {
+    return err instanceof Error && err.message === "FORBIDDEN" ? 403 : 401;
+  }
+  if (category === "internal") return 500;
+  return businessStatus;
+}
+
+export function apiErrorResponse(
+  err: unknown,
+  fallbackMessage: string,
+  businessStatus = 400
+): NextResponse {
+  if (err instanceof Error && (err.message === "UNAUTHENTICATED" || err.message === "FORBIDDEN")) {
+    return authErrorResponse(err);
+  }
+  const status = apiErrorStatus(err, businessStatus);
+  const message = safeErrorMessage(err, fallbackMessage);
+  return NextResponse.json({ success: false, message }, { status });
+}
+
+export function authErrorResponse(error: unknown): NextResponse {
+  if (error instanceof Error && error.message === "UNAUTHENTICATED") {
+    return NextResponse.json({ success: false, message: "Sesi login tidak valid" }, { status: 401 });
+  }
+  if (error instanceof Error && error.message === "FORBIDDEN") {
+    return NextResponse.json({ success: false, message: "Anda tidak memiliki izin untuk operasi ini" }, { status: 403 });
+  }
+  return NextResponse.json({ success: false, message: "Terjadi kesalahan server" }, { status: 500 });
 }

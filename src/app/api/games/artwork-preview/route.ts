@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { resolveGameArtwork } from "@/services/game-artwork.service";
-import { requireUser, authErrorResponse } from "@/lib/auth";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
@@ -20,11 +20,6 @@ export async function GET(request: Request) {
       data: artwork,
     });
   } catch (err: unknown) {
-    const { status, message } = authErrorResponse(err);
-    if (status === 401 || status === 403) {
-      return NextResponse.json({ success: false, message }, { status });
-    }
-    const msg = err instanceof Error ? err.message : "Gagal mencari artwork game";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Gagal mencari artwork game", 500);
   }
 }

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { listMembers, createMember } from "@/services/member.service";
 import { memberSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("q");
     const tier = searchParams.get("tier");
@@ -11,13 +13,13 @@ export async function GET(request: Request) {
     const members = await listMembers({ search, tier });
     return NextResponse.json({ success: true, data: members });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server saat memuat member";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server saat memuat member", 500);
   }
 }
 
 export async function POST(request: Request) {
   try {
+    await requireUser();
     const body = await request.json();
     const validated = memberSchema.safeParse(body);
 
@@ -35,7 +37,6 @@ export async function POST(request: Request) {
       message: `Member ${member.fullName} (${member.memberCode}) berhasil didaftarkan`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menambahkan member";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menambahkan member", 400);
   }
 }

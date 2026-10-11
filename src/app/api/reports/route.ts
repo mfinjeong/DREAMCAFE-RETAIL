@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { getComprehensiveReports, ReportFilterParams } from "@/services/report.service";
 import { reportFilterSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
     const { searchParams } = new URL(request.url);
     const period = searchParams.get("period") || undefined;
     const startDate = searchParams.get("startDate") || undefined;
@@ -35,7 +37,6 @@ export async function GET(request: Request) {
       },
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server saat memuat laporan finansial";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server saat memuat laporan finansial", 500);
   }
 }

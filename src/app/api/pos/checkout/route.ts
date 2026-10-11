@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { createPosCheckout } from "@/services/transaction.service";
 import { posCheckoutSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    const user = await requireUser();
     const body = await request.json();
     const validated = posCheckoutSchema.safeParse(body);
 
@@ -18,7 +20,7 @@ export async function POST(request: Request) {
       memberId: validated.data.memberId,
       items: validated.data.items,
       cashReceived: validated.data.cashReceived,
-      cashierName: validated.data.cashierName,
+      cashierName: user.fullName || user.username,
       notes: validated.data.notes,
     });
 
@@ -30,7 +32,6 @@ export async function POST(request: Request) {
       message: `Transaksi kasir toko berhasil diproses (Kembalian: Rp${result.cashChange.toLocaleString("id-ID")})`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memproses transaksi kasir toko";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memproses transaksi kasir toko");
   }
 }

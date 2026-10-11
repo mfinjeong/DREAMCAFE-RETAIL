@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { adjustStock } from "@/services/inventory.service";
 import { inventoryAdjustmentSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    const user = await requireUser();
     const body = await request.json();
     const validated = inventoryAdjustmentSchema.safeParse(body);
 
@@ -19,7 +21,7 @@ export async function POST(request: Request) {
       action: validated.data.action,
       quantity: validated.data.quantity,
       reason: validated.data.reason,
-      recordedBy: validated.data.recordedBy,
+      recordedBy: user.fullName || user.username,
     });
 
     return NextResponse.json({
@@ -32,7 +34,6 @@ export async function POST(request: Request) {
       message: `Stok ${result.product.name} berhasil diperbarui (${result.previousStock} -> ${result.newStock})`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menyesuaikan stok inventaris";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menyesuaikan stok inventaris", 400);
   }
 }

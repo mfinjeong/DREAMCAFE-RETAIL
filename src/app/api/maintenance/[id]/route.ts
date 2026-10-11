@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { updateMaintenance } from "@/services/maintenance.service";
 import { maintenanceUpdateSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json();
     const validated = maintenanceUpdateSchema.safeParse(body);
@@ -28,7 +30,6 @@ export async function PATCH(
           : `Tiket ${ticket.stationNumber} diperbarui`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui tiket servis";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui tiket servis", 400);
   }
 }

@@ -1,13 +1,16 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { sanitizeRedirectUrl } from "@/lib/redirect";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = sanitizeRedirectUrl(searchParams.get("from"));
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,7 @@ export default function LoginPage() {
         throw new Error(result.message || "Login gagal");
       }
 
-      router.replace("/games");
+      router.replace(redirectTo);
       router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login gagal");
@@ -57,12 +60,26 @@ export default function LoginPage() {
           {isSubmitting ? "Memproses..." : "Masuk"}
         </Button>
 
-        <div className="text-center text-sm">
-          <Link href="/forgot-password" className="text-accent-blue hover:underline">
+        <div className="text-center text-sm space-y-2">
+          <Link href="/forgot-password" className="text-accent-blue hover:underline block">
             Lupa password?
           </Link>
+          <p className="text-text-muted">
+            Belum punya akun?{" "}
+            <Link href="/sign-up" className="text-accent-blue hover:underline">
+              Informasi pendaftaran
+            </Link>
+          </p>
         </div>
       </form>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen flex items-center justify-center bg-background px-4"><div className="w-full max-w-sm h-64 bg-surface border border-surface-border rounded-[6px] animate-pulse" /></main>}>
+      <LoginForm />
+    </Suspense>
   );
 }

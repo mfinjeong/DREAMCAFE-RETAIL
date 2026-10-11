@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { getPCById, updatePC, deletePC, updatePCStatus } from "@/services/pc.service";
 import { pcSchema } from "@/lib/validators";
 import { PCStatus } from "@prisma/client";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const pc = await getPCById(id);
     if (!pc) {
@@ -15,8 +17,7 @@ export async function GET(
     }
     return NextResponse.json({ success: true, data: pc });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server");
   }
 }
 
@@ -25,6 +26,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json();
     const validated = pcSchema.partial().safeParse(body);
@@ -43,8 +45,7 @@ export async function PUT(
       message: `Station ${updated.stationNumber} berhasil diperbarui`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui PC station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui PC station");
   }
 }
 
@@ -53,6 +54,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json();
     const { status } = body;
@@ -68,8 +70,7 @@ export async function PATCH(
       message: `Status ${updated.stationNumber} diubah menjadi ${status}`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui status station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui status station");
   }
 }
 
@@ -78,11 +79,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     await deletePC(id);
     return NextResponse.json({ success: true, message: "PC Station berhasil dihapus" });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menghapus PC station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menghapus PC station");
   }
 }

@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { getInventorySummary } from "@/services/inventory.service";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await requireUser();
     const summary = await getInventorySummary();
     return NextResponse.json({ success: true, data: summary });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memuat ringkasan inventaris";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Gagal memuat ringkasan inventaris", 500);
   }
 }

@@ -48,8 +48,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!dbUser) {
-      const authError = authErrorResponse(new Error("UNAUTHENTICATED"));
-      return NextResponse.json({ success: false, message: authError.message }, { status: authError.status });
+      return authErrorResponse(new Error("UNAUTHENTICATED"));
     }
 
     const isMatch = await verifyPassword(currentPassword, dbUser.passwordHash);
@@ -78,7 +77,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Password berhasil diubah. Silakan login kembali." });
   } catch (error) {
-    const authError = authErrorResponse(error);
-    return NextResponse.json({ success: false, message: authError.message }, { status: authError.status });
+    return authErrorResponse(error);
   }
 }

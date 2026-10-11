@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { checkoutSession } from "@/services/session.service";
 import { sessionCheckoutWithProductsSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    const user = await requireUser();
     const body = await request.json();
     const validated = sessionCheckoutWithProductsSchema.safeParse(body);
 
@@ -18,7 +20,7 @@ export async function POST(request: Request) {
       sessionId: validated.data.sessionId,
       products: validated.data.products,
       cashReceived: validated.data.cashReceived,
-      cashierName: validated.data.cashierName,
+      cashierName: user.fullName || user.username,
       notes: validated.data.notes,
     });
 
@@ -28,7 +30,6 @@ export async function POST(request: Request) {
       message: `Checkout biling berhasil (Kembalian: Rp${result.cashChange.toLocaleString("id-ID")})`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menyelesaikan sesi";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menyelesaikan sesi");
   }
 }

@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { getGameById, updateGame, deleteGame } from "@/services/game.service";
 import { updateGameSchema } from "@/lib/validators";
-import { requireUser, authErrorResponse } from "@/lib/auth";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
+
     const { id } = await params;
     const game = await getGameById(id);
 
@@ -20,8 +22,7 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: game });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server", 500);
   }
 }
 
@@ -50,12 +51,7 @@ export async function PUT(
       message: `Data game '${updated.title}' berhasil diperbarui`,
     });
   } catch (err: unknown) {
-    const { status, message } = authErrorResponse(err);
-    if (status === 401 || status === 403) {
-      return NextResponse.json({ success: false, message }, { status });
-    }
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui game";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui game", 400);
   }
 }
 
@@ -79,11 +75,6 @@ export async function DELETE(
       message,
     });
   } catch (err: unknown) {
-    const { status, message } = authErrorResponse(err);
-    if (status === 401 || status === 403) {
-      return NextResponse.json({ success: false, message }, { status });
-    }
-    const msg = err instanceof Error ? err.message : "Gagal menghapus game";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menghapus game", 400);
   }
 }

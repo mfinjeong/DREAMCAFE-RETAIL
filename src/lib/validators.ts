@@ -113,6 +113,21 @@ export const posCheckoutSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
+export const productSchema = z.object({
+  name: z.string().min(2, "Nama produk minimal 2 karakter"),
+  barcode: z.string().optional().nullable(),
+  categoryId: z.string().min(1, "Kategori wajib dipilih"),
+  price: z.number().min(100, "Harga jual minimal Rp100"),
+  costPrice: z.number().min(0, "Harga modal tidak boleh negatif").optional().default(0),
+  stock: z.number().int().min(0, "Stok tidak boleh negatif").optional().default(0),
+  minStockAlert: z.number().int().min(0, "Batas peringatan stok tidak boleh negatif").optional().default(5),
+  unit: z.string().min(1, "Satuan wajib diisi").optional().default("pcs"),
+  imageUrl: z.string().url().optional().nullable(),
+  isActive: z.boolean().optional().default(true),
+});
+
+export const updateProductSchema = productSchema.partial();
+
 export const inventoryAdjustmentSchema = z
   .object({
     productId: z.string().min(1, "Produk wajib dipilih"),

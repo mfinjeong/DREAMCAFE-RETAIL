@@ -13,7 +13,6 @@ export async function GET() {
       data: user,
     });
   } catch (err: unknown) {
-    const { status, message } = authErrorResponse(err);
-    return NextResponse.json({ success: false, message }, { status });
+    return authErrorResponse(err);
   }
 }

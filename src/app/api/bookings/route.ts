@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { listBookings, createBooking } from "@/services/booking.service";
 import { bookingSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const date = searchParams.get("date");
@@ -14,13 +16,13 @@ export async function GET(request: Request) {
     const bookings = await listBookings({ status, date, memberId, type, search });
     return NextResponse.json({ success: true, data: bookings });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server saat memuat reservasi";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server saat memuat reservasi", 500);
   }
 }
 
 export async function POST(request: Request) {
   try {
+    await requireUser();
     const body = await request.json();
     const validated = bookingSchema.safeParse(body);
 
@@ -48,7 +50,6 @@ export async function POST(request: Request) {
       message: `Reservasi ${booking.bookingCode} berhasil dibuat (${booking.startTime} - ${booking.endTime})`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal membuat reservasi";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal membuat reservasi", 400);
   }
 }

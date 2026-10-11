@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { listConsoles, createConsole } from "@/services/console.service";
 import { consoleSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const consoleType = searchParams.get("type") || searchParams.get("consoleType");
@@ -12,13 +14,13 @@ export async function GET(request: Request) {
     const consoles = await listConsoles({ status, consoleType, search });
     return NextResponse.json({ success: true, data: consoles });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server saat memuat data konsol";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server saat memuat data konsol", 500);
   }
 }
 
 export async function POST(request: Request) {
   try {
+    await requireUser();
     const body = await request.json();
     const validated = consoleSchema.safeParse(body);
 
@@ -36,7 +38,6 @@ export async function POST(request: Request) {
       message: `Console ${consoleStation.stationNumber} berhasil ditambahkan ke database`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menambahkan console station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menambahkan console station", 400);
   }
 }

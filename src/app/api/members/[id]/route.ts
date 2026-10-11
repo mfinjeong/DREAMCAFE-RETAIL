@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { getMemberById, updateMember, deleteMember } from "@/services/member.service";
 import { memberSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const member = await getMemberById(id);
     if (!member) {
@@ -14,8 +16,7 @@ export async function GET(
     }
     return NextResponse.json({ success: true, data: member });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server", 500);
   }
 }
 
@@ -24,6 +25,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json();
     const validated = memberSchema.partial().safeParse(body);
@@ -42,8 +44,7 @@ export async function PUT(
       message: `Data member ${updated.fullName} berhasil diperbarui`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui data member";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui data member", 400);
   }
 }
 
@@ -52,11 +53,11 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     await deleteMember(id);
     return NextResponse.json({ success: true, message: "Member berhasil dihapus" });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menghapus member";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menghapus member", 400);
   }
 }

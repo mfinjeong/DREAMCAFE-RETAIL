@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PaymentStatus, PCStatus } from "@prisma/client";
 import { getJakartaDateBoundaries, getJakartaDateString } from "@/services/report.service";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await requireUser();
     const todayStr = getJakartaDateString();
     const { start: startDate, end: endDate } = getJakartaDateBoundaries(todayStr);
 
@@ -52,10 +54,7 @@ export async function GET() {
         todayRevenue,
       },
     });
-  } catch {
-    return NextResponse.json(
-      { success: false, message: "Failed to load dashboard stats" },
-      { status: 500 }
-    );
+  } catch (err: unknown) {
+    return apiErrorResponse(err, "Failed to load dashboard stats", 500);
   }
 }

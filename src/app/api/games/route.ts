@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { listGames, createGame, getGameGenres } from "@/services/game.service";
 import { gameSchema, gameQuerySchema } from "@/lib/validators";
-import { requireUser, authErrorResponse } from "@/lib/auth";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
+
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q") || undefined;
     const platform = (searchParams.get("platform") as "ALL" | "PC" | "CONSOLE") || undefined;
@@ -26,8 +28,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server saat memuat katalog game";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server saat memuat katalog game", 500);
   }
 }
 
@@ -55,11 +56,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (err: unknown) {
-    const { status, message } = authErrorResponse(err);
-    if (status === 401 || status === 403) {
-      return NextResponse.json({ success: false, message }, { status });
-    }
-    const msg = err instanceof Error ? err.message : "Gagal menambahkan game baru";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menambahkan game baru", 400);
   }
 }

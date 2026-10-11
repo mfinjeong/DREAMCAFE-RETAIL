@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { stopSession } from "@/services/session.service";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    await requireUser();
     const body = await request.json();
     const sessionId = body?.sessionId;
 
@@ -21,7 +23,6 @@ export async function POST(request: Request) {
       message: `Sesi ${session.sessionNumber} berhasil dihentikan`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menghentikan sesi aktif";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menghentikan sesi aktif", 400);
   }
 }

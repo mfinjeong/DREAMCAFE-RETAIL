@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { getConsoleById, updateConsole, deleteConsole, updateConsoleStatus } from "@/services/console.service";
 import { consoleSchema } from "@/lib/validators";
 import { ConsoleStatus } from "@prisma/client";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const con = await getConsoleById(id);
     if (!con) {
@@ -15,8 +17,7 @@ export async function GET(
     }
     return NextResponse.json({ success: true, data: con });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server");
   }
 }
 
@@ -25,6 +26,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json();
     const validated = consoleSchema.partial().safeParse(body);
@@ -43,8 +45,7 @@ export async function PUT(
       message: `Console ${updated.stationNumber} berhasil diperbarui`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui console station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui console station");
   }
 }
 
@@ -53,6 +54,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json();
     const { status } = body;
@@ -68,21 +70,20 @@ export async function PATCH(
       message: `Status ${updated.stationNumber} diubah menjadi ${status}`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memperbarui status konsol";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memperbarui status konsol");
   }
 }
 
 export async function DELETE(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     await deleteConsole(id);
     return NextResponse.json({ success: true, message: "Console Station berhasil dihapus" });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menghapus console station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menghapus console station");
   }
 }

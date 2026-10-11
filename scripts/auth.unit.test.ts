@@ -13,6 +13,49 @@ import {
   isPasswordResetEmailConfigured,
   sendPasswordResetEmail,
 } from "../src/lib/password-reset-email";
+import { sanitizeRedirectUrl } from "../src/lib/redirect";
+
+test("sanitizeRedirectUrl accepts valid internal paths", () => {
+  assert.equal(sanitizeRedirectUrl("/pc"), "/pc");
+  assert.equal(sanitizeRedirectUrl("/profile"), "/profile");
+  assert.equal(sanitizeRedirectUrl("/consoles"), "/consoles");
+  assert.equal(sanitizeRedirectUrl("/dashboard/stats"), "/dashboard/stats");
+  assert.equal(sanitizeRedirectUrl("/inventory?category=drink"), "/inventory?category=drink");
+  assert.equal(sanitizeRedirectUrl("/"), "/");
+});
+
+test("sanitizeRedirectUrl rejects open redirects and protocols", () => {
+  assert.equal(sanitizeRedirectUrl("//evil.example"), "/");
+  assert.equal(sanitizeRedirectUrl("//evil.example/pc"), "/");
+  assert.equal(sanitizeRedirectUrl("https://evil.example"), "/");
+  assert.equal(sanitizeRedirectUrl("http://evil.example/pc"), "/");
+  assert.equal(sanitizeRedirectUrl("javascript:alert(1)"), "/");
+  assert.equal(sanitizeRedirectUrl("data:text/html,evil"), "/");
+  assert.equal(sanitizeRedirectUrl("mailto:admin@example.com"), "/");
+  assert.equal(sanitizeRedirectUrl("/\\evil.example"), "/");
+  assert.equal(sanitizeRedirectUrl("/evil:path"), "/");
+});
+
+test("sanitizeRedirectUrl rejects auth pages to prevent redirect loops", () => {
+  assert.equal(sanitizeRedirectUrl("/login"), "/");
+  assert.equal(sanitizeRedirectUrl("/login?from=/pc"), "/");
+  assert.equal(sanitizeRedirectUrl("/login/extra"), "/");
+  assert.equal(sanitizeRedirectUrl("/reset-password"), "/");
+  assert.equal(sanitizeRedirectUrl("/reset-password?token=abc"), "/");
+  assert.equal(sanitizeRedirectUrl("/sign-up"), "/");
+  assert.equal(sanitizeRedirectUrl("/sign-up?ref=123"), "/");
+  assert.equal(sanitizeRedirectUrl("/forgot-password"), "/");
+});
+
+test("sanitizeRedirectUrl rejects empty, whitespace, and malformed inputs", () => {
+  assert.equal(sanitizeRedirectUrl(""), "/");
+  assert.equal(sanitizeRedirectUrl("   "), "/");
+  assert.equal(sanitizeRedirectUrl(null), "/");
+  assert.equal(sanitizeRedirectUrl(undefined), "/");
+  assert.equal(sanitizeRedirectUrl("pc"), "/");
+  assert.equal(sanitizeRedirectUrl("/path with spaces"), "/");
+  assert.equal(sanitizeRedirectUrl("/path\nwith\nnewlines"), "/");
+});
 
 test("reset tokens use 32 cryptographic bytes and SHA-256 hashes", () => {
   const token = randomBytes(32).toString("hex");

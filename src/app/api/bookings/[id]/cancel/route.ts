@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { cancelBooking } from "@/services/booking.service";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await requireUser();
     const { id } = await params;
     const body = await request.json().catch(() => ({}));
     const cancelled = await cancelBooking(id, body.reason);
@@ -16,7 +18,6 @@ export async function POST(
       message: `Reservasi ${cancelled.bookingCode} berhasil dibatalkan`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal membatalkan reservasi";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal membatalkan reservasi", 400);
   }
 }

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { listPCs, createPC } from "@/services/pc.service";
 import { pcSchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const zone = searchParams.get("zone");
@@ -12,13 +14,13 @@ export async function GET(request: Request) {
     const pcs = await listPCs({ status, zone, search });
     return NextResponse.json({ success: true, data: pcs });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Terjadi kesalahan server saat memuat PC";
-    return NextResponse.json({ success: false, message: msg }, { status: 500 });
+    return apiErrorResponse(err, "Terjadi kesalahan server saat memuat PC");
   }
 }
 
 export async function POST(request: Request) {
   try {
+    await requireUser();
     const body = await request.json();
     const validated = pcSchema.safeParse(body);
 
@@ -36,7 +38,6 @@ export async function POST(request: Request) {
       message: `Station ${pc.stationNumber} berhasil ditambahkan ke database`,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal menambahkan PC station";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal menambahkan PC station");
   }
 }

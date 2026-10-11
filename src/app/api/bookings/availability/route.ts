@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { getBookingAvailability } from "@/services/booking.service";
 import { bookingAvailabilitySchema } from "@/lib/validators";
+import { requireUser, apiErrorResponse } from "@/lib/auth";
 
 export async function GET(request: Request) {
   try {
+    await requireUser();
     const { searchParams } = new URL(request.url);
     const date = searchParams.get("date") || "";
     const startTime = searchParams.get("startTime") || "";
@@ -33,7 +35,6 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, data: availability });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Gagal memeriksa ketersediaan stasiun";
-    return NextResponse.json({ success: false, message: msg }, { status: 400 });
+    return apiErrorResponse(err, "Gagal memeriksa ketersediaan stasiun", 400);
   }
 }
