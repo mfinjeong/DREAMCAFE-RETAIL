@@ -1,46 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { PCStation } from "@/lib/types";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatRupiah, formatCountdown } from "@/lib/formatters";
 
 interface PCStationCardProps {
   pc: PCStation;
+  nowSeconds?: number;
   onStartSession?: (pc: PCStation) => void;
   onViewDetail?: (pc: PCStation) => void;
   onEndSession?: (pc: PCStation) => void;
   onAddTime?: (pc: PCStation) => void;
 }
 
-export const PCStationCard: React.FC<PCStationCardProps> = ({
+export const PCStationCard: React.FC<PCStationCardProps> = React.memo(({
   pc,
+  nowSeconds,
   onStartSession,
   onViewDetail,
   onEndSession,
   onAddTime,
 }) => {
-  // Live ticking countdown calculation
-  const [secondsRemaining, setSecondsRemaining] = useState<number>(() => {
+  const secondsRemaining = useMemo(() => {
     if (pc.status === "IN_USE" && pc.activeSession) {
+      const nowMs = (nowSeconds ?? Math.floor(Date.now() / 1000)) * 1000;
       const start = new Date(pc.activeSession.startTime).getTime();
       const durationMs = pc.activeSession.durationMinutes * 60 * 1000;
       const end = start + durationMs;
-      const leftSec = Math.max(0, Math.floor((end - Date.now()) / 1000));
-      return leftSec > 0 ? leftSec : pc.activeSession.remainingMinutes * 60;
+      const leftSec = Math.max(0, Math.floor((end - nowMs) / 1000));
+      return leftSec;
     }
     return 0;
-  });
-
-  useEffect(() => {
-    if (pc.status !== "IN_USE") return;
-
-    const timer = setInterval(() => {
-      setSecondsRemaining((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [pc.status]);
+  }, [pc.status, pc.activeSession, nowSeconds]);
 
   return (
     <div className="relative overflow-hidden rounded-md border border-surface-border hover:border-sage bg-surface p-4 shadow-pixel flex flex-col justify-between transition-colors select-none">
@@ -162,4 +154,4 @@ export const PCStationCard: React.FC<PCStationCardProps> = ({
       </div>
     </div>
   );
-};
+});

@@ -82,6 +82,7 @@ export const TopBar: React.FC = () => {
               placeholder="Search..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Cari"
               className="w-full bg-surface-muted border border-surface-border rounded-md pl-10 pr-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-orange transition-colors"
             />
           </div>
@@ -90,7 +91,7 @@ export const TopBar: React.FC = () => {
               <button
                 onClick={() => setShowMenu((v) => !v)}
                 className="flex items-center gap-2 p-1.5 text-text-secondary hover:text-orange hover:bg-surface-hover rounded-md transition-colors"
-                aria-haspopup="menu"
+                aria-label={currentUser.fullName ? `Akun ${currentUser.fullName}` : "Menu Akun"}
                 aria-expanded={showMenu}
               >
                 <span className="hidden lg:block text-right">

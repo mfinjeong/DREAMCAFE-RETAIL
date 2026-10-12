@@ -1,0 +1,152 @@
+# Game Account Rental — Pre-Migration Schema Proposal
+
+Status: PROPOSAL ONLY. Belum diterapkan, belum divalidasi runtime.
+Tidak ada perubahan pada `prisma/schema.prisma`, database, atau migrasi aktif.
+
+## 1. Hasil verifikasi schema aktual (read-only)
+
+- `User` (`id` String cuid): relasi `sessionTokens`, `passwordResetTokens`. Belum ada relasi ke `Session`.
+- `Session` (`id` String cuid): field `endTime DateTime?`, `durationMinutes Int`, `remainingMinutes Int`, `hourlyRate Float`, `totalPrice Float`, `status SessionStatus` (ACTIVE/COMPLETED/CANCELLED), `paymentStatus PaymentStatus`, `transactionId String?`, `gameId String?`, `memberId String?`, `pcId String?`, `consoleId String?`. Relasi `game Game?` dengan `onDelete: SetNull`.
+- `Game` (`id` String cuid): `title @unique`, `isActive Boolean`. Relasi `sessions Session[]` dan `memberStats`.
+- Enum `Role`: ADMIN, OPERATOR, STAFF. Tidak ada enum rental.
+- `Session.transactionId` menunjuk ke `Transaction`. Checkout sudah ada di `checkoutSession` (`src/services/session.service.ts`, ~baris 374).
+
+## 2. Model yang diusulkan
+
+### RentalAccount
+| Field | Tipe | Catatan |
+|---|---|---|
+| id | String @id @default(cuid()) | |
+| accountCode | String @unique | Unik global, mis. `CS2-01` |
+| gameId | String | FK ke `Game.id`, `onDelete: Restrict` |
+| status | RentalAccountStatus @default(AVAILABLE) | AVAILABLE, IN_USE, MAINTENANCE, OFFLINE |
+| hourlyRate | Float | Tarif server-side, sumber resmi |
+| loginIdentifier | String? | Non-secret (username akun game) |
+| secretRef | String? | Referensi ke secret manager, bukan secret |
+| notes | String? | Catatan internal |
+| isActive | Boolean @default(true) | Nonaktifkan, jangan hapus |
+| createdAt / updatedAt | DateTime | |
+
+Index: `@@index([gameId])`, `@@index([status])`.
+
+### RentalAllocation
+| Field | Tipe | Catatan |
+|---|---|---|
+| id | String @id @default(cuid()) | |
+| rentalAccountId | String | FK, `onDelete: Restrict` |
+| sessionId | String | FK ke `Session.id`, `onDelete: Restrict` |
+| status | RentalAllocationStatus @default(ACTIVE) | ACTIVE, COMPLETED, CANCELLED |
+| durationMinutes | Int | Total durasi, bertambah saat extension |
+| hourlyRateSnapshot | Float | Salinan `RentalAccount.hourlyRate` saat alokasi |
+| startedAt | DateTime @default(now()) | |
+| releasedAt | DateTime? | |
+| createdAt / updatedAt | DateTime | |
+
+Index: `@@index([rentalAccountId])`, `@@index([sessionId])`, `@@index([status])`.
+
+Unique anti double-active: dibuat sebagai **raw SQL partial unique index** (Prisma tidak bisa mengekspresikannya):
+```sql
+CREATE UNIQUE INDEX "RentalAllocation_rentalAccountId_active_key"
+  ON "RentalAllocation" ("rentalAccountId") WHERE "status" = 'ACTIVE';
+```
+Satu sesi juga hanya boleh punya satu alokasi aktif per sesi (opsional, sama pola partial index):
+```sql
+CREATE UNIQUE INDEX "RentalAllocation_sessionId_active_key"
+  ON "RentalAllocation" ("sessionId") WHERE "status" = 'ACTIVE';
+```
+
+### RentalAccountAuditLog
+| Field | Tipe | Catatan |
+|---|---|---|
+| id | String @id @default(cuid()) | |
+| rentalAccountId | String | FK NOT NULL, `onDelete: Restrict` |
+| action | String | Konstanta action terdefinisi |
+| previousStatus | String? | |
+| newStatus | String? | |
+| performedByUserId | String | FK ke `User.id`, `onDelete: Restrict` |
+| accountCodeSnapshot | String | Disalin agar histori tetap terbaca |
+| gameIdSnapshot | String | |
+| createdAt | DateTime @default(now()) | |
+
+Index: `@@index([rentalAccountId])`, `@@index([performedByUserId])`, `@@index([createdAt])`.
+
+## 3. Back-relation yang diperlukan
+
+- `Game`: `rentalAccounts RentalAccount[]`.
+- `Session`: `rentalAllocations RentalAllocation[]`.
+- `User`: `rentalAuditLogs RentalAccountAuditLog[]`.
+- Tidak ada perubahan field pada model yang sudah ada selain back-relation.
+
+## 4. Kebijakan penghapusan (RESTRICT)
+
+- Semua FK rental memakai `onDelete: Restrict`. Tidak ada `Cascade`.
+- Game dengan akun rental tidak bisa dihapus selama masih ada `RentalAccount`. Perlu dinonaktifkan (`isActive=false`) sebagai gantinya.
+- Akun rental tidak boleh dihapus fisik jika punya allocation/audit. Gunakan `isActive=false` (tidak ada status enum pensiun terpisah; `isActive` adalah sumber kebenaran).
+- Session yang punya allocation tidak bisa dihapus. Session saat ini tidak punya hard-delete di alur normal, jadi dampaknya kecil.
+- User yang punya audit log tidak bisa dihapus. Nonaktifkan user sebagai gantinya.
+- Konsekuensi: penghapusan game atau user yang sudah dipakai akan gagal dengan error FK. Harus ditangani di service sebagai konflik yang jelas.
+
+## 5. Anti double-active (dua lapis)
+
+1. **Database**: partial unique index di atas. Dua INSERT ACTIVE untuk akun sama akan gagal dengan P2002.
+2. **Transaksi aplikasi**: dalam `prisma.$transaction`, lakukan
+   `UPDATE "RentalAccount" SET status='IN_USE' WHERE id=? AND status='AVAILABLE' AND isActive=true`.
+   Jika `count !== 1`, lempar konflik. Lalu insert `RentalAllocation`, `Session`, dan audit log dalam transaksi yang sama.
+3. P2002 dipetakan ke `ConflictError` (siap jadi HTTP 409).
+
+## 6. Konsistensi extension, countdown, checkout, dan snapshot
+
+- Tarif hanya dari `RentalAccount.hourlyRate` di server, disalin ke `hourlyRateSnapshot`.
+- `extendRentalAllocation` menerima `rentalAccountId`, `sessionId`, `extraMinutes`, dan `performedByUserId`. `extraMinutes` adalah integer 15–1440. Dalam satu transaksi, extension menambah `Session.durationMinutes`, `remainingMinutes`, `endTime`, dan `RentalAllocation.durationMinutes`. Tidak mengubah `Session.totalPrice` atau membuat `Transaction` baru.
+- Total hanya dihitung sekali di `checkoutSession`: `round((durationMinutes * hourlyRate) / 60)`. Ini sesuai `stopSession` dan `checkoutSession`.
+- **Guard wajib sebelum aktivasi**: `addSessionTime` harus menolak sesi yang memiliki `RentalAllocation` ACTIVE sebelum mengubah `Session.totalPrice`; sesi non-rental mempertahankan perilaku sekarang. Rental memakai `extendRentalAllocation`, termasuk audit dalam transaksi sama. Tambahkan integration test untuk guard, rollback, dan checkout sekali tagih.
+- Countdown: `endTime` disimpan di `Session`. `RentalAllocation` tidak menyimpan `endTime` agar tidak duplikasi sumber.
+- Checkout: sesi rental ACTIVE dihitung dari `startTime` seperti sesi biasa. Akun dibebaskan (`AVAILABLE`) hanya setelah `Session` COMPLETED/CANCELLED dan allocation diubah ke COMPLETED/CANCELLED dalam transaksi yang sama.
+
+## 7. Enum yang diusulkan
+
+- `RentalAccountStatus`: AVAILABLE, IN_USE, MAINTENANCE, OFFLINE
+- `RentalAllocationStatus`: ACTIVE, COMPLETED, CANCELLED
+
+Catatan: `status` pada audit log memakai string agar fleksibel. Pilihan lain: enum tersendiri.
+
+## 8. Risiko, asumsi, dan konflik
+
+- **Asumsi belum terverifikasi runtime**: nama tabel Prisma default (`RentalAccount`) dan kompatibilitas partial index dengan Prisma Client harus diuji.
+- `RentalAccountAuditLog.rentalAccountId` adalah `NOT NULL` dengan `ON DELETE RESTRICT` (disepakati): audit tidak boleh pernah orphaned (tanpa induk). Soft-delete (`isActive = false`) digunakan alih-alih hard delete akun.
+- `rentalAllocationId` sengaja tidak dijadikan kolom audit log terpisah pada level SQL draft untuk menghindari siklus FK dan orphaning; korelasi sesi dicatat melalui teks terstruktur pada kolom `details` (misal `Session cl... duration 60min`), sementara `Session` dan `RentalAccount` dilindungi `ON DELETE RESTRICT`.
+- **Migrasi additive**: hanya `CREATE TYPE`, `CREATE TABLE`, `CREATE INDEX`, dan FK baru. Tidak mengubah tabel lama. Risiko rendah.
+- **Risiko kunci**: `CREATE UNIQUE INDEX` pada tabel baru tidak mengunci data lama.
+- **Konflik nama**: tidak ada model `Rental*` di schema saat ini.
+- **Secret**: `secretRef` hanya referensi. Provider nyata belum ada, default fail-closed. Blocker sebelum fitur kredensial aktif.
+- **Tarif rental vs `PC`/`Console`**: `hourlyRate` di `RentalAccount` terpisah. Tidak mengubah tarif PC atau Console.
+
+## 9. Rencana rollback (tanpa menghapus data)
+
+1. Sebelum migrasi: backup database (snapshot Supabase).
+2. Jika migrasi gagal: migrasi additive, cukup `DROP` tabel rental baru yang masih kosong. Tabel lama tidak tersentuh.
+3. Jika fitur harus dimatikan setelah dipakai: set `isActive=false` pada akun, tolak alokasi baru di service, pertahankan semua histori.
+4. Hindari `migrate reset` dan `db push --force-reset`.
+
+## 10. Rencana tes di PostgreSQL disposable
+
+Dijalankan hanya di database disposable (container lokal atau branch terpisah), bukan Supabase produksi:
+
+1. `prisma migrate deploy` ke disposable, lalu `prisma validate`.
+2. Concurrency: 20 request paralel alokasi akun sama. Harus tepat 1 sukses, sisanya konflik 409.
+3. Partial index: dua INSERT ACTIVE untuk akun sama harus gagal P2002.
+4. Rollback transaksi: gagal di tengah (setelah update akun, sebelum insert audit) harus mengembalikan status akun ke AVAILABLE.
+5. Foreign key RESTRICT: hapus Game/User/Session yang punya rental harus gagal dengan error FK.
+6. Retensi audit: nonaktifkan akun (`isActive=false`) tidak menghapus audit.
+7. Extension: durasi, `endTime`, dan `remainingMinutes` naik konsisten; `totalPrice` tidak berubah.
+8. Checkout: total dihitung sekali; tidak ada transaksi ganda.
+
+Semua tes di atas belum dijalankan.
+
+## 11. Langkah sebelum persetujuan implementasi
+
+1. Persetujuan pengguna terhadap model, enum, dan kebijakan RESTRICT.
+2. Keputusan nullable atau NOT NULL untuk `RentalAccountAuditLog.rentalAccountId`.
+3. Pemilihan provider secret manager.
+4. Setup PostgreSQL disposable untuk uji integrasi.
+5. Baru setelah itu: schema diubah, migrasi dibuat dan ditinjau, lalu `.ts.draft` diaktifkan.

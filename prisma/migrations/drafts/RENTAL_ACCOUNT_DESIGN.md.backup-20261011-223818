@@ -1,0 +1,113 @@
+# Rental Account Management — Final Design (Draft, Not Activated)
+
+Status: design only. No schema, migration, API, or UI activation. `prisma/schema.prisma` is unchanged.
+
+## 1. Audit retention: `RentalAccountAuditLog` FK
+
+Design decision: `ON DELETE RESTRICT` on `RentalAccountAuditLog.rentalAccountId → RentalAccount`.
+
+Rationale: Hard-deleting an account would erase its audit trail. This contradicts the requirement that history is never lost.
+
+Implementation:
+- `RentalAccountAuditLog.rentalAccountId` is `NOT NULL` with `ON DELETE RESTRICT`, matching `rental_account_management.sql` and `RENTAL_SCHEMA_PROPOSAL.md`. Audit rows can never be orphaned; the referenced account must exist for every audit entry.
+- Account retirement is performed via `isActive = false`, not hard delete. Because accounts are never hard-deleted in normal business workflows, the `RESTRICT` constraint never blocks routine operations while still protecting history.
+- `accountCodeSnapshot` and `gameIdSnapshot` on audit rows preserve historical context if the account's code or game assignment is later modified.
+- `rentalAllocationId` is intentionally NOT a foreign-keyed column on `RentalAccountAuditLog`. Adding such an FK would create a cycle with `RentalAllocation`/`Session` and risk orphaning audit rows when allocations are released. Instead, allocation/session correlation is captured in the human-readable `details` field (e.g. `Session cl... duration 60min`). `Session` and `RentalAccount` are both protected by `ON DELETE RESTRICT`.
+
+This matches the SQL draft and proposal exactly and ensures audit rows cannot be orphaned.
+
+## 2. Models
+
+### RentalAccount
+- `id String @id @default(cuid())`
+- `gameId String` → `Game` (`ON DELETE RESTRICT`), back-relation `Game.rentalAccounts RentalAccount[]`
+- `accountCode String @unique` (global unique, matches PC `stationNumber` convention, e.g. `CS2-01`)
+- `status RentalAccountStatus @default(AVAILABLE)` (AVAILABLE, IN_USE, MAINTENANCE, OFFLINE — same semantics as PC/Console)
+- `hourlyRate Float` (server-managed tariff, validated > 0)
+- `secretRef String?` (URI reference only; never returned by API or logged)
+- `notes String?` (internal notes; never contains credentials)
+- `isActive Boolean @default(true)` (soft-delete flag; false means retired but data preserved)
+- `createdAt`, `updatedAt`
+- Indexes: `@@index([gameId])`, `@@index([status])`, `@@index([isActive])`, composite `@@index([gameId, status])`
+
+### RentalAllocation
+- `id String @id @default(cuid())`
+- `rentalAccountId String` → `RentalAccount` (`ON DELETE RESTRICT`), back-relation `RentalAccount.rentalAllocations RentalAllocation[]`
+- `sessionId String` → `Session` (`ON DELETE RESTRICT`), back-relation `Session.rentalAllocations RentalAllocation[]`
+- `status RentalAllocationStatus @default(ACTIVE)` (ACTIVE, COMPLETED, CANCELLED)
+- `allocatedAt DateTime @default(now())`
+- `releasedAt DateTime?`
+- `durationMinutes Int`
+- `hourlyRateSnapshot Float` (rate copied at allocation time; source of truth stays `RentalAccount.hourlyRate` at that moment)
+- Partial unique index: `UNIQUE ("rentalAccountId") WHERE "status" = 'ACTIVE'` (raw SQL, not expressible in Prisma schema; already in draft SQL)
+- Price: NOT stored. Checkout total lives in `Session.totalPrice` → `Transaction.totalAmount`. Rental stores only the rate snapshot and duration; the amount is calculated at checkout as `round((Session.durationMinutes * Session.hourlyRate) / 60)`. Extension increments `Session.durationMinutes`, `Session.remainingMinutes`, and `Session.endTime` only; `Session.totalPrice` is NOT updated during extension and is recalculated at checkout. This integrates cleanly with the existing POS flow.
+
+### RentalAccountAuditLog
+- `id String @id @default(cuid())`
+- `rentalAccountId String` → `RentalAccount` (`ON DELETE RESTRICT`), `NOT NULL`; audit rows can never be orphaned
+- `accountCodeSnapshot String` (snapshot at time of action)
+- `gameIdSnapshot String` (snapshot at time of action)
+- `action String` (must match `RENTAL_ACCOUNT_AUDIT_ACTIONS`: CREATED, UPDATED, ALLOCATED, EXTENDED, RELEASED, CANCELLED, STATUS_CHANGED, DEACTIVATED)
+- `previousStatus String?` (status before action)
+- `newStatus String?` (status after action)
+- `performedByUserId String` → `User` (`ON DELETE RESTRICT`), back-relation `User.rentalAuditLogs`
+- `details String?` (human-readable context; never contains credentials)
+- `createdAt DateTime @default(now())`
+- Indexes: `@@index([rentalAccountId, createdAt])`, `@@index([createdAt])`
+
+## 3. Pricing rule
+- Rate comes only from `RentalAccount.hourlyRate` on the server. Client never sends rate (already removed from `allocateRentalSchema`).
+- Snapshot `hourlyRateSnapshot` and `durationMinutes` at allocation.
+- Extension: increment `Session.durationMinutes` and `Session.endTime`, but DO NOT update `Session.totalPrice`. The final price is calculated at checkout from the accumulated duration: `sessionPrice = round((durationMinutes * hourlyRate) / 60)`.
+- Amount is settled through the existing `checkoutSession` POS/Transaction flow. Extension does not create a separate transaction or invoice.
+
+## 4. Secret manager (fail-closed)
+- `SecretManagerProvider` interface exists in `src/lib/secret-manager.ts`. Default is `UnconfiguredSecretManagerProvider`, which returns `null`.
+- BLOCKER: no real provider is configured or integrated in this repository. Credential retrieval stays disabled.
+- `secretRef` is stored as a reference only. It is stripped by `sanitizeRentalAccountForClient` and never logged.
+- Credential retrieval restricted to ADMIN (recommended), with an audit row per access (no secret in details).
+
+## 5. API plan (not implemented)
+Base: `/api/rental-accounts`
+- `GET` list (filters: gameId, status, q; pagination required)
+- `POST` create (ADMIN/OPERATOR)
+- `PATCH /[id]` update (rate, notes, status, isActive)
+- `POST /[id]/allocate` body: sessionId, durationMinutes (no rate)
+- `POST /[id]/extend`, `POST /[id]/release`, `POST /[id]/cancel`
+- `GET /[id]/history`
+- Status mapping via `apiErrorResponse`: validation 400, not found 404, double allocation / invalid state 409, unauthenticated 401, forbidden 403, internal 500 without details. Prisma P2002 maps to 409.
+
+## 6. UI plan (not implemented)
+- Games section: list per game with account count and availability.
+- Account list: filter game, status, search by code; status badges; countdown for active rental; actions consistent with PC page.
+- No sidebar entry until activation approved.
+
+## 7. Integration test design (to write with activation)
+- Authorization: 401 without session, 403 for STAFF/unknown role.
+- Concurrency: two parallel allocate calls for one account, exactly one succeeds, other 409.
+- Pricing: rate from DB, client-supplied rate ignored.
+- Extend, cancel, release: state transitions; release only when linked Session/Transaction is completed.
+- Audit retention: deactivate account, history still readable; hard delete blocked by RESTRICT.
+- All tests use mocks or a disposable database, never production.
+
+## 8. Integration with existing POS checkout
+- `extendRentalAllocation` accepts `rentalAccountId`, `sessionId`, `extraMinutes`, and `performedByUserId`; `extraMinutes` is an integer from 15 through 1440. It updates `Session.durationMinutes`, `Session.remainingMinutes`, and `Session.endTime` in one transaction. It does NOT update `Session.totalPrice` or create a separate `Transaction`.
+- `checkoutSession` (in `src/services/session.service.ts`) recalculates final price from persisted `durationMinutes` and trusted `hourlyRate`, so extension is included once at checkout.
+- `addSessionTime` currently updates `Session.totalPrice` directly. Before rental activation, add a server-side guard after loading the session: when an active rental allocation exists for the session, reject `addSessionTime` and require `extendRentalAllocation`. Do not rely on UI restrictions. Guard lookup and duration update must be covered by an integration test.
+- The guard must preserve current non-rental `addSessionTime` behavior. Rental extension must use the rental transaction path, with audit write in the same transaction. Payment happens once at checkout.
+
+## 9. Recommended implementation order
+1. Get owner decision on audit retention (option A recommended) and roles.
+2. Apply draft changes to the SQL draft and this doc (no DB).
+3. Obtain approval, then add models to `schema.prisma` and back-relations on `Game`, `Session`, `User`.
+4. Review migration; back up; apply to non-production first.
+5. Fix draft service, move to `src/services`, run `prisma generate`.
+6. Write integration tests, then API routes, then UI.
+7. Run `npx prisma validate`, `npx tsc --noEmit`, tests, `git diff --check`, `npm run build`.
+
+## 10. Blockers
+- Secret manager provider not chosen or integrated.
+- Audit retention option not confirmed.
+- Role matrix for rental management and credential access not confirmed.
+- Schema change and migration require explicit approval.
+- Production database must not be touched without approval.

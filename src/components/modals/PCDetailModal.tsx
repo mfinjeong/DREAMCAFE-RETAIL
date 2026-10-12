@@ -14,6 +14,7 @@ interface PCDetailModalProps {
   onStatusChange: (pcId: string, newStatus: PCStatus) => Promise<void>;
   onEndSession?: (pc: PCStation) => void;
   onStopSession?: (sessionId: string) => Promise<void>;
+  onAddTime?: (pc: PCStation) => void;
 }
 
 export const PCDetailModal: React.FC<PCDetailModalProps> = ({

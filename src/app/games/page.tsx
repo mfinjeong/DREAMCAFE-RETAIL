@@ -14,7 +14,6 @@ import {
   RefreshCw,
   AlertTriangle,
   Cpu,
-  Clock,
   PlayCircle,
   Tag,
   CheckCircle2,
@@ -22,29 +21,6 @@ import {
   Eye,
   SlidersHorizontal,
 } from "lucide-react";
-
-const CATALOG_REPLACEMENTS: Record<string, { title: string; cover: string }> = {
-  Valorant: {
-    title: "ELDEN RING",
-    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/f0b19c231f86fa0e633ff88a1a63459443017728/header_alt_assets_3.jpg",
-  },
-  "Mobile Legends": {
-    title: "Forza Horizon 5",
-    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1551360/header.jpg",
-  },
-  "Genshin Impact": {
-    title: "The Witcher 3: Wild Hunt",
-    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/292030/e8afc4252e3fee8ed2525ab2fd7675cca39aa38d/header_alt_assets_1.jpg",
-  },
-  "Honkai: Star Rail": {
-    title: "Warframe",
-    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/230410/1a3e7c2a05ce4e5cad5ac4c7e858cf5b0934704e/header.jpg",
-  },
-  Minecraft: {
-    title: "Destiny 2",
-    cover: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1085660/0ccf0dc0a8c4ec078db7ab99ddc820b2fa884441/header.jpg",
-  },
-};
 
 const GAME_COVERS: Record<string, string> = {
   "Counter-Strike 2": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/162664aa5da85f418105350c5d67ca565f6c3713/header.jpg",
@@ -143,20 +119,6 @@ export default function GameLibraryPage() {
     fetchGames();
   }, [fetchGames]);
 
-  // Apply catalog replacements for display only
-  const displayGames = games.map((game) => {
-    const replacement = CATALOG_REPLACEMENTS[game.title];
-    if (replacement) {
-      return {
-        ...game,
-        title: replacement.title,
-        bannerUrl: replacement.cover,
-        iconUrl: null,
-      };
-    }
-    return game;
-  });
-
   const handleRefresh = () => {
     setIsRefreshing(true);
     fetchGames();
@@ -204,12 +166,12 @@ export default function GameLibraryPage() {
         <div>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-5 bg-orange rounded-[1px]"></div>
-            <h1 className="text-3xl font-black tracking-wider text-text-primary uppercase">
+            <h1 className="text-3xl font-bold tracking-tight text-text-primary">
               Game Library
             </h1>
           </div>
           <p className="text-sm text-text-secondary mt-1 font-medium">
-            Katalog game terpasang, platform support, dan histori durasi bermain di DREAMCAFÉ
+            Katalog game terpasang dan platform support di DREAMCAFÉ
           </p>
         </div>
 
@@ -229,7 +191,7 @@ export default function GameLibraryPage() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-3 bg-maroon-subtle border border-maroon-border rounded-[4px] flex items-center justify-between text-xs text-maroon">
+        <div className="p-3 bg-maroon-subtle border border-maroon-border rounded-lg flex items-center justify-between text-sm text-maroon">
           <div className="flex items-center gap-2 font-semibold">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{errorMessage}</span>
@@ -244,37 +206,37 @@ export default function GameLibraryPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
           <div className="flex items-center justify-between text-text-secondary mb-2">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">Total Games</span>
+            <span className="text-sm font-semibold">Total Games</span>
             <Gamepad2 className="w-4 h-4 text-text-secondary" />
           </div>
-          <div className="text-2xl font-bold text-text-primary font-mono">{totalCount}</div>
+          <div className="text-2xl font-bold text-text-primary font-mono">{isLoading || errorMessage ? "—" : totalCount}</div>
           <div className="text-xs text-text-secondary mt-1 font-medium">Semua judul</div>
         </div>
 
         <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
           <div className="flex items-center justify-between text-text-secondary mb-2">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">PC Games</span>
+            <span className="text-sm font-semibold">PC Games</span>
             <Monitor className="w-4 h-4 text-persona-blue" />
           </div>
-          <div className="text-2xl font-bold text-persona-blue font-mono">{pcCount}</div>
+          <div className="text-2xl font-bold text-persona-blue font-mono">{isLoading || errorMessage ? "—" : pcCount}</div>
           <div className="text-xs text-text-secondary mt-1 font-medium">Di PC Stations</div>
         </div>
 
         <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
           <div className="flex items-center justify-between text-text-secondary mb-2">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">Console Games</span>
+            <span className="text-sm font-semibold">Console Games</span>
             <Gamepad2 className="w-4 h-4 text-orange" />
           </div>
-          <div className="text-2xl font-bold text-orange font-mono">{consoleCount}</div>
+          <div className="text-2xl font-bold text-orange font-mono">{isLoading || errorMessage ? "—" : consoleCount}</div>
           <div className="text-xs text-text-secondary mt-1 font-medium">PS5 / Switch</div>
         </div>
 
         <div className="bg-surface-card border border-surface-border p-4 rounded-[6px]">
           <div className="flex items-center justify-between text-text-secondary mb-2">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">Aktif</span>
+            <span className="text-sm font-semibold">Aktif</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-bold text-emerald-400 font-mono">{activeCount}</div>
+          <div className="text-2xl font-bold text-emerald-400 font-mono">{isLoading || errorMessage ? "—" : activeCount}</div>
           <div className="text-xs text-text-secondary mt-1 font-medium">Siap main</div>
         </div>
       </div>
@@ -348,7 +310,7 @@ export default function GameLibraryPage() {
           <RefreshCw className="w-7 h-7 animate-spin text-orange mx-auto mb-3" />
           <p className="text-sm text-text-secondary font-medium">Memuat pustaka game dari Supabase...</p>
         </div>
-      ) : displayGames.length === 0 ? (
+      ) : games.length === 0 ? (
         <div className="p-16 text-center bg-surface-card border border-surface-border rounded-[6px]">
           <Gamepad2 className="w-9 h-9 text-text-secondary mx-auto mb-3" />
           <h3 className="text-lg font-bold text-text-primary">Tidak Ada Game Ditemukan</h3>
@@ -360,8 +322,7 @@ export default function GameLibraryPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {displayGames.map((game) => {
-            const playHours = Math.round(((game.totalPlayMinutes || 0) / 60) * 10) / 10;
+          {games.map((game) => {
 
             return (
               <div
@@ -411,22 +372,13 @@ export default function GameLibraryPage() {
                   </p>
 
                   {/* System & Hardware specs */}
-                  <div className="mt-3 pt-3 border-t border-surface-border grid grid-cols-2 gap-2 text-xs">
+                  <div className="mt-3 pt-3 border-t border-surface-border flex items-center justify-between text-xs">
                     <div>
                       <span className="text-text-secondary flex items-center gap-1 text-xs font-semibold">
                         <Cpu className="w-3.5 h-3.5" /> Min. GPU
                       </span>
-                      <span className="font-mono text-text-primary font-semibold mt-0.5">
+                      <span className="font-mono text-text-primary font-semibold mt-0.5 block">
                         {game.minGpuRequired}
-                      </span>
-                    </div>
-
-                    <div>
-                      <span className="text-text-secondary flex items-center gap-1 text-xs font-semibold">
-                        <Clock className="w-3.5 h-3.5" /> Total Durasi
-                      </span>
-                      <span className="font-mono text-text-primary font-semibold mt-0.5">
-                        {playHours}h ({game.totalSessions || 0}x)
                       </span>
                     </div>
                   </div>
@@ -437,7 +389,7 @@ export default function GameLibraryPage() {
                       {game.tags.slice(0, 4).map((t) => (
                         <span
                           key={t}
-                          className="text-[9px] font-mono px-1 py-0.5 bg-surface-dark text-text-muted rounded-[2px]"
+                          className="text-xs font-mono px-1 py-0.5 bg-surface-dark text-text-muted rounded-[2px]"
                         >
                           #{t}
                         </span>
@@ -492,7 +444,7 @@ export default function GameLibraryPage() {
                   </p>
                 </div>
                 <span
-                  className={`text-[10px] font-mono px-2 py-0.5 rounded ${
+                  className={`text-xs font-mono px-2 py-0.5 rounded ${
                     selectedGame.isActive
                       ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
                       : "bg-zinc-800 text-zinc-400 border border-zinc-700"
@@ -505,14 +457,14 @@ export default function GameLibraryPage() {
 
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="p-2.5 bg-surface-dark border border-surface-border rounded">
-                <span className="text-text-muted block text-[10px]">Min. GPU Specification</span>
+                <span className="text-text-muted block text-xs">Min. GPU Specification</span>
                 <span className="font-mono text-text-primary font-medium mt-0.5 block">
                   {selectedGame.minGpuRequired}
                 </span>
               </div>
 
               <div className="p-2.5 bg-surface-dark border border-surface-border rounded">
-                <span className="text-text-muted block text-[10px]">Platform Compatibility</span>
+                <span className="text-text-muted block text-xs">Platform Compatibility</span>
                 <span className="font-mono text-text-primary font-medium mt-0.5 block">
                   {selectedGame.isInstalledOnPc && selectedGame.isInstalledConsole
                     ? "PC & CONSOLE"
@@ -524,20 +476,6 @@ export default function GameLibraryPage() {
                 </span>
               </div>
 
-              <div className="p-2.5 bg-surface-dark border border-surface-border rounded">
-                <span className="text-text-muted block text-[10px]">Total Sesi Bermain</span>
-                <span className="font-mono text-text-primary font-medium mt-0.5 block">
-                  {selectedGame.totalSessions || 0} Sesi
-                </span>
-              </div>
-
-              <div className="p-2.5 bg-surface-dark border border-surface-border rounded">
-                <span className="text-text-muted block text-[10px]">Total Akumulasi Durasi</span>
-                <span className="font-mono text-text-primary font-medium mt-0.5 block">
-                  {Math.round(((selectedGame.totalPlayMinutes || 0) / 60) * 10) / 10} Jam (
-                  {selectedGame.totalPlayMinutes || 0} Menit)
-                </span>
-              </div>
             </div>
 
             {selectedGame.tags && selectedGame.tags.length > 0 && (
@@ -549,7 +487,7 @@ export default function GameLibraryPage() {
                   {selectedGame.tags.map((t) => (
                     <span
                       key={t}
-                      className="text-[10px] font-mono px-2 py-0.5 bg-surface-dark border border-surface-border text-text-secondary rounded"
+                      className="text-xs font-mono px-2 py-0.5 bg-surface-dark border border-surface-border text-text-secondary rounded"
                     >
                       #{t}
                     </span>

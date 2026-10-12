@@ -1,0 +1,231 @@
+-- ============================================================================
+-- DRAFT MIGRATION — NOT APPLIED
+-- ============================================================================
+-- Feature: Game Account Sharing & Rental Management
+-- Status : DRAFT FOR REVIEW ONLY. Do NOT run `prisma migrate deploy` or
+--          `prisma db push` until this file has been reviewed and approved.
+--
+-- Why this file lives in `prisma/migrations/drafts/` and not in a timestamped
+-- migration directory: a timestamped directory would be detected by Prisma as a
+-- pending migration and could be applied by an unattended deploy. This draft
+-- exists only as a reviewable artifact. To apply it later, the reviewer must:
+--   1. Add the matching models to `prisma/schema.prisma`.
+--   2. Move this file to `prisma/migrations/<timestamp>_rental_account_management/migration.sql`.
+--   3. Run `npx prisma migrate deploy` against a backup-verified target.
+--
+-- Data safety:
+--   * Additive only. No DROP, no TRUNCATE, no column type changes, no renames.
+--   * No existing table, column, index, or row is modified.
+--   * All new foreign keys use ON DELETE RESTRICT so rental history can never
+--     be destroyed as a side effect of deleting a Game or Session.
+--   * All new columns on new tables are NOT NULL only where a default exists.
+-- ============================================================================
+
+
+-- ============================================================================
+-- 1. ENUMS
+-- ============================================================================
+
+-- CreateEnum
+-- Values intentionally mirror the existing PCStatus/ConsoleStatus vocabulary
+-- (AVAILABLE / IN_USE / MAINTENANCE / OFFLINE) so staff-facing status semantics
+-- stay consistent across the app. A dedicated enum is used instead of reusing
+-- PCStatus because the domains are independent and may diverge later.
+CREATE TYPE "RentalAccountStatus" AS ENUM ('AVAILABLE', 'IN_USE', 'MAINTENANCE', 'OFFLINE');
+
+-- CreateEnum
+CREATE TYPE "RentalAllocationStatus" AS ENUM ('ACTIVE', 'COMPLETED', 'CANCELLED');
+
+
+-- ============================================================================
+-- 2. TABLE: RentalAccount
+-- ============================================================================
+-- One row per rental account owned by a game. Example: game "CS2" may own
+-- accounts CS2-01, CS2-02, CS2-03, each with its own status and rate.
+--
+-- Credential handling: NO password column exists here on purpose. Only
+-- `secretRef` is stored, which is a pointer to an external secret manager
+-- (e.g. "vault://dreamcafe/steam/cs2-01"). See src/lib/secret-manager.ts.
+
+-- CreateTable
+CREATE TABLE "RentalAccount" (
+    "id"          TEXT NOT NULL,
+    "accountCode" TEXT NOT NULL,
+    "gameId"      TEXT NOT NULL,
+    "status"      "RentalAccountStatus" NOT NULL DEFAULT 'AVAILABLE',
+    "hourlyRate"  DOUBLE PRECISION NOT NULL DEFAULT 5000,
+    "secretRef"   TEXT,
+    "notes"       TEXT,
+    "isActive"    BOOLEAN NOT NULL DEFAULT true,
+    "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RentalAccount_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+-- Account codes are unique across the whole catalog (e.g. "CS2-01" cannot be
+-- reused by another game), matching how PC.stationNumber and
+-- Console.stationNumber are globally unique today.
+CREATE UNIQUE INDEX "RentalAccount_accountCode_key" ON "RentalAccount"("accountCode");
+
+-- CreateIndex
+CREATE INDEX "RentalAccount_gameId_idx" ON "RentalAccount"("gameId");
+
+-- CreateIndex
+CREATE INDEX "RentalAccount_status_idx" ON "RentalAccount"("status");
+
+-- CreateIndex
+CREATE INDEX "RentalAccount_isActive_idx" ON "RentalAccount"("isActive");
+
+-- CreateIndex
+-- Composite index for the primary admin listing filter (accounts of a game
+-- filtered by status), which is the hottest read path for this table.
+CREATE INDEX "RentalAccount_gameId_status_idx" ON "RentalAccount"("gameId", "status");
+
+-- AddForeignKey
+-- ON DELETE RESTRICT: a Game that still has rental accounts cannot be deleted.
+-- This protects rental history. Deleting a game would require deactivating
+-- (isActive = false) its accounts first, which is an explicit staff action.
+ALTER TABLE "RentalAccount"
+    ADD CONSTRAINT "RentalAccount_gameId_fkey"
+    FOREIGN KEY ("gameId") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+-- ============================================================================
+-- 3. TABLE: RentalAllocation
+-- ============================================================================
+-- Join table between RentalAccount and Session.
+--
+-- Design note (avoids duplicating existing data):
+--   Member, station (PC/Console), duration, times, price, and transaction are
+--   already stored on `Session`. This table therefore records ONLY what is
+--   specific to the rental relationship: which account was handed out, when it
+--   was allocated/released, and the rate snapshot used for that rental.
+--   It deliberately does NOT duplicate memberId, stationId, totalPrice,
+--   or transactionId.
+
+-- CreateTable
+CREATE TABLE "RentalAllocation" (
+    "id"              TEXT NOT NULL,
+    "rentalAccountId" TEXT NOT NULL,
+    "sessionId"       TEXT NOT NULL,
+    "status"          "RentalAllocationStatus" NOT NULL DEFAULT 'ACTIVE',
+    "allocatedAt"     TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "releasedAt"      TIMESTAMP(3),
+    "hourlyRateSnapshot" DOUBLE PRECISION NOT NULL,
+    "durationMinutes" INTEGER NOT NULL,
+
+    CONSTRAINT "RentalAllocation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE INDEX "RentalAllocation_rentalAccountId_idx" ON "RentalAllocation"("rentalAccountId");
+
+-- CreateIndex
+CREATE INDEX "RentalAllocation_sessionId_idx" ON "RentalAllocation"("sessionId");
+
+-- CreateIndex
+CREATE INDEX "RentalAllocation_status_idx" ON "RentalAllocation"("status");
+
+-- ============================================================================
+-- 3a. CONCURRENCY GUARANTEE — THE MOST IMPORTANT CONSTRAINT IN THIS MIGRATION
+-- ============================================================================
+-- A partial unique index physically guarantees, at the database level, that one
+-- rental account can never have two ACTIVE allocations at the same time.
+--
+-- This closes the double-rental race that application-level "check then insert"
+-- logic cannot close: two concurrent requests can both read status = AVAILABLE,
+-- but only one INSERT ... WHERE status = 'ACTIVE' can succeed against this
+-- index. PostgreSQL enforces it atomically; the loser receives a unique
+-- violation (Prisma P2002), which the service maps to a clear
+-- "account already rented" business response instead of a 500.
+CREATE UNIQUE INDEX "RentalAllocation_rentalAccountId_active_key"
+    ON "RentalAllocation"("rentalAccountId")
+    WHERE "status" = 'ACTIVE';
+
+-- AddForeignKey
+ALTER TABLE "RentalAllocation"
+    ADD CONSTRAINT "RentalAllocation_rentalAccountId_fkey"
+    FOREIGN KEY ("rentalAccountId") REFERENCES "RentalAccount"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+-- ON DELETE RESTRICT: a Session that has rental history cannot be deleted.
+ALTER TABLE "RentalAllocation"
+    ADD CONSTRAINT "RentalAllocation_sessionId_fkey"
+    FOREIGN KEY ("sessionId") REFERENCES "Session"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+-- ============================================================================
+-- 4. TABLE: RentalAccountAuditLog
+-- ============================================================================
+-- Append-only audit trail for rental account lifecycle events.
+-- `details` must NEVER contain credential material; it stores human-readable
+-- context only (e.g. "status AVAILABLE -> MAINTENANCE: joystick rusak").
+
+-- CreateTable
+CREATE TABLE "RentalAccountAuditLog" (
+    "id"                 TEXT NOT NULL,
+    "rentalAccountId"    TEXT NOT NULL,
+    "accountCodeSnapshot" TEXT NOT NULL,
+    "gameIdSnapshot"     TEXT NOT NULL,
+    "action"             TEXT NOT NULL,
+    "previousStatus"     TEXT,
+    "newStatus"          TEXT,
+    "performedByUserId"  TEXT NOT NULL,
+    "details"            TEXT,
+    "createdAt"          TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RentalAccountAuditLog_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE INDEX "RentalAccountAuditLog_rentalAccountId_idx" ON "RentalAccountAuditLog"("rentalAccountId");
+
+-- CreateIndex
+CREATE INDEX "RentalAccountAuditLog_createdAt_idx" ON "RentalAccountAuditLog"("createdAt");
+
+-- AddForeignKey
+-- ON DELETE RESTRICT: normal operation uses isActive = false. Hard deletion is
+-- blocked while audit rows exist, preserving audit history by construction.
+ALTER TABLE "RentalAccountAuditLog"
+    ADD CONSTRAINT "RentalAccountAuditLog_rentalAccountId_fkey"
+    FOREIGN KEY ("rentalAccountId") REFERENCES "RentalAccount"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RentalAccountAuditLog"
+    ADD CONSTRAINT "RentalAccountAuditLog_performedByUserId_fkey"
+    FOREIGN KEY ("performedByUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+
+-- ============================================================================
+-- 5. REQUIRED SCHEMA.PRISMA ADDITIONS (NOT APPLIED — FOR REVIEW)
+-- ============================================================================
+-- The SQL above must be mirrored in prisma/schema.prisma before the migration
+-- can be applied. The exact model bodies are documented in the task report.
+-- Summary of what must be added:
+--
+--   enum RentalAccountStatus { AVAILABLE IN_USE MAINTENANCE OFFLINE }
+--   enum RentalAllocationStatus { ACTIVE COMPLETED CANCELLED }
+--
+--   model RentalAccount { ... }
+--   model RentalAllocation { ... }
+--   model RentalAccountAuditLog { ... }
+--
+--   model Game     { rentalAccounts RentalAccount[] }
+--   model Session  { rentalAllocations RentalAllocation[] }
+--
+-- `prisma/schema.prisma` has deliberately NOT been modified, because the task
+-- forbids changing it without explicit authorization.
+
+
+-- ============================================================================
+-- 6. ROLLBACK (review reference only — do NOT run unless reverting this feature)
+-- ============================================================================
+-- DROP TABLE "RentalAccountAuditLog";
+-- DROP TABLE "RentalAllocation";
+-- DROP TABLE "RentalAccount";
+-- DROP TYPE "RentalAllocationStatus";
+-- DROP TYPE "RentalAccountStatus";
+-- Rollback is fully non-destructive to pre-existing data because this migration
+-- only adds new objects and never touches existing tables.

@@ -70,7 +70,7 @@ const config: Config = {
         text: {
                   primary: "#211C20",
                   secondary: "#51464C",
-                  muted: "#7A6F75",
+                  muted: "#70646A",
         },
                 orange: {
                   DEFAULT: "#F97316",

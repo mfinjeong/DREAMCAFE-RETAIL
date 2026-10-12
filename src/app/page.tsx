@@ -1,20 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import dynamic from "next/dynamic";
 import { PCStation, MemberItem, PCStatus } from "@/lib/types";
 import { PCStationCard } from "@/components/cards/PCStationCard";
-import { StartSessionModal } from "@/components/modals/StartSessionModal";
-import { EndSessionPaymentModal } from "@/components/modals/EndSessionPaymentModal";
-import { AddSessionTimeModal } from "@/components/modals/AddSessionTimeModal";
-import { PCDetailModal } from "@/components/modals/PCDetailModal";
+import { Button } from "@/components/ui/Button";
 import { formatRupiah } from "@/lib/formatters";
-import { RefreshCw, AlertTriangle, Activity, DollarSign } from "lucide-react";
+import Link from "next/link";
+import { RefreshCw, AlertTriangle, DollarSign, Monitor, Gamepad2, ShoppingBag, Calendar, BarChart3, Activity as ActivityIcon } from "lucide-react";
+
+const StartSessionModal = dynamic(() => import("@/components/modals/StartSessionModal").then(m => ({ default: m.StartSessionModal })), { ssr: false });
+const EndSessionPaymentModal = dynamic(() => import("@/components/modals/EndSessionPaymentModal").then(m => ({ default: m.EndSessionPaymentModal })), { ssr: false });
+const AddSessionTimeModal = dynamic(() => import("@/components/modals/AddSessionTimeModal").then(m => ({ default: m.AddSessionTimeModal })), { ssr: false });
+const PCDetailModal = dynamic(() => import("@/components/modals/PCDetailModal").then(m => ({ default: m.PCDetailModal })), { ssr: false });
 
 export default function DashboardPage() {
   const [pcs, setPcs] = useState<PCStation[]>([]);
   const [members, setMembers] = useState<MemberItem[]>([]);
   const [todayRevenue, setTodayRevenue] = useState<number>(0);
   const [activeSessionsCount, setActiveSessionsCount] = useState<number>(0);
+  const [statsLoaded, setStatsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -39,9 +44,20 @@ export default function DashboardPage() {
     hourlyRate: number;
   } | null>(null);
 
+  const [nowSeconds, setNowSeconds] = useState<number>(() => Math.floor(Date.now() / 1000));
+  const hasActiveStation = pcs.some((pc) => pc.status === "IN_USE" && pc.activeSession);
+
+  useEffect(() => {
+    if (!hasActiveStation) return;
+    setNowSeconds(Math.floor(Date.now() / 1000));
+    const id = setInterval(() => setNowSeconds(Math.floor(Date.now() / 1000)), 1000);
+    return () => clearInterval(id);
+  }, [hasActiveStation]);
+
   const fetchData = useCallback(async () => {
     try {
       setErrorMessage(null);
+      setStatsLoaded(false);
       const [pcRes, statsRes] = await Promise.all([
         fetch("/api/pc"),
         fetch("/api/dashboard/stats"),
@@ -60,13 +76,9 @@ export default function DashboardPage() {
       if (statsJson.success && statsJson.data) {
         setTodayRevenue(statsJson.data.todayRevenue || 0);
         setActiveSessionsCount(statsJson.data.activeSessionsCount || 0);
-      }
-
-      // Members are needed by start-session modal.
-      const memRes = await fetch("/api/members");
-      const memJson = await memRes.json();
-      if (memJson.success && Array.isArray(memJson.data)) {
-        setMembers(memJson.data);
+        setStatsLoaded(true);
+      } else {
+        setStatsLoaded(false);
       }
     } catch (err: unknown) {
       console.error(err);
@@ -91,8 +103,6 @@ export default function DashboardPage() {
   const inUseCount = pcs.filter((p) => p.status === "IN_USE").length;
   const availableCount = pcs.filter((p) => p.status === "AVAILABLE").length;
   const maintenanceCount = pcs.filter((p) => p.status === "MAINTENANCE").length;
-  const offlineCount = pcs.filter((p) => p.status === "OFFLINE").length;
-  const liveActiveSessions = Math.max(activeSessionsCount, inUseCount);
 
   const filteredPCs = pcs.filter((p) => {
     if (selectedZone !== "ALL" && p.zone !== selectedZone) return false;
@@ -103,6 +113,14 @@ export default function DashboardPage() {
   const handleOpenStartSession = (pc: PCStation) => {
     setSelectedPC(pc);
     setActiveModal("start");
+    if (members.length === 0) {
+      fetch("/api/members")
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && Array.isArray(json.data)) setMembers(json.data);
+        })
+        .catch((err) => console.error("Failed to load members", err));
+    }
   };
 
   const handleOpenDetail = (pc: PCStation) => {
@@ -203,110 +221,113 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-4">
-      {/* Top Statistics: PC Fleet Status (5 Cards) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {/* TOTAL PC */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-surface-border"></span>
-          <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold">
-            TOTAL PC
-          </span>
-          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
-            {isLoading ? "..." : totalPC}
-          </span>
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-[28px] font-bold tracking-tight text-text-primary">Dashboard</h1>
+          <p className="text-sm text-text-secondary mt-1 font-medium">Ringkasan operasional & quick actions</p>
         </div>
-
-        {/* AVAILABLE: Persona 3 Reload Blue Accent */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-sage"></span>
-          <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-sage rounded-[1px]"></span>
-            AVAILABLE
-          </span>
-          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
-            {isLoading ? "..." : availableCount}
-          </span>
-        </div>
-
-        {/* IN USE: Persona Red Accent */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-coffee"></span>
-          <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-coffee rounded-[1px]"></span>
-            IN USE
-          </span>
-          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
-            {isLoading ? "..." : inUseCount}
-          </span>
-        </div>
-
-        {/* MAINTENANCE: Warm Amber Accent */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-pamber"></span>
-          <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-pamber rounded-[1px]"></span>
-            MAINTENANCE
-          </span>
-          <span className="text-2xl font-black font-sans text-text-primary mt-1 block">
-            {isLoading ? "..." : maintenanceCount}
-          </span>
-        </div>
-
-        {/* OFFLINE: Muted Neutral Accent */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5 col-span-2 sm:col-span-1">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-surface-border"></span>
-          <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-text-muted rounded-[1px]"></span>
-            OFFLINE
-          </span>
-          <span className="text-2xl font-black font-sans text-text-muted mt-1 block">
-            {isLoading ? "..." : offlineCount}
-          </span>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleManualRefresh}
+          disabled={isRefreshing}
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
+          <span>Refresh</span>
+        </Button>
       </div>
 
-      {/* Operations & Revenue Banner: Active Sessions & Today's Revenue */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* ACTIVE SESSIONS */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5 flex items-center justify-between">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-coffee"></span>
-          <div>
-            <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-coffee animate-pulse" />
-              ACTIVE SESSIONS
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black font-sans text-text-primary">
-                {isLoading ? "..." : liveActiveSessions}
-              </span>
-              <span className="text-xs font-mono text-text-muted">
-                ({inUseCount} PC stations in play)
-              </span>
+      {/* Quick Navigation Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <Link href="/pc" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <Monitor className="w-8 h-8 text-orange group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">PC Stations</span>
+        </Link>
+        <Link href="/consoles" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <Gamepad2 className="w-8 h-8 text-orange group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Console</span>
+        </Link>
+        <Link href="/games" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <Gamepad2 className="w-8 h-8 text-p3r-blue group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Games</span>
+        </Link>
+        <Link href="/store" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <ShoppingBag className="w-8 h-8 text-teal group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Store & POS</span>
+        </Link>
+        <Link href="/sessions" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <ActivityIcon className="w-8 h-8 text-sage group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Sessions</span>
+        </Link>
+        <Link href="/booking" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <Calendar className="w-8 h-8 text-pamber group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Booking</span>
+        </Link>
+        <Link href="/members" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <Monitor className="w-8 h-8 text-persona-red group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Members</span>
+        </Link>
+        <Link href="/reports" className="group bg-white hover:bg-surface-muted border border-surface-border hover:border-orange rounded-xl p-4 transition-all duration-200 flex flex-col items-center justify-center gap-3 cursor-pointer shadow-sm hover:shadow-md">
+          <BarChart3 className="w-8 h-8 text-terracotta group-hover:scale-110 transition-transform" />
+          <span className="text-sm font-semibold text-text-primary">Reports</span>
+        </Link>
+      </div>
+
+      {/* Operational Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* PC Fleet Status */}
+        <div className="bg-white border border-surface-border rounded-xl p-4 shadow-sm">
+          <h2 className="text-xs font-semibold text-text-primary uppercase mb-3 flex items-center gap-2">
+            <Monitor className="w-4 h-4 text-text-secondary" />
+            PC Fleet
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-surface-dark rounded-lg p-2.5 text-center">
+              <div className="text-2xl font-semibold text-text-primary">{totalPC}</div>
+              <div className="text-xs font-medium text-text-muted uppercase mt-0.5">Total</div>
             </div>
-          </div>
-          <div className="hidden sm:flex flex-col items-end text-right">
-            <span className="text-[11px] font-mono text-text-secondary">Prisma Live State</span>
-            <span className="text-[10px] font-mono text-coffee font-semibold uppercase">Real-Time Sync</span>
+            <div className="bg-sage-subtle border border-sage-border rounded-lg p-2.5 text-center">
+              <div className="text-2xl font-semibold text-sage">{availableCount}</div>
+              <div className="text-xs font-medium text-sage uppercase mt-0.5">Avail</div>
+            </div>
+            <div className="bg-coffee-subtle border border-coffee-border rounded-lg p-2.5 text-center">
+              <div className="text-2xl font-semibold text-coffee">{inUseCount}</div>
+              <div className="text-xs font-medium text-coffee uppercase mt-0.5">In Use</div>
+            </div>
+            <div className="bg-pamber-subtle border border-pamber-border rounded-lg p-2.5 text-center">
+              <div className="text-2xl font-semibold text-pamber">{maintenanceCount}</div>
+              <div className="text-xs font-medium text-pamber uppercase mt-0.5">Maint</div>
+            </div>
           </div>
         </div>
 
-        {/* TODAY'S REVENUE */}
-        <div className="relative overflow-hidden bg-surface border border-surface-border rounded-[8px] p-3.5 flex items-center justify-between">
-          <span className="absolute top-0 left-0 right-0 h-[2px] bg-sage"></span>
-          <div>
-            <span className="text-[10px] font-mono uppercase text-text-secondary tracking-wider block font-semibold flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-sage" />
-              TODAY&apos;S REVENUE
-            </span>
-            <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-2xl font-black font-mono text-text-primary">
-                {isLoading ? "..." : formatRupiah(todayRevenue)}
-              </span>
-            </div>
+        {/* Active Sessions */}
+        <div className="bg-white border border-surface-border rounded-xl p-4 shadow-sm">
+          <h2 className="text-xs font-semibold text-text-primary uppercase mb-3 flex items-center gap-2">
+            <ActivityIcon className="w-4 h-4 text-text-secondary" />
+            Active Sessions
+          </h2>
+          <div className="text-4xl font-bold text-text-primary tracking-tight">
+            {isLoading ? "..." : statsLoaded ? activeSessionsCount : "—"}
           </div>
-          <div className="hidden sm:flex flex-col items-end text-right">
-            <span className="text-[11px] font-mono text-text-secondary">Cash Transactions</span>
-            <span className="text-[10px] font-mono text-sage font-semibold uppercase">Verified Backend</span>
+          <div className="text-xs text-text-secondary mt-2">
+            Sessions currently recorded
+          </div>
+        </div>
+
+        {/* Today's Revenue */}
+        <div className="bg-white border border-surface-border rounded-xl p-4 shadow-sm md:col-span-2">
+          <h2 className="text-xs font-semibold text-text-primary uppercase mb-3 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-text-secondary" />
+            Today's Revenue
+          </h2>
+          <div className="text-4xl font-bold text-text-primary tracking-tight">
+            {isLoading ? "..." : statsLoaded ? formatRupiah(todayRevenue) : "—"}
+          </div>
+          <div className="text-xs text-text-secondary mt-2">
+            Cash transactions
           </div>
         </div>
       </div>
@@ -335,11 +356,11 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2 text-xs">
           <div className="flex items-center gap-1.5 mr-2">
             <span className="w-1.5 h-3.5 bg-coffee rounded-[1px]"></span>
-            <span className="text-xs font-extrabold text-text-primary uppercase tracking-wider font-sans">
+            <span className="text-xs font-semibold text-text-primary font-sans">
               PC STATIONS
             </span>
           </div>
-          <span className="text-text-muted font-mono text-[10px] uppercase mr-1">Zone:</span>
+          <span className="text-text-muted font-mono text-xs uppercase mr-1">Zone:</span>
           {["ALL", "REGULAR", "VIP", "ARENA"].map((zone) => (
             <button
               key={zone}
@@ -356,7 +377,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-text-muted font-mono text-[10px] uppercase mr-1">Status:</span>
+          <span className="text-text-muted font-mono text-xs uppercase mr-1">Status:</span>
           {["ALL", "AVAILABLE", "IN_USE", "MAINTENANCE", "OFFLINE"].map((status) => (
             <button
               key={status}
@@ -376,6 +397,7 @@ export default function DashboardPage() {
               isRefreshing ? "animate-spin text-coffee" : ""
             }`}
             title="Refresh Stations"
+            aria-label="Refresh Stations"
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
@@ -398,6 +420,7 @@ export default function DashboardPage() {
             <PCStationCard
               key={pc.id}
               pc={pc}
+              nowSeconds={nowSeconds}
               onStartSession={handleOpenStartSession}
               onViewDetail={handleOpenDetail}
               onEndSession={handleOpenEndSession}
