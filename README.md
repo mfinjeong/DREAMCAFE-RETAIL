@@ -100,7 +100,7 @@ Pastikan Anda telah menginstal:
 
 ### 2. Kloning Repositori
 ```bash
-git clone https://github.com/mfinjeong/DREAMCAFE-PLATFORM.git
+git clone https://github.com/mfinjeong/DREAMCAFE-RETAIL.git
 cd DREAMCAFE-PLATFORM
 ```
 
